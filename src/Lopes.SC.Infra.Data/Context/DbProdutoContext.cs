@@ -16,7 +16,7 @@ namespace Lopes.SC.Infra.Data.Context
         public DbSet<Anuncio> Anuncios { get; set; }
         public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
         public DbSet<DadosImovel> Imoveis { get; set; }
-        public DbSet<ImovelAtualizacaoPortais> ImovelAtualizacaoPortais { get; set; }
+        public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }
         public DbSet<ImovelCaracteristica> ImovelCaracteristicas{ get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -35,7 +35,7 @@ namespace Lopes.SC.Infra.Data.Context
             builder.Entity<DadosImovel>().HasKey(_ => _.IdImovel);
             builder.Entity<DadosImovel>().ToView("VW_AnuncioImovelDados");
 
-            builder.Entity<ImovelAtualizacaoPortais>().ToTable("ImovelAtualizacaoPortal").HasKey(_ => _.Id);
+            builder.Entity<AnuncioAtualizacao>().ToTable("AnuncioAtualizacao").HasKey(_ => _.Id);
 
             builder.Entity<ImovelCaracteristica>().HasNoKey();
         }

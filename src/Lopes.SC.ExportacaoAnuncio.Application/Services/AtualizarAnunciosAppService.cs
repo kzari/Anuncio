@@ -18,14 +18,16 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
         private readonly IAnuncioAppService _anuncioAppService;
         private readonly IImovelAtualizacaoPortaisRepository _imovelAtualizacaoPortaisRepository;
         private readonly IStatusAnuncioService _statusAnuncioService;
+        private readonly IImovelXMLAppService _imovelXMLAppService;
 
         private readonly List<Imovel> _dadosImoveisCache;
 
         public AtualizarAnunciosAppService(ILogger logger,
-                                         IAnuncioAppService anuncioAppService,
-                                         IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository,
-                                         IDadosImovelAppService dadosImovelAppService,
-                                         IStatusAnuncioService statusAnuncioService)
+                                           IAnuncioAppService anuncioAppService,
+                                           IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository,
+                                           IDadosImovelAppService dadosImovelAppService,
+                                           IStatusAnuncioService statusAnuncioService,
+                                           IImovelXMLAppService imovelXMLAppService)
         {
             _logger = logger;
             _anuncioAppService = anuncioAppService;
@@ -33,6 +35,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             _dadosImoveisCache = new List<Imovel>();
             _dadosImovelAppService = dadosImovelAppService;
             _statusAnuncioService = statusAnuncioService;
+            _imovelXMLAppService = imovelXMLAppService;
         }
 
 
@@ -84,8 +87,9 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                 int partitionId = partitionIds++;
 
                 //TODO: Obter de DI
-                var repo = new EmpresaApelidoPortalRepository(new DbLopesnetContext());
-                var imovelXMLAppService = new ImovelXMLAppService(@"C:\Temp\portais", repo, _logger);
+                //_serviceProvider.GetRequiredService<IEmpresaApelidoPortalRepository>();
+                //var repo =  new EmpresaApelidoPortalRepository(new DbLopesnetContext());
+                //var imovelXMLAppService = new ImovelXMLAppService(@"C:\Temp\portais", repo, _logger);
 
                 using (partition)
                     while (partition.MoveNext())
@@ -93,7 +97,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                         var portalEmpresa = partition.Current;
 
 
-                        IRetorno<string> caminhoArquivo = imovelXMLAppService.CaminhoArquivoXml(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
+                        IRetorno<string> caminhoArquivo = _imovelXMLAppService.CaminhoArquivoXml(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
                         if(!caminhoArquivo.Sucesso)
                         {
                             _logger.Error($"Erro ao obter o caminho do arquivo: {caminhoArquivo.ErrosConcatenados()}.");
@@ -121,7 +125,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                             if (statusImovelPortal == StatusAnuncioPortal.ARemover)
                             {
                                 builder.RemoverImovel(anuncio.IdImovel);
-                                RegistrarRemocaoImovelPortal(anuncio.IdImovel, anuncio.Portal);
+                                RegistrarRemocaoImovelPortal(anuncio, AtualizacaoAcao.Exclusao);
                                 _logger.Debug($"{InicioLog(anuncio, i, partitionId)}  removido.");
                             }
                             else if (statusImovelPortal == StatusAnuncioPortal.Desatualizado)
@@ -133,7 +137,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                                 dados.CodigoClientePortal = anuncio.CodigoClientePortal;
 
                                 builder.InserirAtualizarImovel(dados);
-                                RegistrarAtualizacaoImovelPortal(anuncio.IdImovel, anuncio.Portal);
+                                RegistrarRemocaoImovelPortal(anuncio, AtualizacaoAcao.Atualizacao);
                                 _logger.Debug($"{InicioLog(anuncio, i, partitionId)}  inserido/atualizado.");
                             }
                         }
@@ -145,16 +149,11 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 
         private static string InicioLog(Anuncio anuncio, int i, int processador)
         {
-            return $"P{processador} - {i} Imóvel {anuncio.IdImovel.ToString().PadLeft(6)}  Portal: {anuncio.Portal.ToString().PadRight(10)}  Empresa: {anuncio.Empresa.PadRight(40)} :: ";
+            return $"P{processador} - {i} Imóvel {anuncio.IdImovel.ToString().PadLeft(6)}  Portal: {anuncio.Portal.ToString().PadRight(10)}  Empresa: {anuncio.NomeEmpresa.PadRight(40)} :: ";
         }
-        private void RegistrarRemocaoImovelPortal(int idImovel, Portal portal)
+        private void RegistrarRemocaoImovelPortal(Anuncio anuncio, AtualizacaoAcao acao)
         {
-            var model = new ImovelRemovidoPortais(idImovel, portal, DateTime.Now);
-            _imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(model);
-        }
-        private void RegistrarAtualizacaoImovelPortal(int idImovel, Portal portal)
-        {
-            var model = new ImovelAtualizadoPortais(idImovel, portal, DateTime.Now);
+            var model = new AnuncioAtualizacao(anuncio.Portal, anuncio.IdImovel, anuncio.IdEmpresa, acao);
             _imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(model);
         }
 

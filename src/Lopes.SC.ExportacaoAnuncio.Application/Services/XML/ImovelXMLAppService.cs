@@ -2,8 +2,8 @@
 using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Application.Models;
 using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using System.Text.RegularExpressions;
 
 namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML

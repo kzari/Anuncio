@@ -9,19 +9,4 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
         IEnumerable<Anuncio> ObterPorCotas(int[] idCotas);
         IEnumerable<Anuncio> ObterPorPortais(Portal[] portais);
     }
-
-    public interface IImovelAtualizacaoPortaisRepository
-    {
-
-    }
-
-    public interface IEmpresaApelidoPortalRepository
-    {
-
-    }
-
-    public interface IImovelRepository
-    {
-
-    }
 }

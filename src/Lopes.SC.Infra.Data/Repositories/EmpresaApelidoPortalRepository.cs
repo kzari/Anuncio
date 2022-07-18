@@ -1,5 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.Infra.Data.Context;
 
 namespace Lopes.SC.Infra.Data.Repositories
@@ -10,6 +10,6 @@ namespace Lopes.SC.Infra.Data.Repositories
         {
         }
 
-        public IEnumerable<EmpresaApelidoPortal> Obter() => GetAll().ToList();
+        public IEnumerable<EmpresaApelidoPortal> Obter() => ObterTodos().ToList();
     }
 }

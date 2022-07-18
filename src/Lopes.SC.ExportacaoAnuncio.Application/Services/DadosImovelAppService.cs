@@ -1,7 +1,7 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Application.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 
 namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 {
@@ -32,7 +32,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             Imovel imovel = new Imovel(dados);
 
             imovel.Caracteristicas = _imovelRepository.ObterCaracteristicas(idImovel).ToList();
-            //TODO: preencher v
+            //TODO: preencher: v
             //dados.UrlTourVirtuais = 
             //dados.UrlVideos = 
             //dados.Imagens = 

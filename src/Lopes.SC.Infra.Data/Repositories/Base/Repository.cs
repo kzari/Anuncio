@@ -1,46 +1,46 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Interfaces;
-using Lopes.SC.Infra.Data.Context;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.SC.Infra.Data.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntidade> : IRepository<TEntidade> where TEntidade : class
     {
         protected readonly DbContext Db;
-        protected readonly DbSet<TEntity> DbSet;
+        protected readonly DbSet<TEntidade> DbSet;
+
 
         public Repository(DbContext context)
         {
             Db = context;
-            DbSet = Db.Set<TEntity>();
+            DbSet = Db.Set<TEntidade>();
         }
 
-        public virtual void Add(TEntity obj)
+
+        public virtual void Criar(TEntidade obj)
         {
             DbSet.Add(obj);
         }
 
-        public virtual TEntity GetById(Guid id)
+        public virtual TEntidade ObterPorId(int id)
         {
             return DbSet.Find(id);
         }
-
-        public virtual IQueryable<TEntity> GetAll()
+        public virtual IQueryable<TEntidade> ObterTodos()
         {
             return DbSet;
         }
 
-        public virtual void Update(TEntity obj)
+        public virtual void Alterar(TEntidade obj)
         {
             DbSet.Update(obj);
         }
 
-        public virtual void Remove(Guid id)
+        public virtual void Excluir(int id)
         {
             DbSet.Remove(DbSet.Find(id));
         }
 
-        public int SaveChanges()
+        public int SalvarAlteracoes()
         {
             return Db.SaveChanges();
         }

@@ -22,7 +22,7 @@ namespace Lopes.SC.Infra.Data.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // connect to sql server with connection string from app settings
+            // TODO: connect to sql server with connection string from app settings
             if(Configuration != null)
                 options.UseSqlServer(Configuration.GetConnectionString("DbLopesnet"));
             else

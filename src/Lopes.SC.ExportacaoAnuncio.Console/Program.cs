@@ -1,11 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Lopes.SC.ExportacaoAnuncio.Application.Services;
-using Lopes.SC.ExportacaoAnuncio.Application.Services.XML;
+using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.ConsoleTestes;
 using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Services;
-using Lopes.SC.Infra.Data.Context;
-using Lopes.SC.Infra.Data.Repositories;
 using Lopes.SC.Infra.IoC;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 //atualizarImovelAppService.AtualizarPorImoveis(new int[] { 627841 } );
 
 
-var services = ServiceConfiguration.ConfigureServices(new ServiceCollection());
+var services = ServiceConfiguration.ConfigureServices<ConsoleLogger>(new ServiceCollection());
 
-var atualizarImovelAppService = services.Get
+IAtualizarAnunciosAppService atualizarImovelAppService = services.GetService<IAtualizarAnunciosAppService>();
 atualizarImovelAppService.AtualizarPorPortais(new Portal[] { Portal.Zap });

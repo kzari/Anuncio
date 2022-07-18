@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.ExportacaoAnuncio.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

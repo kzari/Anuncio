@@ -16,7 +16,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
 
         public StatusAnuncioPortal VerificarStatusImovelPortal(Anuncio anuncio, bool imovelNoXml)
         {
-            
+            return StatusAnuncioPortal.Atualizado;
         }
     }
 }
