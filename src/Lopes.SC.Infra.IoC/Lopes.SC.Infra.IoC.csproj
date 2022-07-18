@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.ExportacaoAnuncio.Application.csproj" />
+    <ProjectReference Include="..\Lopes.SC.Infra.Data\Lopes.SC.Infra.Data.csproj" />
+  </ItemGroup>
+
+</Project>

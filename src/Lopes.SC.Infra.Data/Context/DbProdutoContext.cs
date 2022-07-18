@@ -1,0 +1,43 @@
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+using Lopes.SC.Infra.Data.Mappings;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace Lopes.SC.Infra.Data.Context
+{
+    public class DbProdutoContext : DbContext
+    {
+        protected readonly IConfiguration Configuration;
+
+        public DbProdutoContext()
+        {
+        }
+
+        public DbSet<Anuncio> Anuncios { get; set; }
+        public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
+        public DbSet<DadosImovel> Imoveis { get; set; }
+        public DbSet<ImovelAtualizacaoPortais> ImovelAtualizacaoPortais { get; set; }
+        public DbSet<ImovelCaracteristica> ImovelCaracteristicas{ get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            // connect to sql server with connection string from app settings
+            options.UseSqlServer(@"Initial Catalog=dbproduto;Data Source=LPS-SI-DEV02\SQLCORP_HML;User id=usrapp;Password=Lopesnet2010;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.ApplyConfiguration(new AnuncioMap());
+            builder.Entity<ImovelEmpresa>().HasNoKey().ToView("VW_ImovelEmpresas");
+
+            builder.Entity<DadosImovel>().HasKey(_ => _.IdImovel);
+            builder.Entity<DadosImovel>().ToView("VW_AnuncioImovelDados");
+
+            builder.Entity<ImovelAtualizacaoPortais>().ToTable("ImovelAtualizacaoPortal").HasKey(_ => _.Id);
+
+            builder.Entity<ImovelCaracteristica>().HasNoKey();
+        }
+    }
+}
