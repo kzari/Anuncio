@@ -167,7 +167,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             return $"P{processador} - {i} Imóvel {anuncio.IdImovel.ToString().PadLeft(6)}  Portal: {anuncio.Portal.ToString().PadRight(10)}  Empresa: {anuncio.NomeEmpresa.PadRight(40)} :: ";
         }
 
-        private Imovel ObterDadosImovel(int idImovel, IDadosImovelAppService dadosImovelAppService)
+        private Imovel? ObterDadosImovel(int idImovel, IDadosImovelAppService dadosImovelAppService)
         {
             Imovel? dados;
             lock (_dadosImoveisCache)

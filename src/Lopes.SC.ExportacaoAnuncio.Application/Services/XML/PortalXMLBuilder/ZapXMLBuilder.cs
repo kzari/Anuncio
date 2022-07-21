@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
 {
-    public class ZapXMLBuilder : PortalXMLBuilder,  IPortalXMLBuilder
+    public class ZapXMLBuilder : PortalXMLBuilder, IPortalXMLBuilder
     {
         public ZapXMLBuilder(Portal portal, string caminhoArquivo) : base(portal, caminhoArquivo)
         {
@@ -79,12 +79,10 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
             string observacao = SubstituirCaracteresInvalidosUnicode(dados.TextoSite) + " - Ref.: " + dados.IdImovel;
             AdicionarElemento(doc, eImovel, "Observacao", observacao);
 
-            AdicionarTourVirtual(doc, eImoveis, dados.UrlTourVirtuais);
-
+            AdicionarTourVirtual(doc, eImoveis, dados);
+            AdicionarVideos(doc, eImoveis, dados);
 
             //TODO: adicionar imagens
-            //TODO: adicionar videos
-            //TODO: adicionar caracteristicas
 
             doc.Save(CaminhoArquivo);
         }
@@ -107,11 +105,33 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
             doc.Save(CaminhoArquivo);
         }
 
-        protected void AdicionarTourVirtual(XmlDocument doc, XmlNode eImoveis, IEnumerable<string> linksTourVirtual)
+        private static void AdicionarTourVirtual(XmlDocument doc, XmlNode eImoveis, Imovel imovel)
         {
-            //XmlElement elemento = doc.CreateElement("Link");
-            //elemento.InnerText = valor;
-            //eImovel.AppendChild(elemento);
+            if (imovel.UrlTourVirtuais == null || !imovel.UrlTourVirtuais.Any())
+                return;
+
+            foreach (var url in imovel.UrlTourVirtuais)
+            {
+                XmlElement elemento = doc.CreateElement("LinkTourVirtual");
+                elemento.InnerText = url;
+                eImoveis.AppendChild(elemento);
+            }
+        }
+
+        private static void AdicionarVideos(XmlDocument doc, XmlNode eImoveis, Imovel imovel)
+        {
+            if (imovel.UrlVideos == null || !imovel.UrlVideos.Any())
+                return;
+
+            XmlElement eVideos = doc.CreateElement("Videos");
+            eImoveis.AppendChild(eVideos);
+
+            foreach (var url in imovel.UrlVideos)
+            {
+                XmlElement elemento = doc.CreateElement("LinkTourVirtual");
+                elemento.InnerText = url;
+                eVideos.AppendChild(elemento);
+            }
         }
 
         private static bool Terreno(string descrition) => descrition.Contains("Terreno");

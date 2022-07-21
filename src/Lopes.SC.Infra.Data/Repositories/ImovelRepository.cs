@@ -32,20 +32,18 @@ namespace Lopes.SC.Infra.Data.Repositories
             return Db.ImovelCaracteristicas.FromSqlRaw("dbo.ImovelCaracteristicas {0}", idImovel).ToList();
         }
 
-        public IEnumerable<string> ObterUrlTourVirtual(int idUnidade)
+        public IEnumerable<string> ObterUrlTourVirtuais(int idImovel)
         {
-            return  Select<string>($"SELECT UNTV_nm_url_tour_virtual FROM tb_UNTV_unidade_tour_virtual WHERE UNPR_cd_unidade_pronta = {idUnidade}").ToList();
+            return Db.TourVirtuais.Where(_ => _.IdImovel == idImovel)
+                                  .Select(_ => _.Url)
+                                  .ToList();
         }
 
-        public IEnumerable<string> ObterUrlVideosCache(int idUnidade)
-        {
-            string key = $"URLVideos_{idUnidade}";
-            return _cache.Fetch(key, ObterUrlVideos, idUnidade, new NewntonsoftSerializerWrapper());
-        }
         public IEnumerable<string> ObterUrlVideos(int idUnidade)
         {
-            return Select<string>($"SELECT UNVI_nm_url_video FROM tb_UNVI_unidade_video WHERE UNPR_cd_unidade_pronta = {idUnidade}").ToList();
+            return Db.ImovelVideos.Where(_ => _.IdImovel == idUnidade)
+                                  .Select(_ => _.Url)
+                                  .ToList();
         }
-
     }
 }

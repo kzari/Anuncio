@@ -18,10 +18,12 @@ namespace Lopes.SC.Infra.Data.Context
         public DbSet<DadosImovel> Imoveis { get; set; }
         public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }
         public DbSet<ImovelCaracteristica> ImovelCaracteristicas{ get; set; }
+        public DbSet<TourVirtual> TourVirtuais { get; set; }
+        public DbSet<Video> ImovelVideos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // connect to sql server with connection string from app settings
+            // TODO: connect to sql server with connection string from app settings
             options.UseSqlServer(@"Initial Catalog=dbproduto;Data Source=LPS-SI-DEV02\SQLCORP_HML;User id=usrapp;Password=Lopesnet2010;");
         }
 
@@ -30,6 +32,9 @@ namespace Lopes.SC.Infra.Data.Context
             base.OnModelCreating(builder);
 
             builder.ApplyConfiguration(new AnuncioMap());
+            builder.ApplyConfiguration(new TourVirtualMap());
+            builder.ApplyConfiguration(new VideoMap());
+
             builder.Entity<ImovelEmpresa>().HasNoKey().ToView("VW_ImovelEmpresas");
 
             builder.Entity<DadosImovel>().HasKey(_ => _.IdImovel);
