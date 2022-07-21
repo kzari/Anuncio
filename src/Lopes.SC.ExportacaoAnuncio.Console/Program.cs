@@ -26,7 +26,10 @@ using Microsoft.Extensions.DependencyInjection;
 //atualizarImovelAppService.AtualizarPorImoveis(new int[] { 627841 } );
 
 
-var services = ServiceConfiguration.ConfigureServices<ConsoleLogger>(new ServiceCollection());
-
-IAtualizarAnunciosAppService atualizarImovelAppService = services.GetService<IAtualizarAnunciosAppService>();
-atualizarImovelAppService.AtualizarPorPortais(new Portal[] { Portal.Zap });
+IServiceProvider provider = ServiceConfiguration.ConfigureServices<ConsoleLogger>(new ServiceCollection());
+using (IServiceScope scope = provider.CreateScope())
+{
+    IAtualizarAnunciosAppService atualizarImovelAppService = scope.ServiceProvider.GetService<IAtualizarAnunciosAppService>();
+    atualizarImovelAppService.AtualizarPorPortais(new Portal[] { Portal.Zap });
+}
+    

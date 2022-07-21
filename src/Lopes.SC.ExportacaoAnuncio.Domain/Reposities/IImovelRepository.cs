@@ -8,5 +8,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
         IEnumerable<DadosImovel> ObterDadosImoveis(int[] idImoveis);
         DadosImovel ObterDadosImovel(int idImovel);
         int[] ObterEmpresasImovel(int idImovel);
+        IEnumerable<string> ObterUrlTourVirtuais(int idImovel);
+        IEnumerable<string> ObterUrlVideos(int idImovel);
     }
 }

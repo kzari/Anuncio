@@ -32,9 +32,9 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             Imovel imovel = new Imovel(dados);
 
             imovel.Caracteristicas = _imovelRepository.ObterCaracteristicas(idImovel).ToList();
+            imovel.UrlTourVirtuais = _imovelRepository.ObterUrlTourVirtuais(idImovel).ToList();
+            imovel.UrlVideos = _imovelRepository.ObterUrlVideos(idImovel).ToList();
             //TODO: preencher: v
-            //dados.UrlTourVirtuais = 
-            //dados.UrlVideos = 
             //dados.Imagens = 
 
             return imovel;

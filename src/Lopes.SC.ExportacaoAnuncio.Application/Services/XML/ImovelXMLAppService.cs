@@ -24,6 +24,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
 
 
         private EmpresaApelidoPortal[] _empresaApelidoPortais;
+        //TODO: acessar cache
         public EmpresaApelidoPortal[] EmpresaApelidoPortais => _empresaApelidoPortais ??= _empresaApelidoPortalRepository.Obter().ToArray();
 
         public string CaminhoPastaArquivos { get; }

@@ -13,6 +13,11 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Models
             Data = data ?? DateTime.Now;
         }
 
+        private AnuncioAtualizacao()
+        {
+            //EF ctor
+        }
+
         public int Id { get; set; }
         public Portal IdPortal { get; set; }
         public int IdImovel { get; set; }

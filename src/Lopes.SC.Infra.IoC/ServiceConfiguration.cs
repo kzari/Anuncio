@@ -23,14 +23,16 @@ namespace Lopes.SC.Infra.IoC
             ConfigurarAppServices(services);
             ConfigurarRepositorios(services);
             ConfigurarDomainServices(services);
-
-            services.AddDbContext<DbProdutoContext>();
-            services.AddDbContext<DbLopesnetContext>();
+            ConfigureDbContexts(services);
 
             return services.BuildServiceProvider(validateScopes: true);
         }
 
-
+        private static void ConfigureDbContexts(IServiceCollection services)
+        {
+            services.AddDbContext<DbProdutoContext>(ServiceLifetime.Transient);
+            services.AddDbContext<DbLopesnetContext>(ServiceLifetime.Transient);
+        }
 
         private static void ConfigurarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger
         {
@@ -39,17 +41,17 @@ namespace Lopes.SC.Infra.IoC
 
         private static void ConfigurarDomainServices(IServiceCollection services)
         {
-            services.AddScoped<IStatusAnuncioService, StatusAnuncioService>();
+            services.AddTransient<IStatusAnuncioService, StatusAnuncioService>();
         }
 
         private static void ConfigurarAppServices(IServiceCollection services)
         {
-            services.AddScoped<IAnuncioAppService, AnuncioAppService>();
-            services.AddScoped<IAtualizarAnunciosAppService, AtualizarAnunciosAppService>();
-            services.AddScoped<IDadosImovelAppService, DadosImovelAppService>();
-            services.AddScoped<IImovelXMLAppService, ImovelXMLAppService>();
+            services.AddTransient<IAnuncioAppService, AnuncioAppService>();
+            services.AddTransient<IAtualizarAnunciosAppService, AtualizarAnunciosAppService>();
+            services.AddTransient<IDadosImovelAppService, DadosImovelAppService>();
+            services.AddTransient<IImovelXMLAppService, ImovelXMLAppService>();
 
-            services.AddSingleton<IImovelXMLAppService>(_ =>
+            services.AddTransient<IImovelXMLAppService>(_ =>
                 new ImovelXMLAppService(CAMINHO_PASTA_XMLs,
                                         _.GetService<IEmpresaApelidoPortalRepository>(),
                                         _.GetService<ILogger>()));
@@ -57,10 +59,10 @@ namespace Lopes.SC.Infra.IoC
 
         private static void ConfigurarRepositorios(IServiceCollection services)
         {
-            services.AddScoped<IEmpresaApelidoPortalRepository, EmpresaApelidoPortalRepository>();
-            services.AddScoped<IImovelRepository, ImovelRepository>();
-            services.AddScoped<IAnuncioRepository, AnuncioRepository>();
-            services.AddScoped<IImovelAtualizacaoPortaisRepository, ImovelAtualizacaoPortaisRepository>();
+            services.AddTransient<IEmpresaApelidoPortalRepository, EmpresaApelidoPortalRepository>();
+            services.AddTransient<IImovelRepository, ImovelRepository>();
+            services.AddTransient<IAnuncioRepository, AnuncioRepository>();
+            services.AddTransient<IImovelAtualizacaoPortaisRepository, ImovelAtualizacaoPortaisRepository>();
             //services.AddScoped<IRepository<>, Repository<TEntity>>();
         }
     }
