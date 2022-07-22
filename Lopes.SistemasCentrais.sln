@@ -28,15 +28,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Services", "2. Services"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5.1. Data", "5.1. Data", "{C4446485-A85B-4B4A-9B52-2768E8351ECD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.ExportacaoAnuncio.Api", "src\Lopes.SC.ExportacaoAnuncio.Api\Lopes.SC.ExportacaoAnuncio.Api.csproj", "{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.Api", "src\Lopes.SC.ExportacaoAnuncio.Api\Lopes.SC.ExportacaoAnuncio.Api.csproj", "{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{7D051D87-7FF2-458E-8EF0-2400DD9D4528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.Infra.IoC", "src\Lopes.SC.Infra.IoC\Lopes.SC.Infra.IoC.csproj", "{B3BD8547-551E-4962-A837-8DF279FC7D6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.IoC", "src\Lopes.SC.Infra.IoC\Lopes.SC.Infra.IoC.csproj", "{B3BD8547-551E-4962-A837-8DF279FC7D6F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.Data", "src\Lopes.SC.Infra.Data\Lopes.SC.Infra.Data.csproj", "{0EA037BD-9624-4697-9561-586ACF785AE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.ExportacaoAnuncio.Domain", "src\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.ExportacaoAnuncio.Domain.csproj", "{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.Domain", "src\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.ExportacaoAnuncio.Domain.csproj", "{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.AnuncioXML.Domain", "src\Lopes.SC.XML.Domain\Lopes.SC.AnuncioXML.Domain.csproj", "{F190BE58-1615-43AD-8FE3-B0095EC3A23C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.Infra.XML", "src\Lopes.SC.Infra.XML\Lopes.SC.Infra.XML.csproj", "{6C354FC6-7DE6-471A-981C-03464ADC918C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.AnuncioXML.Application", "Lopes.SC.AnuncioXML.Application\Lopes.SC.AnuncioXML.Application.csproj", "{5F4E0181-EA6D-422E-9851-0E139BFA3A68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +82,18 @@ Global
 		{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F190BE58-1615-43AD-8FE3-B0095EC3A23C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F190BE58-1615-43AD-8FE3-B0095EC3A23C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F190BE58-1615-43AD-8FE3-B0095EC3A23C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F190BE58-1615-43AD-8FE3-B0095EC3A23C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C354FC6-7DE6-471A-981C-03464ADC918C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C354FC6-7DE6-471A-981C-03464ADC918C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C354FC6-7DE6-471A-981C-03464ADC918C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C354FC6-7DE6-471A-981C-03464ADC918C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F4E0181-EA6D-422E-9851-0E139BFA3A68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F4E0181-EA6D-422E-9851-0E139BFA3A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F4E0181-EA6D-422E-9851-0E139BFA3A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F4E0181-EA6D-422E-9851-0E139BFA3A68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +109,9 @@ Global
 		{B3BD8547-551E-4962-A837-8DF279FC7D6F} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
 		{0EA037BD-9624-4697-9561-586ACF785AE2} = {C4446485-A85B-4B4A-9B52-2768E8351ECD}
 		{648010E4-2224-47FF-B0DA-0EC1AEE96BB1} = {BA4C73B5-5886-4BC0-9201-B60297E8FA07}
+		{F190BE58-1615-43AD-8FE3-B0095EC3A23C} = {BA4C73B5-5886-4BC0-9201-B60297E8FA07}
+		{6C354FC6-7DE6-471A-981C-03464ADC918C} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
+		{5F4E0181-EA6D-422E-9851-0E139BFA3A68} = {67E1DEA1-F354-478F-897D-A99D46AC4A25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD9DC786-D91E-4431-BAAD-4D4C00C5C2B1}

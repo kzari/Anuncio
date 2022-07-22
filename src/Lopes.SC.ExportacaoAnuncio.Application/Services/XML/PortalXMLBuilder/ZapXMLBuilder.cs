@@ -128,7 +128,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
 
             foreach (var url in imovel.UrlVideos)
             {
-                XmlElement elemento = doc.CreateElement("LinkTourVirtual");
+                XmlElement elemento = doc.CreateElement("Video");
                 elemento.InnerText = url;
                 eVideos.AppendChild(elemento);
             }

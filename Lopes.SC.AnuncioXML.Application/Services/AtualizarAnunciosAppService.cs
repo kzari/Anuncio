@@ -1,21 +1,12 @@
-﻿using Lopes.SC.Commons;
-using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Application.Models;
-using Lopes.SC.ExportacaoAnuncio.Application.Services.XML;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
-using Lopes.SC.ExportacaoAnuncio.Domain.Services;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 
-namespace Lopes.SC.ExportacaoAnuncio.Application.Services
+namespace Lopes.SC.AnuncioXML.Application.Services
 {
     public class AtualizarAnunciosAppService : IAtualizarAnunciosAppService
     {
-        private readonly ILogger _logger;
-        private readonly IAnuncioAppService _anuncioAppService;
-        private readonly IServiceProvider _serviceProvider;
+        //private readonly IAnuncioAppService _anuncioAppService;
+        //private readonly IServiceProvider _serviceProvider;
 
         private readonly List<Imovel> _dadosImoveisCache;
 
