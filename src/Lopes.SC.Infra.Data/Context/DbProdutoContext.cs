@@ -1,4 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.ExportacaoAnuncio.Domain.Models;
 using Lopes.SC.Infra.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +16,9 @@ namespace Lopes.SC.Infra.Data.Context
 
         public DbSet<Anuncio> Anuncios { get; set; }
         public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
-        public DbSet<DadosImovel> Imoveis { get; set; }
+        public DbSet<DadosPrincipais> Imoveis { get; set; }
         public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }
-        public DbSet<ImovelCaracteristica> ImovelCaracteristicas{ get; set; }
+        public DbSet<Caracteristica> ImovelCaracteristicas{ get; set; }
         public DbSet<TourVirtual> TourVirtuais { get; set; }
         public DbSet<Video> ImovelVideos { get; set; }
 
@@ -37,12 +38,12 @@ namespace Lopes.SC.Infra.Data.Context
 
             builder.Entity<ImovelEmpresa>().HasNoKey().ToView("VW_ImovelEmpresas");
 
-            builder.Entity<DadosImovel>().HasKey(_ => _.IdImovel);
-            builder.Entity<DadosImovel>().ToView("VW_AnuncioImovelDados");
+            builder.Entity<DadosPrincipais>().HasKey(_ => _.IdImovel);
+            builder.Entity<DadosPrincipais>().ToView("VW_AnuncioImovelDados");
 
             builder.Entity<AnuncioAtualizacao>().ToTable("AnuncioAtualizacao").HasKey(_ => _.Id);
 
-            builder.Entity<ImovelCaracteristica>().HasNoKey();
+            builder.Entity<Caracteristica>().HasNoKey();
         }
     }
 }

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.ExportacaoAnuncio.Domain.csproj" />
-    <ProjectReference Include="..\Lopes.SC.XML.Domain\Lopes.SC.AnuncioXML.Domain.csproj" />
   </ItemGroup>
 
 </Project>

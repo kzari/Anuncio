@@ -1,4 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Application.Models;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 
 namespace Lopes.SC.ExportacaoAnuncio.Application.Interfaces
 {
@@ -9,7 +9,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Interfaces
         /// </summary>
         /// <param name="idImovel"></param>
         /// <returns></returns>
-        Imovel ObterDadosImovel(int idImovel);
+        DadosImovel ObterDadosImovel(int idImovel);
 
         /// <summary>
         /// Retorna as empresas ao qual o imóvel é gerido

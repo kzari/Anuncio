@@ -1,6 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-
-namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
+﻿namespace Lopes.SC.ExportacaoAnuncio.Application.Services.XML
 {
     public interface IProcurarIdImoveisStrategy
     {

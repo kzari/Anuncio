@@ -1,10 +1,10 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 
 namespace Lopes.SC.ExportacaoAnuncio.Application.Models
 {
     public class Imovel
     {
-        public Imovel(DadosImovel dados)
+        public Imovel(DadosPrincipais dados)
         {
             IdImovel = dados.IdImovel;
             Titulo = dados.Titulo ?? string.Empty;
@@ -91,7 +91,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Models
         public int? AnoConstrucao { get; set; }
         public string? CodigoClientePortal { get; set; }
 
-        public IEnumerable<ImovelCaracteristica> Caracteristicas { get; set; }
+        public IEnumerable<Caracteristica> Caracteristicas { get; set; }
         public IEnumerable<ImovelImagem> Imagens { get; set; }
         public IEnumerable<string> UrlVideos { get; set; }
         public IEnumerable<string> UrlTourVirtuais { get; set; }

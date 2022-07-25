@@ -5,13 +5,14 @@ using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 using Lopes.SC.Infra.Data.Context;
 using Lopes.SC.Infra.Data.Repositories;
+using Lopes.SC.Infra.XML;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lopes.SC.Infra.IoC
 {
     public abstract class ServiceConfiguration
     {
-        private const string CAMINHO_PASTA_XMLs = "C:/temp/portais"; //TODO: colocar no arquivo de configuração 
+        private const string CAMINHO_PASTA_XMLs = "C:/temp/portais_novo"; //TODO: colocar no arquivo de configuração 
 
 
         public static IServiceProvider ConfigureServices<TLogger>(IServiceCollection services) where TLogger : class, ILogger
@@ -47,9 +48,10 @@ namespace Lopes.SC.Infra.IoC
         private static void ConfigurarAppServices(IServiceCollection services)
         {
             services.AddTransient<IAnuncioAppService, AnuncioAppService>();
-            services.AddTransient<IAtualizarAnunciosAppService, AtualizarAnunciosAppService>();
+            services.AddTransient<IAtualizarAnunciosAppService, AtualizarAnunciosXMLAppService>();
             services.AddTransient<IDadosImovelAppService, DadosImovelAppService>();
             services.AddTransient<IImovelXMLAppService, ImovelXMLAppService>();
+            services.AddTransient<IPortalXMLBuilder, PortalXMLBuilder>();
 
             services.AddTransient<IImovelXMLAppService>(_ =>
                 new ImovelXMLAppService(CAMINHO_PASTA_XMLs,

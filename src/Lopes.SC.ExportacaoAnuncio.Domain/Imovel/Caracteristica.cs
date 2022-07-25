@@ -1,7 +1,6 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Models
+﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Imovel
 {
-
-    public class ImovelCaracteristica
+    public class Caracteristica
     {
         public int Id { get; set; }
         public string Nome { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Models
+﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Imovel
 {
-    public class DadosImovel
+    public class DadosPrincipais
     {
         public int IdImovel { get; set; }
         public string? Titulo { get; set; }

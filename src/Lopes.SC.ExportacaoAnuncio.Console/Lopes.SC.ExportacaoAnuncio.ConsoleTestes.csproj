@@ -24,7 +24,6 @@
     <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.ExportacaoAnuncio.Application.csproj" />
     <ProjectReference Include="..\Lopes.SC.Infra.IoC\Lopes.SC.Infra.IoC.csproj" />
     <ProjectReference Include="..\Lopes.SC.Infra.XML\Lopes.SC.Infra.XML.csproj" />
-    <ProjectReference Include="..\Lopes.SC.XML.Domain\Lopes.SC.AnuncioXML.Domain.csproj" />
   </ItemGroup>
 
 </Project>

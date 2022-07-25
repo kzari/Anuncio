@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Lopes.SC.Domain.Commons\Lopes.SC.Domain.Commons.csproj" />
-  </ItemGroup>
-
 </Project>

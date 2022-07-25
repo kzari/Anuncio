@@ -1,12 +1,12 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 
 namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
 {
     public interface IImovelRepository
     {
-        IEnumerable<ImovelCaracteristica> ObterCaracteristicas(int idImovel);
-        IEnumerable<DadosImovel> ObterDadosImoveis(int[] idImoveis);
-        DadosImovel ObterDadosImovel(int idImovel);
+        IEnumerable<Caracteristica> ObterCaracteristicas(int idImovel);
+        IEnumerable<DadosPrincipais> ObterDadosImoveis(int[] idImoveis);
+        DadosPrincipais ObterDadosImovel(int idImovel);
         int[] ObterEmpresasImovel(int idImovel);
         IEnumerable<string> ObterUrlTourVirtuais(int idImovel);
         IEnumerable<string> ObterUrlVideos(int idImovel);

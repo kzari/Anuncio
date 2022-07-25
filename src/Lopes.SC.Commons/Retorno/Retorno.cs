@@ -1,4 +1,6 @@
-﻿namespace Lopes.SC.Commons
+﻿using Lopes.SC.Domain.Commons;
+
+namespace Lopes.SC.Infra.Commons
 {
     public class Retorno : IRetorno
     {
@@ -9,8 +11,16 @@
         public IList<Mensagem> Mensagens { get; }
         public bool Sucesso => !Mensagens.Any(_ => _.Tipo == TipoMensagem.Erro);
 
-        public void AdicionarErro(string erro) => Mensagens.Add(new Mensagem(TipoMensagem.Erro, erro));
-        public void AdicionarInformacao(string infrormacao) => Mensagens.Add(new Mensagem(TipoMensagem.Informacao, infrormacao));
+        public IRetorno AdicionarErro(string erro)
+        {
+            Mensagens.Add(new Mensagem(TipoMensagem.Erro, erro));
+            return this;
+        }
+        public IRetorno AdicionarInformacao(string informacao)
+        {
+            Mensagens.Add(new Mensagem(TipoMensagem.Informacao, informacao));
+            return this;
+        }
 
         public string ErrosConcatenados(string separador = ",")
         {

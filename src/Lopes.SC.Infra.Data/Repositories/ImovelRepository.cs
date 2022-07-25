@@ -1,4 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +14,8 @@ namespace Lopes.SC.Infra.Data.Repositories
             Db = context;
         }
 
-        public DadosImovel ObterDadosImovel(int idImovel) => ObterDadosImoveis(new int[] { idImovel }).FirstOrDefault();
-        public IEnumerable<DadosImovel> ObterDadosImoveis(int[] idImoveis)
+        public DadosPrincipais ObterDadosImovel(int idImovel) => ObterDadosImoveis(new int[] { idImovel }).FirstOrDefault();
+        public IEnumerable<DadosPrincipais> ObterDadosImoveis(int[] idImoveis)
         {
             return Db.Imoveis.Where(_ => idImoveis.Contains(_.IdImovel));
         }
@@ -27,7 +27,7 @@ namespace Lopes.SC.Infra.Data.Repositories
                                     .ToArray();
         }
 
-        public IEnumerable<ImovelCaracteristica> ObterCaracteristicas(int idImovel)
+        public IEnumerable<Caracteristica> ObterCaracteristicas(int idImovel)
         {
             return Db.ImovelCaracteristicas.FromSqlRaw("dbo.ImovelCaracteristicas {0}", idImovel).ToList();
         }

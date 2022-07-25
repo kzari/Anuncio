@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Lopes.SC.Common
+﻿namespace Lopes.SC.Common
 {
     public static class ConsoleExtensions
     {

@@ -1,51 +1,50 @@
-﻿using Lopes.SC.AnuncioXML.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
+using Lopes.SC.ExportacaoAnuncio.Domain.Services;
+using Lopes.SC.ExportacaoAnuncio.Domain.XML;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.XPath;
 
 namespace Lopes.SC.Infra.XML
 {
-    public class PortalXMLBuilder
+    public class PortalXMLBuilder : IPortalXMLBuilder
     {
-        public PortalXMLBuilder(string caminhoArquivo)
+        public virtual void InserirAtualizarImoveis(Xml xml, string caminhoArquivo)
         {
-            CaminhoArquivo = caminhoArquivo;
-        }
-
-        public string CaminhoArquivo { get; }
-
-        public virtual void InserirAtualizarImovel(int idImovel, Elemento cabecalhos, Elemento imovel)
-        {
-            if (!File.Exists(CaminhoArquivo))
-                CriarXml("1.0", "UTF-8", cabecalhos);
+            if (!File.Exists(caminhoArquivo))
+                CriarXml("1.0", "UTF-8", xml.Cabecalhos, caminhoArquivo);
 
             XmlDocument doc = new XmlDocument();
-            doc.Load(CaminhoArquivo);
+            doc.Load(caminhoArquivo);
 
-            XmlNode? eImoveis = doc.SelectSingleNode("/Carga/Imoveis");
+            XmlNode? eImoveis = doc.SelectSingleNode(xml.CaminhoTagPaiImoveis);
 
-            //Removendo se existir
-            XmlNode? eImovelExistente = doc.SelectSingleNode(QueryIdImovel("REO" + idImovel));
-            if (eImovelExistente != null)
-                eImoveis.RemoveChild(eImovelExistente.ParentNode);
 
-            AdicionarElemento(doc, eImoveis, imovel);
+            foreach (ElementoImovel eImovel in xml.Imoveis)
+            {
+                //Removendo se existir
+                string query = QueryIdImovel("REO" + eImovel.IdImovel);
+                XmlNode? eImovelExistente = doc.SelectSingleNode(query);
+                if (eImovelExistente != null)
+                    eImoveis.RemoveChild(eImovelExistente.ParentNode);
 
-            doc.Save(CaminhoArquivo);
+                AdicionarElemento(doc, eImoveis, eImovel);
+            }
+
+            doc.Save(caminhoArquivo);
         }
 
-        public bool ImovelNoXml(int idImovel) => ImovelNoXml(idImovel, null);
-        public bool ImovelNoXml(int idImovel, string query)
+        //public bool ImovelNoXml(int idImovel) => ImovelNoXml(idImovel, null);
+        public bool ImovelNoXml(int idImovel, string caminhoArquivo, string query = null)
         {
-            if (!File.Exists(CaminhoArquivo))
+            if (!File.Exists(caminhoArquivo))
                 return false;
 
-            using Stream fileStream = File.Open(CaminhoArquivo, FileMode.Open);
+            using Stream fileStream = File.Open(caminhoArquivo, FileMode.Open);
             XPathDocument xPath = new XPathDocument(fileStream);
 
             XPathNavigator navigator = xPath.CreateNavigator();
-            XPathExpression xPathExpression = navigator.Compile(query ?? $"//*[text() = 'REO{idImovel}']");
+            XPathExpression xPathExpression = navigator.Compile(query ?? QueryIdImovel(idImovel));
             XPathNavigator node = navigator.SelectSingleNode(xPathExpression);
             if (node == null)
                 return false;
@@ -60,10 +59,10 @@ namespace Lopes.SC.Infra.XML
 
             return false;
         }
-        public IEnumerable<int> ObterIdImoveisXml(string @namespace, string query)
+        public IEnumerable<int> ObterIdImoveisXml(string @namespace, string query, string caminhoArquivo)
         {
             XmlDocument document = new XmlDocument();
-            document.Load(CaminhoArquivo);
+            document.Load(caminhoArquivo);
 
             XmlNamespaceManager m = new XmlNamespaceManager(document.NameTable);
             m.AddNamespace("ns", @namespace);
@@ -83,9 +82,9 @@ namespace Lopes.SC.Infra.XML
                 }
             }
         }
-        public IEnumerable<int> ObterIdImoveisNoXml(string query)
+        public IEnumerable<int> ObterIdImoveisNoXml(string query, string caminhoArquivo)
         {
-            using Stream fileStream = File.Open(CaminhoArquivo, FileMode.Open);
+            using Stream fileStream = File.Open(caminhoArquivo, FileMode.Open);
             XPathDocument xPath = new XPathDocument(fileStream);
 
             XPathNavigator navigator = xPath.CreateNavigator();
@@ -106,7 +105,7 @@ namespace Lopes.SC.Infra.XML
             }
         }
 
-        private void CriarXml(string versao, string codificacao, Elemento elemento)
+        private void CriarXml(string versao, string codificacao, Elemento elemento, string caminhoArquivo)
         {
             XmlDocument doc = new XmlDocument();
             XmlNode docNode = doc.CreateXmlDeclaration(versao, codificacao, null);
@@ -117,10 +116,10 @@ namespace Lopes.SC.Infra.XML
 
             AdicionarElementos(doc, eRoot, elemento.Filhos);
 
-            doc.Save(CaminhoArquivo);
+            doc.Save(caminhoArquivo);
         }
 
-        private static void AdicionarElemento(XmlDocument doc, XmlNode node, Elemento elemento)
+        private static void AdicionarElemento(XmlDocument doc, XmlNode node, ElementoImovel elemento)
         {
             XmlElement eImovel = CriarElemento(doc, elemento);
             node.AppendChild(eImovel);
@@ -157,11 +156,16 @@ namespace Lopes.SC.Infra.XML
         }
         
         private static string QueryIdImovel(int idImovel) => QueryIdImovel("REO" + idImovel);
-        private static string QueryIdImovel(string idImovelPortal) => $"Carga/Imoveis/Imovel/CodigoImovel[text()='{idImovelPortal}']";
+        private static string QueryIdImovel(string idImovelPortal) => $"//*[text() = '{idImovelPortal}']";
 
         protected static string SubstituirCaracteresInvalidosUnicode(string input, string substituto = "")
         {
             return Regex.Replace(input, "\\p{C}+", substituto);
+        }
+
+        public void RemoverImovel(int idImovel, string caminhoArquivo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

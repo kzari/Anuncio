@@ -1,24 +1,36 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Domain.Commons;
+using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
+using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
+using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
+using Lopes.SC.ExportacaoAnuncio.Domain.Services;
+using Lopes.SC.ExportacaoAnuncio.Domain.XML;
 using System.Collections.Concurrent;
 
 
-namespace Lopes.SC.AnuncioXML.Application.Services
+namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 {
-    public class AtualizarAnunciosAppService : IAtualizarAnunciosAppService
+    public class AtualizarAnunciosXMLAppService : IAtualizarAnunciosAppService
     {
-        //private readonly IAnuncioAppService _anuncioAppService;
-        //private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger _logger;
+        private readonly IAnuncioAppService _anuncioAppService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IPortalXMLBuilder _portalXMLBuilder;
 
-        private readonly List<Imovel> _dadosImoveisCache;
+        private readonly List<DadosImovel> _dadosImoveisCache;
 
-        public AtualizarAnunciosAppService(ILogger logger,
-                                           IAnuncioAppService anuncioAppService,
-                                           IServiceProvider serviceProvider)
+        public AtualizarAnunciosXMLAppService(ILogger logger,
+                                              IAnuncioAppService anuncioAppService,
+                                              IServiceProvider serviceProvider,
+                                              IPortalXMLBuilder portalXMLBuilder)
         {
             _logger = logger;
             _anuncioAppService = anuncioAppService;
-            _dadosImoveisCache = new List<Imovel>();
+            _dadosImoveisCache = new List<DadosImovel>();
             _serviceProvider = serviceProvider;
+            _portalXMLBuilder = portalXMLBuilder;
         }
 
 
@@ -61,6 +73,7 @@ namespace Lopes.SC.AnuncioXML.Application.Services
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
             var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
+            //var partitions = partitioner.GetPartitions(1);
 
             Task[] tasks = partitions.Select(partition => Task.Run(() =>
             {
@@ -71,6 +84,7 @@ namespace Lopes.SC.AnuncioXML.Application.Services
                 IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository = (IImovelAtualizacaoPortaisRepository)_serviceProvider.GetService(typeof(IImovelAtualizacaoPortaisRepository));
                 IDadosImovelAppService dadosImovelAppService = (IDadosImovelAppService)_serviceProvider.GetService(typeof(IDadosImovelAppService));
 
+
                 using (partition)
                     while (partition.MoveNext())
                     {
@@ -80,14 +94,18 @@ namespace Lopes.SC.AnuncioXML.Application.Services
                         int atualizados = 0;
                         int jaAtualizados  = 0;
 
-                        IRetorno<string> caminhoArquivo = imovelXMLAppService.CaminhoArquivoXml(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
-                        if(!caminhoArquivo.Sucesso)
+                        IPortalXMLElementos portalElementos = PortalXmlElementosBase.ObterPortalXml(portalEmpresa.Portal);
+
+
+                        IRetorno<string> retornoCaminhoArquivo = imovelXMLAppService.CaminhoArquivoXml(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
+                        if(!retornoCaminhoArquivo.Sucesso)
                         {
-                            _logger.Error($"Erro ao obter o caminho do arquivo: {caminhoArquivo.ErrosConcatenados()}.");
+                            _logger.Error($"Erro ao obter o caminho do arquivo: {retornoCaminhoArquivo.ErrosConcatenados()}.");
                             continue;
                         }
-                        IPortalXMLBuilder builder = PortalXMLBuilder.ObterXmlBuilder(portalEmpresa.Portal, caminhoArquivo.Dado);
+                        //IPortalXMLBuilder builder = PortalXMLBuilder.ObterXmlBuilder(portalEmpresa.Portal, caminhoArquivo.Dado);
 
+                        List<DadosImovel> imoveisParaAtualizar = new List<DadosImovel>();
 
                         foreach (Anuncio anuncio in portalEmpresa.Anuncios)
                         {
@@ -95,7 +113,7 @@ namespace Lopes.SC.AnuncioXML.Application.Services
                             //if (i % 1000 == 0)
                             //    _logger.Debug($"-- {i} anúncios processados de {anuncios.Count()}, {(i/totalAnuncios)*100}% completo.");
 
-                            bool imovelNoXml = builder.ImovelNoXml(anuncio.IdImovel);
+                            bool imovelNoXml = _portalXMLBuilder.ImovelNoXml(anuncio.IdImovel, retornoCaminhoArquivo.Dado);
                             StatusAnuncioPortal statusImovelPortal = statusAnuncioService.VerificarStatusImovelPortal(anuncio, imovelNoXml);
 
                             if (statusImovelPortal == StatusAnuncioPortal.Atualizado)
@@ -111,7 +129,7 @@ namespace Lopes.SC.AnuncioXML.Application.Services
 
                             if (statusImovelPortal == StatusAnuncioPortal.ARemover)
                             {
-                                builder.RemoverImovel(anuncio.IdImovel);
+                                _portalXMLBuilder.RemoverImovel(anuncio.IdImovel, retornoCaminhoArquivo.Dado);
 
                                 imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(new AnuncioAtualizacao(anuncio.Portal,
                                                                                                                anuncio.IdImovel,
@@ -122,35 +140,50 @@ namespace Lopes.SC.AnuncioXML.Application.Services
                             }
                             else if (statusImovelPortal == StatusAnuncioPortal.Desatualizado)
                             {
-                                Imovel dados = ObterDadosImovel(anuncio.IdImovel, dadosImovelAppService);
+                                DadosImovel dados = ObterDadosImovel(anuncio.IdImovel, dadosImovelAppService);
                                 if (dados == null)
-                                    _logger.Error(InicioLog(anuncio, i, partitionId) + "Imóvel não encontrado.");
+                                    _logger.Error(InicioLog(anuncio, i, partitionId) + $"Imóvel não encontrado {anuncio.IdImovel}.");
                                 else
                                 {
                                     dados.CodigoClientePortal = anuncio.CodigoClientePortal;
 
-                                    builder.InserirAtualizarImovel(dados);
-
-                                    imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(new AnuncioAtualizacao(anuncio.Portal,
-                                                                                                                   anuncio.IdImovel,
-                                                                                                                   anuncio.IdEmpresa,
-                                                                                                                   AtualizacaoAcao.Atualizacao));
-                                    //_logger.Debug($"{InicioLog(anuncio, i, partitionId)}  inserido/atualizado.");
-                                    atualizados++;
+                                    imoveisParaAtualizar.Add(dados);
                                 }
                             }
                         }
 
+                        Atualizar(imoveisParaAtualizar, portalEmpresa.IdEmpresa, portalEmpresa.Portal, retornoCaminhoArquivo.Dado, portalElementos, imovelAtualizacaoPortaisRepository);
+                        
 
                         string anuncios = $"Total anúncios: {portalEmpresa.Anuncios.Count().ToString().PadLeft(5)} " +
-                                          $"Atualizados: {atualizados.ToString().PadLeft(5)} " +
+                                          $"Atualizados: {imoveisParaAtualizar.Count().ToString().PadLeft(5)} " +
                                           $"Removidos: {removidos.ToString().PadLeft(5)} " +
                                           $"Já atualizados: {jaAtualizados.ToString().PadLeft(5)} " +
                                           $"Já removidos: {jaRemovidos.ToString().PadLeft(5)} ";
-                        _logger.Info($"-- Portal: {portalEmpresa.Portal.ToString().PadRight(10)}  Empresa: {portalEmpresa.IdEmpresa.ToString().PadLeft(3)} {anuncios}  Arquivo: {caminhoArquivo.Dado}");
+                        _logger.Info($"P{partitionId} - Portal: {portalEmpresa.Portal.ToString().PadRight(10)}  Empresa: {portalEmpresa.IdEmpresa.ToString().PadLeft(3)} {anuncios}  Arquivo: {retornoCaminhoArquivo.Dado}");
                     }
             })).ToArray();
             Task.WaitAll(tasks);
+        }
+
+
+        private void Atualizar(List<DadosImovel> imoveisParaAtualizar, 
+                               int idEmpresa, 
+                               Portal portal, 
+                               string caminhoArquivo, 
+                               IPortalXMLElementos portalElementos, 
+                               IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository)
+        {
+            if (!imoveisParaAtualizar.Any())
+                return;
+
+            Xml xml = portalElementos.ObterXml(imoveisParaAtualizar);
+            _portalXMLBuilder.InserirAtualizarImoveis(xml, caminhoArquivo);
+
+            foreach (int idImovel in imoveisParaAtualizar.Select(_ => _.Dados.IdImovel))
+            {
+                imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(new AnuncioAtualizacao(portal, idImovel, idEmpresa, AtualizacaoAcao.Atualizacao));
+            }
         }
 
         private static string InicioLog(Anuncio anuncio, int i, int processador)
@@ -158,12 +191,12 @@ namespace Lopes.SC.AnuncioXML.Application.Services
             return $"P{processador} - {i} Imóvel {anuncio.IdImovel.ToString().PadLeft(6)}  Portal: {anuncio.Portal.ToString().PadRight(10)}  Empresa: {anuncio.NomeEmpresa.PadRight(40)} :: ";
         }
 
-        private Imovel? ObterDadosImovel(int idImovel, IDadosImovelAppService dadosImovelAppService)
+        private DadosImovel? ObterDadosImovel(int idImovel, IDadosImovelAppService dadosImovelAppService)
         {
-            Imovel? dados;
+            DadosImovel? dados;
             lock (_dadosImoveisCache)
             { 
-                dados = _dadosImoveisCache.ToList().FirstOrDefault(_ => _.IdImovel == idImovel);
+                dados = _dadosImoveisCache.ToList().FirstOrDefault(_ => _.Dados.IdImovel == idImovel);
                 if (dados != null)
                     return dados;
             }

@@ -1,12 +1,12 @@
-﻿namespace Lopes.SC.Commons
+﻿namespace Lopes.SC.Domain.Commons
 {
     public interface IRetorno
     {
         IList<Mensagem> Mensagens { get; }
         bool Sucesso { get; }
 
-        void AdicionarErro(string erro);
-        void AdicionarInformacao(string infrormacao);
+        IRetorno AdicionarErro(string erro);
+        IRetorno AdicionarInformacao(string infrormacao);
 
         string ErrosConcatenados(string separador = ",");
     }

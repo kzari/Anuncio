@@ -1,6 +1,5 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Application.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 
 namespace Lopes.SC.ExportacaoAnuncio.Application.Services
@@ -22,14 +21,14 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             return _imovelRepository.ObterEmpresasImovel(idImovel);
         }
 
-        public Imovel ObterDadosImovel(int idImovel)
+        public DadosImovel ObterDadosImovel(int idImovel)
         {
-            DadosImovel? dados = _imovelRepository.ObterDadosImovel(idImovel);
+            DadosPrincipais? principais = _imovelRepository.ObterDadosImovel(idImovel);
 
-            if (dados == null)
+            if (principais == null)
                 return null;
 
-            Imovel imovel = new Imovel(dados);
+            DadosImovel imovel = new DadosImovel(principais);
 
             imovel.Caracteristicas = _imovelRepository.ObterCaracteristicas(idImovel).ToList();
             imovel.UrlTourVirtuais = _imovelRepository.ObterUrlTourVirtuais(idImovel).ToList();
