@@ -33,5 +33,10 @@ namespace Lopes.SC.ExportacaoAnuncio.ConsoleTestes
             Console.WriteLine(mensagem, ConsoleColor.Green);
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+        public IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto)
+        {
+            return new Progresso(valorMaximo, tamanhoTexto);
+        }
     }
 }

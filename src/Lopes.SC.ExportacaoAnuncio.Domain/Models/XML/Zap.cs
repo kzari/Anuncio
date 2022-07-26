@@ -1,9 +1,11 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 
 namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
 {
     public class Zap : PortalXmlElementosBase, IPortalXMLElementos
     {
+        //TODO: para interface
         protected override string CaminhoTagPaiImoveis => "/Carga/Imoveis";
 
 

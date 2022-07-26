@@ -1,6 +1,5 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Application.Services;
-using Lopes.SC.ExportacaoAnuncio.Application.Services.XML;
 using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 using Lopes.SC.Infra.Data.Context;
@@ -24,12 +23,18 @@ namespace Lopes.SC.Infra.IoC
             ConfigurarAppServices(services);
             ConfigurarRepositorios(services);
             ConfigurarDomainServices(services);
-            ConfigureDbContexts(services);
+            ConfigurarDbContexts(services);
+            ConfigurarOutrosServicos(services);
 
             return services.BuildServiceProvider(validateScopes: true);
         }
 
-        private static void ConfigureDbContexts(IServiceCollection services)
+        private static void ConfigurarOutrosServicos(IServiceCollection services)
+        {
+            services.AddTransient<IPortalAtualizadorFactory, PortalAtualizadorFactory>();
+        }
+
+        private static void ConfigurarDbContexts(IServiceCollection services)
         {
             services.AddDbContext<DbProdutoContext>(ServiceLifetime.Transient);
             services.AddDbContext<DbLopesnetContext>(ServiceLifetime.Transient);
@@ -48,15 +53,9 @@ namespace Lopes.SC.Infra.IoC
         private static void ConfigurarAppServices(IServiceCollection services)
         {
             services.AddTransient<IAnuncioAppService, AnuncioAppService>();
-            services.AddTransient<IAtualizarAnunciosAppService, AtualizarAnunciosXMLAppService>();
+            services.AddTransient<IAtualizarAnunciosAppService, AtualizarAnunciosAppService>();
             services.AddTransient<IDadosImovelAppService, DadosImovelAppService>();
-            services.AddTransient<IImovelXMLAppService, ImovelXMLAppService>();
-            services.AddTransient<IPortalXMLBuilder, PortalXMLBuilder>();
-
-            services.AddTransient<IImovelXMLAppService>(_ =>
-                new ImovelXMLAppService(CAMINHO_PASTA_XMLs,
-                                        _.GetService<IEmpresaApelidoPortalRepository>(),
-                                        _.GetService<ILogger>()));
+            services.AddTransient<IPortalAtualizador, PortalXMLBuilder>();
         }
 
         private static void ConfigurarRepositorios(IServiceCollection services)

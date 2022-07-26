@@ -1,8 +1,9 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
+using Lopes.SC.ExportacaoAnuncio.Domain.XML;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
+namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
 {
     public abstract class PortalXmlElementosBase
     {

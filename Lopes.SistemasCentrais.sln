@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.Application", "src\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.ExportacaoAnuncio.Application.csproj", "{2214917F-A154-4D98-9B96-D74305D269D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.Common.Console", "src\Lopes.SC.Common.Console\Lopes.SC.Infra.Common.Console.csproj", "{CF6B0306-48C9-40EE-A746-B358A92BC5D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.Console.Commons", "src\Lopes.SC.Common.Console\Lopes.SC.Infra.Console.Commons.csproj", "{CF6B0306-48C9-40EE-A746-B358A92BC5D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. UIs", "1. UIs", "{0DF06FE8-4877-40D4-958C-8A2C660484EE}"
 EndProject
@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.XML", "src\Lopes.SC.Infra.XML\Lopes.SC.Infra.XML.csproj", "{6C354FC6-7DE6-471A-981C-03464ADC918C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.Domain.Commons", "src\Lopes.SC.Domain.Commons\Lopes.SC.Domain.Commons.csproj", "{1DA9B66C-987B-49E9-A6C6-A47746CC9CE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Domain.Commons", "src\Lopes.SC.Domain.Commons\Lopes.SC.Domain.Commons.csproj", "{1DA9B66C-987B-49E9-A6C6-A47746CC9CE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

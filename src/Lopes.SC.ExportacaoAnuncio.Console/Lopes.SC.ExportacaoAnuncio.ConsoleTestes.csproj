@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Goblinfactory.Konsole" Version="6.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lopes.SC.Common.Console\Lopes.SC.Infra.Common.Console.csproj" />
+    <ProjectReference Include="..\Lopes.SC.Common.Console\Lopes.SC.Infra.Console.Commons.csproj" />
     <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.ExportacaoAnuncio.Application.csproj" />
     <ProjectReference Include="..\Lopes.SC.Infra.IoC\Lopes.SC.Infra.IoC.csproj" />
     <ProjectReference Include="..\Lopes.SC.Infra.XML\Lopes.SC.Infra.XML.csproj" />

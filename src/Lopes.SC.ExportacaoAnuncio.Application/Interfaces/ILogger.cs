@@ -6,5 +6,6 @@
         void Info(string message);
         void Warn(string message);
         void Debug(string message);
+        IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto);
     }
 }
