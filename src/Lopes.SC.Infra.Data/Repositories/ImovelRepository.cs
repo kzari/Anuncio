@@ -24,6 +24,7 @@ namespace Lopes.SC.Infra.Data.Repositories
         {
             return Db.ImovelEmpresas.Where(_ => _.IdImovel == idImovel)
                                     .Select(_=> _.IdEmpresa)
+                                    .Distinct()
                                     .ToArray();
         }
 

@@ -3,6 +3,8 @@
     public class DadosPrincipais
     {
         public int IdImovel { get; set; }
+        public string IdImovelPortais => $"REO{IdImovel}";
+
         public string? Titulo { get; set; }
         public string? TextoSite { get; set; }
 
@@ -38,6 +40,9 @@
         public decimal? Longitude { get; set; }
 
         public string? SA { get; set; }
+
         public int? AnoConstrucao { get; set; }
+        public string? InscricaoMunicipal { get; set; }
+        public string? ZonaValor { get; set; }
     }
 }

@@ -17,7 +17,8 @@ namespace Lopes.SC.ExportacaoAnuncio.ConsoleTestes
 
         public void Atualizar(int valorAtual, string item)
         {
-            progressBar.Refresh(valorAtual, item);
+            if(valorAtual > 0)
+                progressBar.Refresh(valorAtual, item);
         }
 
         public void Atualizar(string item)

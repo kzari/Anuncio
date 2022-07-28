@@ -11,9 +11,6 @@ namespace Lopes.SC.Infra.IoC
 {
     public abstract class ServiceConfiguration
     {
-        private const string CAMINHO_PASTA_XMLs = "C:/temp/portais_novo"; //TODO: colocar no arquivo de configuração 
-
-
         public static IServiceProvider ConfigureServices<TLogger>(IServiceCollection services) where TLogger : class, ILogger
         {
             services.AddMemoryCache();
@@ -28,6 +25,7 @@ namespace Lopes.SC.Infra.IoC
 
             return services.BuildServiceProvider(validateScopes: true);
         }
+
 
         private static void ConfigurarOutrosServicos(IServiceCollection services)
         {
@@ -57,14 +55,13 @@ namespace Lopes.SC.Infra.IoC
             services.AddTransient<IDadosImovelAppService, DadosImovelAppService>();
             services.AddTransient<IPortalAtualizador, PortalXMLBuilder>();
         }
-
         private static void ConfigurarRepositorios(IServiceCollection services)
         {
             services.AddTransient<IEmpresaApelidoPortalRepository, EmpresaApelidoPortalRepository>();
             services.AddTransient<IImovelRepository, ImovelRepository>();
             services.AddTransient<IAnuncioRepository, AnuncioRepository>();
             services.AddTransient<IImovelAtualizacaoPortaisRepository, ImovelAtualizacaoPortaisRepository>();
-            //services.AddScoped<IRepository<>, Repository<TEntity>>();
+            services.AddTransient<IPortalCaracteristicaRepository, PortalCaracteristicaRepository>();
         }
     }
 }

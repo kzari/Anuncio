@@ -7,6 +7,7 @@ using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 using Lopes.SC.ExportacaoAnuncio.Domain.XML;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace Lopes.SC.Infra.XML
@@ -16,33 +17,34 @@ namespace Lopes.SC.Infra.XML
         private readonly string _caminhoArquivoPasta;
         private readonly Portal _portal;
         private readonly int _idEmpresa;
-        private readonly IEmpresaApelidoPortalRepository _empresaApelidoPortalRepository;
+        private readonly IPortalXMLElementos _portalXmlElementos;
+        private readonly string _apelidoEmpresa;
+
 
         private EmpresaApelidoPortal[] _empresaApelidoPortais;
         private string _caminhoArquivo;
 
 
         public PortalXMLBuilder(string caminhoArquivoPasta,
-                                IEmpresaApelidoPortalRepository empresaApelidoPortalRepository,
+                                IEnumerable<PortalCaracteristica> portalCaracteristicas,
+                                string apelidoEmpresa,
                                 Portal portal,
                                 int idEmpresa)
         {
-            _empresaApelidoPortalRepository = empresaApelidoPortalRepository;
             _idEmpresa = idEmpresa;
             _portal = portal;
             _caminhoArquivoPasta = caminhoArquivoPasta;
+            _portalXmlElementos = PortalXmlElementosBase.ObterPortalXml(portal, portalCaracteristicas);
+            _apelidoEmpresa = apelidoEmpresa;
         }
 
 
-        //TODO: acessar cache
-        public EmpresaApelidoPortal[] EmpresaApelidoPortais => _empresaApelidoPortais ??= _empresaApelidoPortalRepository.Obter().ToArray();
         public string CaminhoArquivo => _caminhoArquivo ??= CaminhoArquivoXml();
 
 
-        public virtual void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados)
+        public virtual void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExistir = false)
         {
-            IPortalXMLElementos portalElementos = PortalXmlElementosBase.ObterPortalXml(_portal);
-            Xml xml = portalElementos.ObterXml(dados);
+            Xml xml = _portalXmlElementos.ObterXml(dados);
 
             if (!File.Exists(CaminhoArquivo))
                 CriarXml("1.0", "UTF-8", xml.Cabecalhos, CaminhoArquivo);
@@ -50,23 +52,20 @@ namespace Lopes.SC.Infra.XML
             XmlDocument doc = new XmlDocument();
             doc.Load(CaminhoArquivo);
 
-            XmlNode? eImoveis = doc.SelectSingleNode(xml.CaminhoTagPaiImoveis);
+            XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
 
             foreach (ElementoImovel eImovel in xml.Imoveis)
             {
-                //Removendo se existir
-                string query = QueryIdImovel("REO" + eImovel.IdImovel);
-                XmlNode? eImovelExistente = doc.SelectSingleNode(query);
-                if (eImovelExistente != null)
-                    eImoveis.RemoveChild(eImovelExistente.ParentNode);
-
+                if (removerSeExistir)
+                    RemoverImovel(doc, eImoveis, eImovel.IdImovel);
+                
                 AdicionarElemento(doc, eImoveis, eImovel);
             }
 
             doc.Save(CaminhoArquivo);
         }
 
-        public void RemoverImovel(int idImovel)
+        public void RemoverImoveis(int[] idImoveis)
         {
             if (!File.Exists(CaminhoArquivo))
                 return;
@@ -74,16 +73,19 @@ namespace Lopes.SC.Infra.XML
             XmlDocument doc = new XmlDocument();
             doc.Load(CaminhoArquivo);
 
-            //TODO: colocar como parâmetro
-            XmlNode? eImoveis = doc.SelectSingleNode("/Carga/Imoveis");
+            XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
 
-            //Removendo se existir
+            foreach (int id in idImoveis)
+                RemoverImovel(doc, eImoveis, id);
+        }
+
+        private static void RemoverImovel(XmlDocument doc, XmlNode eImoveis, int idImovel)
+        {
             string query = QueryIdImovel("REO" + idImovel);
             XmlNode? eImovelExistente = doc.SelectSingleNode(query);
             if (eImovelExistente != null)
                 eImoveis.RemoveChild(eImovelExistente.ParentNode);
         }
-
 
         public bool ImovelNoPortal(int idImovel)
         {
@@ -170,20 +172,16 @@ namespace Lopes.SC.Infra.XML
             return Regex.Replace(input, "\\p{C}+", substituto);
         }
 
-        public string CaminhoArquivoXml()
+        private string CaminhoArquivoXml()
         {
-
-            string? apelidoEmpresa = EmpresaApelidoPortais.Where(_ => _.IdEmpresa == _idEmpresa)
-                                                          .Select(_ => _.Apelido)
-                                                          .FirstOrDefault();
-            if (string.IsNullOrEmpty(apelidoEmpresa))
+            if (string.IsNullOrEmpty(_apelidoEmpresa))
                 throw new Exception($"Apelido empresa não encontrado. Id Empresa: {_idEmpresa}");
 
             string nomePortal = Enum.GetName(_portal);
             if (string.IsNullOrEmpty(nomePortal))
                 throw new Exception($"Portal não encontrado. Id portal: {_portal}");
 
-            string caminhoArquivo = _caminhoArquivoPasta + "/" + nomePortal.ToLower() + "-" + apelidoEmpresa + ".xml";
+            string caminhoArquivo = _caminhoArquivoPasta + "/" + nomePortal.ToLower() + "-" + _apelidoEmpresa + ".xml";
 
             return caminhoArquivo;
         }
@@ -236,5 +234,19 @@ namespace Lopes.SC.Infra.XML
         //    }
         //}
 
+        public IEnumerable<int> ObterIdImoveisNoPortal()
+        {
+            if (File.Exists(CaminhoArquivo))
+            {
+                XDocument xDocument = XDocument.Load(CaminhoArquivo);
+                IEnumerable<string> idsImovelString = xDocument.Descendants(_portalXmlElementos.NomeTagCodigoImovel)
+                                                               .Select(_ => _.Value.Replace("REO", ""));
+                foreach (string idString in idsImovelString)
+                {
+                    if (int.TryParse(idString, out int idImovel))
+                        yield return idImovel;
+                }
+            }
+        }
     }
 }

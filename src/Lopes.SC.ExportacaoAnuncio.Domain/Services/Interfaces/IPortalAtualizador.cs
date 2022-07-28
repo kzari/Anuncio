@@ -18,8 +18,9 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
     }
     public interface IPortalAtualizador
     {
-        void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados);
-        void RemoverImovel(int idImovel);
+        void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste = false);
+        void RemoverImoveis(int[] idImovel);
         bool ImovelNoPortal(int idImovel);
+        IEnumerable<int> ObterIdImoveisNoPortal();
     }
 }

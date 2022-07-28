@@ -22,5 +22,7 @@ IServiceProvider provider = ServiceConfiguration.ConfigureServices<ConsoleLogger
 using (IServiceScope scope = provider.CreateScope())
 {
     IAtualizarAnunciosAppService atualizarImovelAppService = scope.ServiceProvider.GetService<IAtualizarAnunciosAppService>();
-    atualizarImovelAppService.AtualizarPorPortais(new Portal[] { Portal.Zap });
+    //atualizarImovelAppService.AtualizarPorPortais(new Portal[] { Portal.Zap });
+
+    atualizarImovelAppService.AtualizarPorCotas(new [] { 887, 788, 942 });
 }

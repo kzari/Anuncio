@@ -48,7 +48,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
             if (_imovelEmpresasCache.TryGetValue(idImovel, out int[] idEmpresas))
                 return idEmpresas;
 
-            idEmpresas = _imovelRepository.ObterEmpresasImovel(idImovel);
+            idEmpresas = _imovelRepository.ObterEmpresasImovel(idImovel).ToArray();
             _imovelEmpresasCache.Add(idImovel, idEmpresas);
 
             return idEmpresas;

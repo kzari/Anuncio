@@ -21,6 +21,7 @@ namespace Lopes.SC.Infra.Data.Context
         public DbSet<Caracteristica> ImovelCaracteristicas{ get; set; }
         public DbSet<TourVirtual> TourVirtuais { get; set; }
         public DbSet<Video> ImovelVideos { get; set; }
+        public DbSet<ExportacaoAnuncio.Domain.Models.PortalCaracteristica> PortalCaracteristicas { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -35,6 +36,7 @@ namespace Lopes.SC.Infra.Data.Context
             builder.ApplyConfiguration(new AnuncioMap());
             builder.ApplyConfiguration(new TourVirtualMap());
             builder.ApplyConfiguration(new VideoMap());
+            builder.ApplyConfiguration(new PortalCaracteristicaMap());
 
             builder.Entity<ImovelEmpresa>().HasNoKey().ToView("VW_ImovelEmpresas");
 
