@@ -1,4 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+﻿using Lopes.SC.Domain.Commons;
+using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 
 namespace Lopes.SC.Infra.XML
@@ -13,7 +14,7 @@ namespace Lopes.SC.Infra.XML
             throw new NotImplementedException();
         }
 
-        public void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste)
+        public void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste = false, IProgresso progresso = null)
         {
             throw new NotImplementedException();
         }
@@ -23,12 +24,7 @@ namespace Lopes.SC.Infra.XML
             throw new NotImplementedException();
         }
 
-        public void RemoverImoveis(int[] idImovel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoverImovel(int idImovel)
+        public void RemoverImoveis(int[] idImovel, IProgresso progresso = null)
         {
             throw new NotImplementedException();
         }

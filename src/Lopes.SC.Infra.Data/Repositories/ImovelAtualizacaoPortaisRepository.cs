@@ -1,4 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+﻿using Lopes.SC.Domain.Commons;
+using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models;
 using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.Infra.Data.Context;
@@ -27,17 +28,22 @@ namespace Lopes.SC.Infra.Data.Repositories
                 SalvarAlteracoes();
         }
 
-        public void AtualizarOuAdicionar(IEnumerable<AnuncioAtualizacao> models)
+        public void AtualizarOuAdicionar(IEnumerable<AnuncioAtualizacao> models, IProgresso progresso = null)
         {
             int i = 0;
             foreach (var model in models)
             {
+                i++;
                 AtualizarOuAdicionar(model, salvarAlteracoes: false);
 
                 if (i % 1000 == 0)
+                {
+                    progresso.Atualizar($"Atualizando status do anúncio/imóvel. {i} de {models.Count()}", i);
                     SalvarAlteracoes();
+                }
             }
             SalvarAlteracoes();
+            progresso.Atualizar($"Atualização de status concluída", i);
         }
     }
 }

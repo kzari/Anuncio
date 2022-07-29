@@ -1,4 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
+﻿using Lopes.SC.Domain.Commons;
 
 namespace Lopes.SC.ExportacaoAnuncio.ConsoleTestes
 {
@@ -34,9 +34,9 @@ namespace Lopes.SC.ExportacaoAnuncio.ConsoleTestes
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto)
+        public IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]")
         {
-            return new Progresso(valorMaximo, tamanhoTexto);
+            return new Progresso(valorMaximo, tamanhoTexto, textoInicial, caractereSubstituicao);
         }
     }
 }

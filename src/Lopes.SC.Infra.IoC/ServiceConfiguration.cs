@@ -6,6 +6,7 @@ using Lopes.SC.Infra.Data.Context;
 using Lopes.SC.Infra.Data.Repositories;
 using Lopes.SC.Infra.XML;
 using Microsoft.Extensions.DependencyInjection;
+using Lopes.SC.Domain.Commons;
 
 namespace Lopes.SC.Infra.IoC
 {

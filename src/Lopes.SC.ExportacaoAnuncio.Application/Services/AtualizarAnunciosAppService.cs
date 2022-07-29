@@ -1,4 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
+﻿using Lopes.SC.Domain.Commons;
+using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models;
@@ -56,9 +57,9 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 
         private void AtualizarImoveisXMLs(IEnumerable<Anuncio> anuncios)
         {
-            int contPortalEmpresa = 0;
             int totalAnuncios = anuncios.Count();
             int partitionIds = 0;
+            int cotaAtual = 0;
 
             var anunciosAgrupados = anuncios.GroupBy(_ => new { _.Portal, _.IdEmpresa }, (key, group) => new
             {
@@ -66,13 +67,14 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                 IdEmpresa = key.IdEmpresa,
                 Anuncios = group.ToList()
             }).ToList();
+            int qtdeCotas = anunciosAgrupados.Count();
 
-            IProgresso progressoGeral = _logger.ObterProgresso(anunciosAgrupados.Count(), 100);
-            progressoGeral.Atualizar(contPortalEmpresa, $"Progresso geral 0 de {anunciosAgrupados.Count()}.");
+            IProgresso progressoGeral = _logger.ObterProgresso(anunciosAgrupados.Count(), 110, $">> Atualização de imóveis nos portais.");
+            progressoGeral.Atualizar($"Processando {qtdeCotas} cotas.");
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
             var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
-            //var partitions = partitioner.GetPartitions(2);
+            //var partitions = partitioner.GetPartitions(1);
 
             Task[] tasks = partitions.Select(partition => Task.Run(() =>
             {
@@ -80,11 +82,11 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 
                 IStatusAnuncioService statusAnuncioService = (IStatusAnuncioService)_serviceProvider.GetService(typeof(IStatusAnuncioService));
                 IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository = (IImovelAtualizacaoPortaisRepository)_serviceProvider.GetService(typeof(IImovelAtualizacaoPortaisRepository));
-                IDadosImovelAppService dadosImovelAppService = (IDadosImovelAppService)_serviceProvider.GetService(typeof(IDadosImovelAppService));
 
                 using (partition)
                     while (partition.MoveNext())
                     {
+                        cotaAtual++;
                         var portalEmpresa = partition.Current;
 
                         int idEmpresa = portalEmpresa.IdEmpresa;
@@ -97,9 +99,11 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                         int jaRemovidos = 0;
                         int jaAtualizados = 0;
 
-                        IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
+                        IProgresso progresso = _logger.ObterProgresso(qtdeAnuncios, 110, textoInicial: $"P{partitionId.ToString().PadLeft(2)} E: {idEmpresa.ToString().PadRight(5)} P: {portal.ToString().PadRight(10)} Anúncios: {qtdeAnuncios.ToString().PadLeft(5)} ");
 
-                        IProgresso progresso = _logger.ObterProgresso(qtdeAnuncios, 100);
+                        progresso.Atualizar("1. Verificando o status...", percentualConcluido: 10);
+
+                        IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
 
                         int[] idImoveisNoPortal = atualizador.ObterIdImoveisNoPortal().ToArray();
 
@@ -128,52 +132,47 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                             }
                         }
 
-                        MostrarProgresso(ref progresso, partitionId, portal, idEmpresa, qtdeAnuncios, 1);
+                        progresso.Atualizar($"2. Removendo {imoveisParaRemover.Count} anúncios...", percentualConcluido: 10);
+                        Remover(imovelAtualizacaoPortaisRepository, idEmpresa, portal, imoveisParaRemover, atualizador, progresso);
 
-                        Remover(imovelAtualizacaoPortaisRepository, idEmpresa, portal, imoveisParaRemover, atualizador);
-                        MostrarProgresso(ref progresso, partitionId, portalEmpresa.Portal, portalEmpresa.IdEmpresa, qtdeAnuncios, imoveisParaRemover.Count());
+                        //Atualizar(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, imovelAtualizacaoPortaisRepository, dadosImovelAppService, progresso);
+                        AtualizarLote(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, imovelAtualizacaoPortaisRepository, progresso);
 
-                        Atualizar(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, imovelAtualizacaoPortaisRepository, dadosImovelAppService);
-                        MostrarProgresso(ref progresso, partitionId, portalEmpresa.Portal, portalEmpresa.IdEmpresa, qtdeAnuncios, portalEmpresa.Anuncios.Count());
+                        progresso.Atualizar($"Concluído. R: ({imoveisParaRemover.Count} | {jaRemovidos}) A: ({imoveisParaAtualizar.Count} | {jaAtualizados}).", percentualConcluido: 100);
 
-                        progressoGeral.Atualizar(++contPortalEmpresa, $"Progresso geral {contPortalEmpresa} de {anunciosAgrupados.Count()}.");
+                        progressoGeral.Atualizar($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }
             })).ToArray();
             Task.WaitAll(tasks);
+
+            progressoGeral.Atualizar($"Atualização concluída. {qtdeCotas} cotas processadas, {totalAnuncios} anúncios processados.", percentualConcluido: 100);
         }
 
-        private static void Remover(IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository, int idEmpresa, Portal portal, List<int> imoveisParaRemover, IPortalAtualizador atualizador)
+        private static void Remover(IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository, int idEmpresa, Portal portal, List<int> imoveisParaRemover, IPortalAtualizador atualizador, IProgresso progresso)
         {
-            atualizador.RemoverImoveis(imoveisParaRemover.ToArray());
+            atualizador.RemoverImoveis(imoveisParaRemover.ToArray(), progresso);
             var anuncioAtualizacoes = imoveisParaRemover.Select(_ => new AnuncioAtualizacao(portal, _, idEmpresa, AtualizacaoAcao.Exclusao));
-            imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(anuncioAtualizacoes);
-        }
-
-        private static void MostrarProgresso(ref IProgresso progresso, int partitionId, Portal portal, int idEmpresa, int qtdeAnuncios, int qtdeAtual)
-        {
-            //if (qtdeAtual < (qtdeAnuncios - 5) && qtdeAnuncios % 5 > 0) //Mostrando de 5 em 5
-            //    return;
-
-            string mensagem = $"P{partitionId} - Portal: {portal.ToString().PadRight(10)}" +
-                            $" Empresa: {idEmpresa.ToString().PadLeft(3)}" +
-                            $" {qtdeAtual.ToString().PadLeft(5)} de {qtdeAnuncios.ToString().PadLeft(5)} anúncios.";
-
-            progresso.Atualizar(qtdeAtual, mensagem);
+            imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(anuncioAtualizacoes, progresso);
         }
 
         private void Atualizar(IEnumerable<Anuncio> anuncios,
-                               IEnumerable<int> imoveisParaAtualizar, 
-                               int idEmpresa, 
-                               Portal portal, 
+                               IEnumerable<int> imoveisParaAtualizar,
+                               int idEmpresa,
+                               Portal portal,
                                IPortalAtualizador atualizador,
                                IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository,
-                               IDadosImovelAppService dadosImovelAppService)
+                               IDadosImovelAppService dadosImovelAppService,
+                               IProgresso progresso)
         {
             List<DadosImovel> imoveis = new List<DadosImovel>();
             List<AnuncioAtualizacao> atualizacoes = new List<AnuncioAtualizacao>();
 
+            int i = 0;
             foreach (int idImovel in imoveisParaAtualizar)
             {
+                i++;
+                progresso.Atualizar($"3. Obtendo dados dos imóveis. {i} de {imoveisParaAtualizar.Count()}", i);
+
                 DadosImovel dados = ObterDadosImovel(idImovel, dadosImovelAppService);
                 if (dados == null)
                 {
@@ -184,14 +183,47 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                     dados.CodigoClientePortal = anuncios.FirstOrDefault(_ => _.IdImovel == idImovel).CodigoClientePortal;
                     imoveis.Add(dados);
                     atualizacoes.Add(new AnuncioAtualizacao(portal, idImovel, idEmpresa, AtualizacaoAcao.Atualizacao));
-                } 
+                }
             }
 
             if (!imoveisParaAtualizar.Any())
                 return;
 
-            atualizador.InserirAtualizarImoveis(imoveis);
-            imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes);
+            progresso.Atualizar($"4. Atualizando status do anúncio/imóvel.", i);
+
+            atualizador.InserirAtualizarImoveis(imoveis, progresso: progresso);
+            imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes, progresso);
+        }
+
+        private void AtualizarLote(IEnumerable<Anuncio> anuncios,
+                               IEnumerable<int> imoveisParaAtualizar,
+                               int idEmpresa,
+                               Portal portal,
+                               IPortalAtualizador atualizador,
+                               IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository,
+                               IProgresso progresso)
+        {
+            progresso.Atualizar($"3. Obtendo dados dos {imoveisParaAtualizar.Count()} imóveis.", percentualConcluido: 20);
+
+            IDadosImovelAppService dadosImovelAppService = (IDadosImovelAppService)_serviceProvider.GetService(typeof(IDadosImovelAppService));
+
+            IEnumerable<DadosImovel> imoveis = ObterDadosImovelLote(imoveisParaAtualizar.ToArray(), dadosImovelAppService, progresso);
+
+            if (!imoveisParaAtualizar.Any())
+                return;
+
+            List<AnuncioAtualizacao> atualizacoes = new List<AnuncioAtualizacao>();
+            foreach (DadosImovel imovel in imoveis)
+            {
+                imovel.CodigoClientePortal = anuncios.FirstOrDefault(_ => _.IdImovel == imovel.Dados.IdImovel).CodigoClientePortal;
+                atualizacoes.Add(new AnuncioAtualizacao(portal, imovel.Dados.IdImovel, idEmpresa, AtualizacaoAcao.Atualizacao));
+            }
+
+            progresso.Atualizar($"3. Atualizando imóveis...", percentualConcluido: 30);
+            atualizador.InserirAtualizarImoveis(imoveis, progresso: progresso);
+
+            progresso.Atualizar($"3. Registrando o status...", percentualConcluido: 30);
+            imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes, progresso);
         }
 
         private DadosImovel? ObterDadosImovel(int idImovel, IDadosImovelAppService dadosImovelAppService)
@@ -205,11 +237,33 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             }
 
             dados = dadosImovelAppService.ObterDadosImovel(idImovel);
-
-            lock (_dadosImoveisCache)
-                _dadosImoveisCache.Add(dados);
+            if (dados != null)
+            {
+                lock (_dadosImoveisCache)
+                    _dadosImoveisCache.Add(dados);
+            }
 
             return dados;
+        }
+
+        private IEnumerable<DadosImovel> ObterDadosImovelLote(int[] idImoveis, IDadosImovelAppService dadosImovelAppService, IProgresso progresso)
+        {
+            IEnumerable<DadosImovel> imoveisCacheados;
+            lock (_dadosImoveisCache)
+            {
+                imoveisCacheados = _dadosImoveisCache.ToList().Where(_ => idImoveis.Contains(_.Dados.IdImovel)) ?? new List<DadosImovel>();
+            }
+
+            int[] idImoveisNaoCacheados = idImoveis.Where(_ => !imoveisCacheados.Select(_ => _.Dados.IdImovel).Contains(_)).ToArray() ?? idImoveis;
+
+            IEnumerable<DadosImovel> imoveisNaoCacheados = dadosImovelAppService.ObterDadosImovel(idImoveisNaoCacheados, progresso);
+            if (imoveisNaoCacheados.Any())
+            {
+                lock (_dadosImoveisCache)
+                    _dadosImoveisCache.AddRange(imoveisNaoCacheados);
+            }
+
+            return imoveisCacheados.Concat(imoveisNaoCacheados);
         }
     }
 }

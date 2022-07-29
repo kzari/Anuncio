@@ -2,9 +2,9 @@
 using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 using Lopes.SC.ExportacaoAnuncio.Domain.XML;
+using Lopes.SC.Domain.Commons;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -14,15 +14,13 @@ namespace Lopes.SC.Infra.XML
 {
     public class PortalXMLBuilder : IPortalAtualizadorXml
     {
-        private readonly string _caminhoArquivoPasta;
+        private readonly IPortalXMLElementos _portalXmlElementos;
         private readonly Portal _portal;
         private readonly int _idEmpresa;
-        private readonly IPortalXMLElementos _portalXmlElementos;
+        private readonly string _caminhoArquivoPasta;
         private readonly string _apelidoEmpresa;
 
-
-        private EmpresaApelidoPortal[] _empresaApelidoPortais;
-        private string _caminhoArquivo;
+        private string caminhoArquivo;
 
 
         public PortalXMLBuilder(string caminhoArquivoPasta,
@@ -39,10 +37,10 @@ namespace Lopes.SC.Infra.XML
         }
 
 
-        public string CaminhoArquivo => _caminhoArquivo ??= CaminhoArquivoXml();
+        public string CaminhoArquivo => caminhoArquivo ??= CaminhoArquivoXml();
 
 
-        public virtual void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExistir = false)
+        public virtual void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExistir = false, IProgresso progresso = null)
         {
             Xml xml = _portalXmlElementos.ObterXml(dados);
 
@@ -54,18 +52,26 @@ namespace Lopes.SC.Infra.XML
 
             XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
 
-            foreach (ElementoImovel eImovel in xml.Imoveis)
+            List<ElementoImovel> elementos = xml.Imoveis.ToList();
+
+            int i = 0;
+            int qtdeImoveis = elementos.Count;
+            foreach (ElementoImovel eImovel in elementos)
             {
+                i++;
                 if (removerSeExistir)
                     RemoverImovel(doc, eImoveis, eImovel.IdImovel);
                 
                 AdicionarElemento(doc, eImoveis, eImovel);
+
+                if(progresso != null)
+                    progresso.Atualizar($"Inserindo/atualizando no XML. {i} de {qtdeImoveis}", i);
             }
 
             doc.Save(CaminhoArquivo);
         }
 
-        public void RemoverImoveis(int[] idImoveis)
+        public void RemoverImoveis(int[] idImoveis, IProgresso progresso = null)
         {
             if (!File.Exists(CaminhoArquivo))
                 return;
@@ -75,8 +81,17 @@ namespace Lopes.SC.Infra.XML
 
             XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
 
+            int i = 0;
             foreach (int id in idImoveis)
+            {
+                i++;
                 RemoverImovel(doc, eImoveis, id);
+                
+                if (progresso != null)
+                    progresso.Atualizar($"{i} imóveis removido(s) no XML de {idImoveis.Length}.", i);
+            }
+
+            doc.Save(CaminhoArquivo);
         }
 
         private static void RemoverImovel(XmlDocument doc, XmlNode eImoveis, int idImovel)
@@ -102,16 +117,6 @@ namespace Lopes.SC.Infra.XML
                 return false;
 
             return true;
-
-            //string codigoImovel = node.Value;
-            //if (string.IsNullOrEmpty(codigoImovel))
-            //    return false;
-
-            //codigoImovel = codigoImovel.Replace("REO", "");
-            //if (int.TryParse(codigoImovel, out int idImovelInt))
-            //    return idImovelInt == idImovel;
-
-            //return false;
         }
 
         private void CriarXml(string versao, string codificacao, Elemento elemento, string caminhoArquivo)
@@ -185,54 +190,6 @@ namespace Lopes.SC.Infra.XML
 
             return caminhoArquivo;
         }
-
-
-
-        //public IEnumerable<int> ObterIdImoveisXml(string @namespace, string query, string caminhoArquivo)
-        //{
-        //    XmlDocument document = new XmlDocument();
-        //    document.Load(caminhoArquivo);
-
-        //    XmlNamespaceManager m = new XmlNamespaceManager(document.NameTable);
-        //    m.AddNamespace("ns", @namespace);
-
-        //    XmlNodeList nodes = document.SelectNodes(query, m);
-
-        //    foreach (XmlElement node in nodes)
-        //    {
-        //        string codigoImovel = node.InnerText;
-        //        if (!string.IsNullOrEmpty(codigoImovel))
-        //        {
-        //            codigoImovel = codigoImovel.Replace("REO", "");
-        //            if (int.TryParse(codigoImovel, out int idImovelInt))
-        //            {
-        //                yield return idImovelInt;
-        //            }
-        //        }
-        //    }
-        //}
-        //public IEnumerable<int> ObterIdImoveisNoXml(string query, string caminhoArquivo)
-        //{
-        //    using Stream fileStream = File.Open(caminhoArquivo, FileMode.Open);
-        //    XPathDocument xPath = new XPathDocument(fileStream);
-
-        //    XPathNavigator navigator = xPath.CreateNavigator();
-        //    XPathExpression xPathExpression = navigator.Compile(query);
-        //    XPathNodeIterator nodeIterator = navigator.Select(xPathExpression);
-
-        //    while (nodeIterator.MoveNext())
-        //    {
-        //        string codigoImovel = nodeIterator.Current.Value;
-        //        if (!string.IsNullOrEmpty(codigoImovel))
-        //        {
-        //            codigoImovel = codigoImovel.Replace("REO", "");
-        //            if (int.TryParse(codigoImovel, out int idImovelInt))
-        //            {
-        //                yield return idImovelInt;
-        //            }
-        //        }
-        //    }
-        //}
 
         public IEnumerable<int> ObterIdImoveisNoPortal()
         {

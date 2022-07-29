@@ -28,23 +28,26 @@ namespace Lopes.SC.Infra.Data.Repositories
                                     .ToArray();
         }
 
-        public IEnumerable<Caracteristica> ObterCaracteristicas(int idImovel)
+        public IEnumerable<Caracteristica> ObterCaracteristicas(int[] idImoveis)
         {
-            return Db.ImovelCaracteristicas.FromSqlRaw("dbo.ImovelCaracteristicas {0}", idImovel).ToList();
+            string imoveisStr = string.Join(",", idImoveis);
+            return Db.ImovelCaracteristicas.FromSqlRaw("dbo.ImovelCaracteristicasLote {0}", imoveisStr).ToList();
         }
 
-        public IEnumerable<string> ObterUrlTourVirtuais(int idImovel)
+        public IDictionary<int, string[]> ObterUrlTourVirtuais(int[] idImoveis)
         {
-            return Db.TourVirtuais.Where(_ => _.IdImovel == idImovel)
-                                  .Select(_ => _.Url)
-                                  .ToList();
+            return Db.TourVirtuais.Where(_ => idImoveis.Contains(_.IdImovel))
+                                  .ToList()
+                                  .GroupBy(_ => _.IdImovel)
+                                  .ToDictionary(_ => _.Key, _ => _.Select(_ => _.Url).ToArray());
         }
 
-        public IEnumerable<string> ObterUrlVideos(int idUnidade)
+        public IDictionary<int, string[]> ObterUrlVideos(int[] idImoveis)
         {
-            return Db.ImovelVideos.Where(_ => _.IdImovel == idUnidade)
-                                  .Select(_ => _.Url)
-                                  .ToList();
+            return Db.ImovelVideos.Where(_ => idImoveis.Contains(_.IdImovel))
+                                  .ToList()
+                                  .GroupBy(_ => _.IdImovel)
+                                  .ToDictionary(_ => _.Key, _ => _.Select(_ => _.Url).ToArray());
         }
     }
 }

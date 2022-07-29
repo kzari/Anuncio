@@ -1,4 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+﻿using Lopes.SC.Domain.Commons;
+using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 
 namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
@@ -18,8 +19,8 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
     }
     public interface IPortalAtualizador
     {
-        void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste = false);
-        void RemoverImoveis(int[] idImovel);
+        void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste = false, IProgresso progresso = null);
+        void RemoverImoveis(int[] idImovel, IProgresso progresso = null);
         bool ImovelNoPortal(int idImovel);
         IEnumerable<int> ObterIdImoveisNoPortal();
     }

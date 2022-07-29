@@ -1,4 +1,4 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Application.Interfaces
+﻿namespace Lopes.SC.Domain.Commons
 {
     public interface ILogger
     {
@@ -6,6 +6,6 @@
         void Info(string message);
         void Warn(string message);
         void Debug(string message);
-        IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto);
+        IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]");
     }
 }
