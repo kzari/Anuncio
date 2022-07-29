@@ -1,4 +1,5 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.ExportacaoAnuncio.Domain.Models;
 
 namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
 {
@@ -14,5 +15,6 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
         IDictionary<int, string[]> ObterUrlTourVirtuais(int[] idImoveis);
         IDictionary<int, string[]> ObterUrlVideos(int[] idImoveis);
         IEnumerable<Caracteristica> ObterCaracteristicas(int[] idImoveis);
+        IEnumerable<Fotos> ObterFotos(int[] idImoveis);
     }
 }

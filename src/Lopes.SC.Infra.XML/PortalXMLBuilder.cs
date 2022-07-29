@@ -27,12 +27,13 @@ namespace Lopes.SC.Infra.XML
                                 IEnumerable<PortalCaracteristica> portalCaracteristicas,
                                 string apelidoEmpresa,
                                 Portal portal,
-                                int idEmpresa)
+                                int idEmpresa,
+                                string urlFotosImoveis)
         {
             _idEmpresa = idEmpresa;
             _portal = portal;
             _caminhoArquivoPasta = caminhoArquivoPasta;
-            _portalXmlElementos = PortalXmlElementosBase.ObterPortalXml(portal, portalCaracteristicas);
+            _portalXmlElementos = PortalXmlElementosBase.ObterPortalXml(portal, portalCaracteristicas, urlFotosImoveis);
             _apelidoEmpresa = apelidoEmpresa;
         }
 
@@ -51,6 +52,9 @@ namespace Lopes.SC.Infra.XML
             doc.Load(CaminhoArquivo);
 
             XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
+
+            if (progresso != null)
+                progresso.Atualizar($"Montando elementos...");
 
             List<ElementoImovel> elementos = xml.Imoveis.ToList();
 

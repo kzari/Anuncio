@@ -7,6 +7,8 @@ using Lopes.SC.Infra.Data.Repositories;
 using Lopes.SC.Infra.XML;
 using Microsoft.Extensions.DependencyInjection;
 using Lopes.SC.Domain.Commons;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace Lopes.SC.Infra.IoC
 {
@@ -31,6 +33,13 @@ namespace Lopes.SC.Infra.IoC
         private static void ConfigurarOutrosServicos(IServiceCollection services)
         {
             services.AddTransient<IPortalAtualizadorFactory, PortalAtualizadorFactory>();
+
+            // Build configuration
+            var configuration = new ConfigurationBuilder()
+                //.SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+                .AddJsonFile("appsettings.json", false)
+                .Build();
+            services.AddSingleton<IConfiguration>(configuration);
         }
 
         private static void ConfigurarDbContexts(IServiceCollection services)

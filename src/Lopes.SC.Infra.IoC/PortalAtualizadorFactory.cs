@@ -3,6 +3,7 @@ using Lopes.SC.ExportacaoAnuncio.Domain.Models;
 using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 using Lopes.SC.Infra.XML;
+using Microsoft.Extensions.Configuration;
 
 namespace Lopes.SC.Infra.IoC
 {
@@ -10,11 +11,14 @@ namespace Lopes.SC.Infra.IoC
     {
         private readonly IDictionary<Portal,IEnumerable<PortalCaracteristica>> _portaisCaracteristicas;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IConfiguration _configuration;
 
-        public PortalAtualizadorFactory(IServiceProvider serviceProvider)
+
+        public PortalAtualizadorFactory(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             _serviceProvider = serviceProvider;
             _portaisCaracteristicas = new Dictionary<Portal, IEnumerable<PortalCaracteristica>>();
+            _configuration = configuration;
         }
 
 
@@ -31,13 +35,13 @@ namespace Lopes.SC.Infra.IoC
 
                 default:
                     {
-                        // TODO: Obter de config
-                        string caminhoPastaXmls = "C:/temp/portais_novo";
+                        string caminhoPastaXmls = _configuration["CaminhoPastaXmls"].ToString();
+                        string urlImagens = _configuration["UrlFotosImoveis"].ToString();
 
                         IEnumerable<PortalCaracteristica> portalCaracteristicas = ObterCaracteristicasPortal(portal);
                         string apelidoEmpresa = ObterApelidoEmpresa(idEmpresa);
 
-                        return new PortalXMLBuilder(caminhoPastaXmls, portalCaracteristicas, apelidoEmpresa, portal, idEmpresa);
+                        return new PortalXMLBuilder(caminhoPastaXmls, portalCaracteristicas, apelidoEmpresa, portal, idEmpresa, urlImagens);
                     }
             }
         }

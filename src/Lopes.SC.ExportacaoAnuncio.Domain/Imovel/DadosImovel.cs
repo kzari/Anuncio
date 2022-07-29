@@ -1,4 +1,6 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Imovel
+﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+
+namespace Lopes.SC.ExportacaoAnuncio.Domain.Imovel
 {
     public class DadosImovel
     {
@@ -12,5 +14,6 @@
         public IEnumerable<Caracteristica> Caracteristicas { get; set; }
         public IEnumerable<string> UrlTourVirtuais { get; set; }
         public IEnumerable<string> UrlVideos { get; set; }
+        public IEnumerable<Fotos> Imagens { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
-using System.Xml.Linq;
 
 namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
 {

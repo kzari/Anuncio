@@ -1,8 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Konsole;
 using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.ConsoleTestes;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Lopes.SC.Infra.IoC;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,8 +19,10 @@ using Microsoft.Extensions.DependencyInjection;
 IServiceProvider provider = ServiceConfiguration.ConfigureServices<ConsoleLogger>(new ServiceCollection());
 using (IServiceScope scope = provider.CreateScope())
 {
-    IAtualizarAnunciosAppService atualizarImovelAppService = scope.ServiceProvider.GetService<IAtualizarAnunciosAppService>();
-    atualizarImovelAppService.AtualizarPorPortais(new Portal[] { Portal.Zap });
+    IAtualizarAnunciosAppService atualizarAnuncioService = scope.ServiceProvider.GetService<IAtualizarAnunciosAppService>();
+    //atualizarAnuncioService.AtualizarPorPortais(new Portal[] { Portal.Zap });
 
-    //atualizarImovelAppService.AtualizarPorCotas(new [] { 48 });
+    atualizarAnuncioService.AtualizarPorCotas(new [] { 788 });
+
+    //atualizarAnuncioService.AtualizarPorImoveis(new[] { 43495 });
 }

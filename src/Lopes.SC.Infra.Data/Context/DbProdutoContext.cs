@@ -10,9 +10,11 @@ namespace Lopes.SC.Infra.Data.Context
     {
         protected readonly IConfiguration Configuration;
 
-        public DbProdutoContext()
+        public DbProdutoContext(IConfiguration configuration)
         {
+            Configuration = configuration;
         }
+
 
         public DbSet<Anuncio> Anuncios { get; set; }
         public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
@@ -21,12 +23,13 @@ namespace Lopes.SC.Infra.Data.Context
         public DbSet<Caracteristica> ImovelCaracteristicas{ get; set; }
         public DbSet<TourVirtual> TourVirtuais { get; set; }
         public DbSet<Video> ImovelVideos { get; set; }
-        public DbSet<ExportacaoAnuncio.Domain.Models.PortalCaracteristica> PortalCaracteristicas { get; set; }
+        public DbSet<PortalCaracteristica> PortalCaracteristicas { get; set; }
+        public DbSet<Fotos> ImovelImagens { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // TODO: connect to sql server with connection string from app settings
-            options.UseSqlServer(@"Initial Catalog=dbproduto;Data Source=LPS-SI-DEV02\SQLCORP_HML;User id=usrapp;Password=Lopesnet2010;");
+            options.UseSqlServer(Configuration.GetConnectionString("DbProduto"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -46,6 +49,10 @@ namespace Lopes.SC.Infra.Data.Context
             builder.Entity<AnuncioAtualizacao>().ToTable("AnuncioAtualizacao").HasKey(_ => _.Id);
 
             builder.Entity<Caracteristica>().HasNoKey();
+
+            builder.Entity<Fotos>().ToView("VW_ImovelImagensAnuncio");
+            builder.Entity<Fotos>().HasKey(_ => _.Id);
+
         }
     }
 }

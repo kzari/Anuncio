@@ -8,7 +8,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
 {
     public class Zap : PortalXmlElementosBase, IPortalXMLElementos
     {
-        public Zap(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas) : base(portal, portalCaracteristicas)
+        public Zap(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas, string urlFotosImoveis) : base(portal, portalCaracteristicas, urlFotosImoveis)
         {
         }
 
@@ -64,7 +64,25 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
 
             AdicionarCaracteristicas(dados, eImovel);
 
+            AdicionarFotos(dados, eImovel);
+
             return eImovel;
+        }
+
+        private void AdicionarFotos(DadosImovel dados, ElementoImovel eImovel)
+        {
+            if (!dados.Imagens.Any())
+                return;
+
+            Elemento eFotos = eImovel.AdicionarElemento("Fotos");
+            foreach (Fotos foto in dados.Imagens)
+            {
+                Elemento eFoto = eFotos.AdicionarElemento("Foto");
+                eFoto.AdicionarElemento("NomeArquivo", foto.Descricao);
+                eFoto.AdicionarElemento("Principal", foto.Ordem == 1 ? "1" : "0");
+                eFoto.AdicionarElemento("URLArquivo", foto.ObterCaminhoFotoImovel(UrlFotosImoveis));
+                eFoto.AdicionarElemento("Alterada", "1");
+            }
         }
 
         private void AdicionarValores(DadosPrincipais dados, ElementoImovel eImovel)

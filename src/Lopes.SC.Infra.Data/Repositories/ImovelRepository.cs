@@ -1,4 +1,5 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.ExportacaoAnuncio.Domain.Models;
 using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,11 @@ namespace Lopes.SC.Infra.Data.Repositories
                                   .ToList()
                                   .GroupBy(_ => _.IdImovel)
                                   .ToDictionary(_ => _.Key, _ => _.Select(_ => _.Url).ToArray());
+        }
+
+        public IEnumerable<Fotos> ObterFotos(int[] idImoveis)
+        {
+            return Db.ImovelImagens.Where(_ => idImoveis.Contains(_.IdImovel)).ToList();
         }
     }
 }
