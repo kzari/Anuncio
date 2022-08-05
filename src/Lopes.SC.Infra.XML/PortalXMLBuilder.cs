@@ -68,7 +68,7 @@ namespace Lopes.SC.Infra.XML
                 
                 AdicionarElemento(doc, eImoveis, eImovel);
 
-                if(progresso != null)
+                if(progresso != null && i % 100 == 0)
                     progresso.Atualizar($"Inserindo/atualizando no XML. {i} de {qtdeImoveis}", i);
             }
 

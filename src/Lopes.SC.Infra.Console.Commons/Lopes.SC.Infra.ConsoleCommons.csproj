@@ -7,12 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lopes.SC.Commons\Lopes.SC.Infra.Commons.csproj" />
-    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.ExportacaoAnuncio.Domain.csproj" />
+    <PackageReference Include="Goblinfactory.Konsole" Version="6.2.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <ProjectReference Include="..\Lopes.SC.Domain.Commons\Lopes.SC.Domain.Commons.csproj" />
   </ItemGroup>
 
 </Project>

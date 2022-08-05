@@ -27,6 +27,18 @@ namespace Lopes.SC.Infra.IoC
 
             return services.BuildServiceProvider(validateScopes: true);
         }
+        public static void Configure<TLogger>(IServiceCollection services) where TLogger : class, ILogger
+        {
+            services.AddMemoryCache();
+
+            ConfigurarLog<TLogger>(services);
+            services.AddTransient<IPortalAtualizadorFactory, PortalAtualizadorFactory>();
+
+            ConfigurarAppServices(services);
+            ConfigurarRepositorios(services);
+            ConfigurarDomainServices(services);
+            ConfigurarDbContexts(services);
+        }
 
 
         private static void ConfigurarOutrosServicos(IServiceCollection services)
@@ -62,7 +74,6 @@ namespace Lopes.SC.Infra.IoC
             services.AddTransient<IAnuncioAppService, AnuncioAppService>();
             services.AddTransient<IAtualizarAnunciosAppService, AtualizarAnunciosAppService>();
             services.AddTransient<IDadosImovelAppService, DadosImovelAppService>();
-            services.AddTransient<IPortalAtualizador, PortalXMLBuilder>();
         }
         private static void ConfigurarRepositorios(IServiceCollection services)
         {

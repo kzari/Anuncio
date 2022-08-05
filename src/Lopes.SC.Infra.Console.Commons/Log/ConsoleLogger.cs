@@ -1,6 +1,6 @@
 ﻿using Lopes.SC.Domain.Commons;
 
-namespace Lopes.SC.ExportacaoAnuncio.ConsoleTestes
+namespace Lopes.SC.Infra.ConsoleCommons.Log
 {
     public class ConsoleLogger : ILogger
     {

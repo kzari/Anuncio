@@ -12,9 +12,9 @@ namespace Lopes.SC.Infra.Data.Repositories
         {
         }
 
-        public IEnumerable<Anuncio> ObterPorImoveis(int[] idImoveis)
+        public IEnumerable<Anuncio> ObterPorImoveis(int[] idImoveis, Portal? portal = null)
         {
-            IQueryable<Anuncio> query = ObterTodos().Where(_ => idImoveis.Contains(_.IdImovel));
+            IQueryable<Anuncio> query = ObterTodos().Where(_ => idImoveis.Contains(_.IdImovel) && (!portal.HasValue || _.Portal == portal.Value));
             return query.ToList();
         }
 

@@ -19,9 +19,9 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
             return _anuncioRepository.ObterPorCotas(idCotas);
         }
 
-        public IEnumerable<Anuncio> ObterAnunciosPorImoveis(int[] idImoveis)
+        public IEnumerable<Anuncio> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null)
         {
-            return _anuncioRepository.ObterPorImoveis(idImoveis);
+            return _anuncioRepository.ObterPorImoveis(idImoveis, portal);
         }
 
         public IEnumerable<Anuncio> ObterAnunciosPorPortais(Portal[] portais)
