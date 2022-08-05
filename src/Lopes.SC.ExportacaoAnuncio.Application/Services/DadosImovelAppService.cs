@@ -65,7 +65,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 
             IDictionary<int, string[]> urlTours = _imovelRepository.ObterUrlTourVirtuais(idImoveisResgatados);
             IDictionary<int, string[]> urlVideos = _imovelRepository.ObterUrlVideos(idImoveisResgatados);
-            IEnumerable<Fotos> imagens = _imovelRepository.ObterFotos(idImoveisResgatados);
+            IEnumerable<Fotos> fotos = _imovelRepository.ObterFotos(idImoveisResgatados);
 
 
             if (progresso != null)
@@ -78,7 +78,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
                 imovel.Caracteristicas = caracteristicas.Where(_ => _.IdImovel == dados.IdImovel);
                 imovel.UrlTourVirtuais = urlTours.Where(_ => _.Key == dados.IdImovel).SelectMany(_ => _.Value);
                 imovel.UrlVideos       = urlVideos.Where(_ => _.Key == dados.IdImovel).SelectMany(_ => _.Value);
-                imovel.Imagens         = imagens.Where(_ => _.IdImovel == dados.IdImovel);
+                imovel.Imagens         = fotos.Where(_ => _.IdImovel == dados.IdImovel);
 
                 //TODO: preencher imagens
                 //dados.Imagens = 

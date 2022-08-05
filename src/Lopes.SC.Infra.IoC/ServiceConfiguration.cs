@@ -8,7 +8,6 @@ using Lopes.SC.Infra.XML;
 using Microsoft.Extensions.DependencyInjection;
 using Lopes.SC.Domain.Commons;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace Lopes.SC.Infra.IoC
 {

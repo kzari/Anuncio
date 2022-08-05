@@ -103,11 +103,11 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 
                         progresso.Atualizar("1. Verificando o status...", percentualConcluido: 10);
 
-                        IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portalEmpresa.Portal, portalEmpresa.IdEmpresa);
+                        IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portal, idEmpresa);
 
                         int[] idImoveisNoPortal = atualizador.ObterIdImoveisNoPortal().ToArray();
 
-                        foreach (Anuncio anuncio in portalEmpresa.Anuncios)
+                        foreach (Anuncio anuncio in anuncios)
                         {
                             bool imovelNoPortal = idImoveisNoPortal.Contains(anuncio.IdImovel);
 
@@ -145,6 +145,9 @@ namespace Lopes.SC.ExportacaoAnuncio.Application.Services
 
 
                         progresso.Atualizar($"Concluído. R: {imoveisParaRemover.Count.ToString().PadLeft(5)} ° {jaRemovidos.ToString().PadLeft(5)} A: {imoveisParaAtualizar.Count.ToString().PadLeft(5)} ° {jaAtualizados.ToString().PadLeft(5)}).", percentualConcluido: 100);
+
+
+                        imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes, progresso);
 
                         progressoGeral.Atualizar($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }

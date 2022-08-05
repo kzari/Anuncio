@@ -1,7 +1,6 @@
 ﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
 using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
 using Lopes.SC.ExportacaoAnuncio.Domain.Services;
 
 namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
