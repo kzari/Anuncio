@@ -1,6 +1,6 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Models;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Imovel
+namespace Lopes.SC.Anuncio.Domain.Imovel
 {
     public class DadosImovel
     {

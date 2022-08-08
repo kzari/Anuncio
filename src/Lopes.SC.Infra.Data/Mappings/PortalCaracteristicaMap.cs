@@ -1,4 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -6,7 +6,7 @@ namespace Lopes.SC.Infra.Data.Mappings
 {
     public class PortalCaracteristicaMap : IEntityTypeConfiguration<PortalCaracteristica>
     {
-        public void Configure(EntityTypeBuilder<ExportacaoAnuncio.Domain.Models.PortalCaracteristica> builder)
+        public void Configure(EntityTypeBuilder<Anuncio.Domain.Models.PortalCaracteristica> builder)
         {
             builder.ToTable("tb_VEIC_x_ATRI_veiculo_atributo");
             builder.HasNoKey();

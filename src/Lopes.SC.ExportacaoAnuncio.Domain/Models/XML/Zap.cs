@@ -1,9 +1,9 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Services;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models;
+using Lopes.SC.Anuncio.Domain.Services;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
+namespace Lopes.SC.Anuncio.Domain.XML
 {
     public class Zap : PortalXmlElementosBase, IPortalXMLElementos
     {

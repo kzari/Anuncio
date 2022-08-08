@@ -1,7 +1,7 @@
 ﻿using Lopes.SC.Domain.Commons;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Enums;
 
-namespace Lopes.SC.ExportacaoAnuncio.Application.Interfaces
+namespace Lopes.SC.Anuncio.Application.Interfaces
 {
     public interface IAtualizarAnunciosAppService
     {

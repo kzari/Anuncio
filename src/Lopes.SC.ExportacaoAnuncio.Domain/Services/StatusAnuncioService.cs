@@ -1,8 +1,7 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Reposities;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
+namespace Lopes.SC.Anuncio.Domain.Services
 {
     public class StatusAnuncioService : IStatusAnuncioService
     {
@@ -16,7 +15,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
         }
 
 
-        public StatusAnuncioPortal VerificarStatusImovelPortal(Anuncio anuncio, bool imovelNoXml)
+        public StatusAnuncioPortal VerificarStatusImovelPortal(Models.Anuncio anuncio, bool imovelNoXml)
         {
             if (!anuncio.Ativo ||
                 !anuncio.CotaAtiva ||
@@ -34,7 +33,7 @@ namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
             return StatusAnuncioPortal.Atualizado;
         }
 
-        private bool PodeAnunciarOutraEmpresa(Anuncio anuncio)
+        private bool PodeAnunciarOutraEmpresa(Models.Anuncio anuncio)
         {
             if (anuncio.PodeAnunciarOutraEmpresa)
                 return true;

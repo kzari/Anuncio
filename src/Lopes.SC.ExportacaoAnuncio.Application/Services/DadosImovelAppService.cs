@@ -1,10 +1,10 @@
 ﻿using Lopes.SC.Domain.Commons;
-using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
+using Lopes.SC.Anuncio.Application.Interfaces;
+using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models;
+using Lopes.SC.Anuncio.Domain.Reposities;
 
-namespace Lopes.SC.ExportacaoAnuncio.Application.Services
+namespace Lopes.SC.Anuncio.Application.Services
 {
 
     public class DadosImovelAppService : IDadosImovelAppService

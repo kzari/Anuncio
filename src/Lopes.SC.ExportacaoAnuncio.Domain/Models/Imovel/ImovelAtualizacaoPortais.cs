@@ -1,6 +1,6 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Models
+namespace Lopes.SC.Anuncio.Domain.Models
 {
     public class AnuncioAtualizacao
     {

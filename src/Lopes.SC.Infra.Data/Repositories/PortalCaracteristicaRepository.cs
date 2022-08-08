@@ -1,6 +1,6 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Models;
+using Lopes.SC.Anuncio.Domain.Reposities;
 using Lopes.SC.Infra.Data.Context;
 
 namespace Lopes.SC.Infra.Data.Repositories

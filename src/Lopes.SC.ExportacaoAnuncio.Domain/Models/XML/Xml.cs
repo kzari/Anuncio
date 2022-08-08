@@ -1,6 +1,6 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.XML;
+﻿using Lopes.SC.Anuncio.Domain.XML;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Models.XML
+namespace Lopes.SC.Anuncio.Domain.Models.XML
 {
     public class Xml
     {

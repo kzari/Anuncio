@@ -1,4 +1,4 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.XML
+﻿namespace Lopes.SC.Anuncio.Domain.XML
 {
     public struct Atributo
     {

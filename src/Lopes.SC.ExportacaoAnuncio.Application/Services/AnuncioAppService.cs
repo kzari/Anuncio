@@ -1,8 +1,8 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Reposities;
+using Lopes.SC.Anuncio.Domain.Models;
 
-namespace Lopes.SC.ExportacaoAnuncio.Application.Services
+namespace Lopes.SC.Anuncio.Application.Services
 {
     public class AnuncioAppService : IAnuncioAppService
     {

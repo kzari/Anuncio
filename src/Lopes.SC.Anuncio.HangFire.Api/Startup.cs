@@ -1,6 +1,6 @@
 ﻿using Hangfire;
-using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Application.Interfaces;
+using Lopes.SC.Anuncio.Domain.Enums;
 
 namespace Lopes.SC.Jobs.Api
 {

@@ -1,4 +1,4 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Imovel
+﻿namespace Lopes.SC.Anuncio.Domain.Imovel
 {
     public class Caracteristica
     {

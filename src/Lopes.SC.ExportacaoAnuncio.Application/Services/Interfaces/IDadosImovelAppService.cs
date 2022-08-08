@@ -1,7 +1,7 @@
 ﻿using Lopes.SC.Domain.Commons;
-using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Imovel;
 
-namespace Lopes.SC.ExportacaoAnuncio.Application.Interfaces
+namespace Lopes.SC.Anuncio.Application.Interfaces
 {
     public interface IDadosImovelAppService
     {

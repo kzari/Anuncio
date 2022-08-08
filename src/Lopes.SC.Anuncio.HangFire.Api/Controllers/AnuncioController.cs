@@ -2,8 +2,8 @@ using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
 using Lopes.SC.Jobs.Api.Log;
-using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Application.Interfaces;
+using Lopes.SC.Anuncio.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lopes.SC.Jobs.Api.Controllers

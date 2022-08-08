@@ -1,4 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
+﻿using Lopes.SC.Anuncio.Domain.Reposities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.SC.Infra.Data.Repositories

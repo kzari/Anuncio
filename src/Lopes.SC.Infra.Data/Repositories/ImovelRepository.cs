@@ -1,6 +1,6 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
+﻿using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models;
+using Lopes.SC.Anuncio.Domain.Reposities;
 using Lopes.SC.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 

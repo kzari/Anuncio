@@ -1,4 +1,4 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Models;
 using Lopes.SC.Infra.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

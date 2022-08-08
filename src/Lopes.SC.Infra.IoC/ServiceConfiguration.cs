@@ -1,7 +1,7 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Application.Services;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
-using Lopes.SC.ExportacaoAnuncio.Domain.Services;
+﻿using Lopes.SC.Anuncio.Application.Interfaces;
+using Lopes.SC.Anuncio.Application.Services;
+using Lopes.SC.Anuncio.Domain.Reposities;
+using Lopes.SC.Anuncio.Domain.Services;
 using Lopes.SC.Infra.Data.Context;
 using Lopes.SC.Infra.Data.Repositories;
 using Lopes.SC.Infra.XML;

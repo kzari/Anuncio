@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.IoC", "src\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.Data", "src\Lopes.SC.Infra.Data\Lopes.SC.Infra.Data.csproj", "{0EA037BD-9624-4697-9561-586ACF785AE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.Domain", "src\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.ExportacaoAnuncio.Domain.csproj", "{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Anuncio.Domain", "src\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.Anuncio.Domain.csproj", "{648010E4-2224-47FF-B0DA-0EC1AEE96BB1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.XML", "src\Lopes.SC.Infra.XML\Lopes.SC.Infra.XML.csproj", "{6C354FC6-7DE6-471A-981C-03464ADC918C}"
 EndProject
@@ -41,6 +41,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Jobs.Api", "src\Lopes.SC.Anuncio.HangFire.Api\Lopes.SC.Jobs.Api.csproj", "{DD5478E3-89DA-4068-A117-61825569024E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.ConsoleCommons", "src\Lopes.SC.Infra.Console.Commons\Lopes.SC.Infra.ConsoleCommons.csproj", "{24A18421-7694-46DC-9412-52719C508EA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{6653F361-3879-4C77-9EE1-8DDC289AECE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.Anuncio.Domain.Testes", "src\Lopes.SC.Anuncio.Domain.Testes\Lopes.SC.Anuncio.Domain.Testes.csproj", "{168E2676-0A23-4E7E-8E15-E8C556972D5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +92,10 @@ Global
 		{24A18421-7694-46DC-9412-52719C508EA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A18421-7694-46DC-9412-52719C508EA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A18421-7694-46DC-9412-52719C508EA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{168E2676-0A23-4E7E-8E15-E8C556972D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{168E2676-0A23-4E7E-8E15-E8C556972D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{168E2676-0A23-4E7E-8E15-E8C556972D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{168E2676-0A23-4E7E-8E15-E8C556972D5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +113,8 @@ Global
 		{1DA9B66C-987B-49E9-A6C6-A47746CC9CE2} = {BA4C73B5-5886-4BC0-9201-B60297E8FA07}
 		{DD5478E3-89DA-4068-A117-61825569024E} = {F85F6353-2238-427B-9CCF-44E0DB7DD582}
 		{24A18421-7694-46DC-9412-52719C508EA1} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
+		{6653F361-3879-4C77-9EE1-8DDC289AECE6} = {BA4C73B5-5886-4BC0-9201-B60297E8FA07}
+		{168E2676-0A23-4E7E-8E15-E8C556972D5F} = {6653F361-3879-4C77-9EE1-8DDC289AECE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD9DC786-D91E-4431-BAAD-4D4C00C5C2B1}

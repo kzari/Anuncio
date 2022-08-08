@@ -1,6 +1,6 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Models;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
+namespace Lopes.SC.Anuncio.Domain.Reposities
 {
     public interface IEmpresaApelidoPortalRepository
     {

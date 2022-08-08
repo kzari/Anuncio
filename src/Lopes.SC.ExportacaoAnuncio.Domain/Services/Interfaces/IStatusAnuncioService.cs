@@ -1,10 +1,10 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Models;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
+namespace Lopes.SC.Anuncio.Domain.Services
 {
     public interface IStatusAnuncioService
     {
-        StatusAnuncioPortal VerificarStatusImovelPortal(Anuncio anuncio, bool imovelNoXml);
+        StatusAnuncioPortal VerificarStatusImovelPortal(Models.Anuncio anuncio, bool imovelNoXml);
     }
 }

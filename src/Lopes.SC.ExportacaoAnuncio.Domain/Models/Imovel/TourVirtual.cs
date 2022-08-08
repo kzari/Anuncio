@@ -1,4 +1,4 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Models
+﻿namespace Lopes.SC.Anuncio.Domain.Models
 {
     public class TourVirtual
     {

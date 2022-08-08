@@ -1,8 +1,8 @@
 ﻿using Lopes.SC.Domain.Commons;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Imovel;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
+namespace Lopes.SC.Anuncio.Domain.Services
 {
     public interface IPortalAtualizadorApi : IPortalAtualizador
     {

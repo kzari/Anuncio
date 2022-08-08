@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
-using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Application.Interfaces;
+using Lopes.SC.Anuncio.Domain.Enums;
 using Lopes.SC.Infra.ConsoleCommons.Log;
 using Lopes.SC.Infra.IoC;
 using Microsoft.Extensions.DependencyInjection;

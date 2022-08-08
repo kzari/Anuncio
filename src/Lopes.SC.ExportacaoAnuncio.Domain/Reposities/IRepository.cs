@@ -1,5 +1,5 @@
 ﻿
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
+namespace Lopes.SC.Anuncio.Domain.Reposities
 {
     public interface IRepository<TEntidade> where TEntidade : class
     {

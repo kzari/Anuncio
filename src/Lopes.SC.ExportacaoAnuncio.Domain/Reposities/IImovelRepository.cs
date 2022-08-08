@@ -1,7 +1,7 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
+namespace Lopes.SC.Anuncio.Domain.Reposities
 {
     public interface IImovelRepository
     {

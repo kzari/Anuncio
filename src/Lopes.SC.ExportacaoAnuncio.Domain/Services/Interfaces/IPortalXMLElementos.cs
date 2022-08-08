@@ -1,7 +1,7 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
+﻿using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models.XML;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
+namespace Lopes.SC.Anuncio.Domain.Services
 {
     public interface IPortalXMLElementos
     {

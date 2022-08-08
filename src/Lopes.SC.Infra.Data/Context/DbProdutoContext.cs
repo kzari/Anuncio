@@ -1,5 +1,5 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models;
 using Lopes.SC.Infra.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +16,7 @@ namespace Lopes.SC.Infra.Data.Context
         }
 
 
-        public DbSet<Anuncio> Anuncios { get; set; }
+        public DbSet<Anuncio.Domain.Models.Anuncio> Anuncios { get; set; }
         public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
         public DbSet<DadosPrincipais> Imoveis { get; set; }
         public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }

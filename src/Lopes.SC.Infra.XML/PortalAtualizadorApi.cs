@@ -1,6 +1,6 @@
 ﻿using Lopes.SC.Domain.Commons;
-using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Services;
+using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Services;
 
 namespace Lopes.SC.Infra.XML
 {

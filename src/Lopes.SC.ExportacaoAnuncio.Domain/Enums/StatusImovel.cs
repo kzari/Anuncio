@@ -1,4 +1,4 @@
-﻿namespace Lopes.SC.ExportacaoAnuncio.Domain.Enums
+﻿namespace Lopes.SC.Anuncio.Domain.Enums
 {
     public enum StatusImovel
     {

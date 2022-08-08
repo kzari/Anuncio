@@ -1,11 +1,11 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Imovel;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models.XML;
-using Lopes.SC.ExportacaoAnuncio.Domain.XML;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Imovel;
+using Lopes.SC.Anuncio.Domain.Models;
+using Lopes.SC.Anuncio.Domain.Models.XML;
+using Lopes.SC.Anuncio.Domain.XML;
 using System.Text.RegularExpressions;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Services
+namespace Lopes.SC.Anuncio.Domain.Services
 {
     public abstract class PortalXmlElementosBase
     {

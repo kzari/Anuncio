@@ -1,7 +1,7 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
-using Lopes.SC.ExportacaoAnuncio.Domain.Reposities;
-using Lopes.SC.ExportacaoAnuncio.Domain.Services;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Models;
+using Lopes.SC.Anuncio.Domain.Reposities;
+using Lopes.SC.Anuncio.Domain.Services;
 using Lopes.SC.Infra.XML;
 using Microsoft.Extensions.Configuration;
 

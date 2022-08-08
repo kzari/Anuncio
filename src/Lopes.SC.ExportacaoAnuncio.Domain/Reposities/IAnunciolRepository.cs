@@ -1,12 +1,12 @@
-﻿using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
-using Lopes.SC.ExportacaoAnuncio.Domain.Models;
+﻿using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Models;
 
-namespace Lopes.SC.ExportacaoAnuncio.Domain.Reposities
+namespace Lopes.SC.Anuncio.Domain.Reposities
 {
     public interface IAnuncioRepository
     {
-        IEnumerable<Anuncio> ObterPorImoveis(int[] idImoveis, Portal? portal);
-        IEnumerable<Anuncio> ObterPorCotas(int[] idCotas);
-        IEnumerable<Anuncio> ObterPorPortais(Portal[] portais);
+        IEnumerable<Models.Anuncio> ObterPorImoveis(int[] idImoveis, Portal? portal);
+        IEnumerable<Models.Anuncio> ObterPorCotas(int[] idCotas);
+        IEnumerable<Models.Anuncio> ObterPorPortais(Portal[] portais);
     }
 }
