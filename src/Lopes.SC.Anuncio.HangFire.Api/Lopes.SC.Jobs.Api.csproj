@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.ExportacaoAnuncio.Application.csproj" />
+    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.Anuncio.Application.csproj" />
     <ProjectReference Include="..\Lopes.SC.Infra.Console.Commons\Lopes.SC.Infra.ConsoleCommons.csproj" />
     <ProjectReference Include="..\Lopes.SC.Infra.IoC\Lopes.SC.Infra.IoC.csproj" />
   </ItemGroup>

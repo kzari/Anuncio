@@ -1,12 +1,12 @@
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
-using Lopes.SC.Anuncio.HangFire.Api.Log;
+using Lopes.SC.Jobs.Api.Log;
 using Lopes.SC.ExportacaoAnuncio.Application.Interfaces;
 using Lopes.SC.ExportacaoAnuncio.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lopes.SC.Anuncio.HangFire.Api.Controllers
+namespace Lopes.SC.Jobs.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]

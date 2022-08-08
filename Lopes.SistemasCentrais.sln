@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.ConsoleTestes", "src\Lopes.SC.ExportacaoAnuncio.Console\Lopes.SC.ExportacaoAnuncio.ConsoleTestes.csproj", "{D8CD5875-408C-409E-9C12-50FC10B9A6CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.Application", "src\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.ExportacaoAnuncio.Application.csproj", "{2214917F-A154-4D98-9B96-D74305D269D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Anuncio.Application", "src\Lopes.SC.ExportacaoAnuncio.Application\Lopes.SC.Anuncio.Application.csproj", "{2214917F-A154-4D98-9B96-D74305D269D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. UIs", "1. UIs", "{0DF06FE8-4877-40D4-958C-8A2C660484EE}"
 EndProject
@@ -26,8 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Services", "2. Services"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5.1. Data", "5.1. Data", "{C4446485-A85B-4B4A-9B52-2768E8351ECD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.ExportacaoAnuncio.Api", "src\Lopes.SC.ExportacaoAnuncio.Api\Lopes.SC.ExportacaoAnuncio.Api.csproj", "{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{7D051D87-7FF2-458E-8EF0-2400DD9D4528}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.IoC", "src\Lopes.SC.Infra.IoC\Lopes.SC.Infra.IoC.csproj", "{B3BD8547-551E-4962-A837-8DF279FC7D6F}"
@@ -40,9 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.XML", "src\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Domain.Commons", "src\Lopes.SC.Domain.Commons\Lopes.SC.Domain.Commons.csproj", "{1DA9B66C-987B-49E9-A6C6-A47746CC9CE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.Anuncio.HangFire.Api", "src\Lopes.SC.Anuncio.HangFire.Api\Lopes.SC.Anuncio.HangFire.Api.csproj", "{DD5478E3-89DA-4068-A117-61825569024E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Jobs.Api", "src\Lopes.SC.Anuncio.HangFire.Api\Lopes.SC.Jobs.Api.csproj", "{DD5478E3-89DA-4068-A117-61825569024E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.SC.Infra.ConsoleCommons", "src\Lopes.SC.Infra.Console.Commons\Lopes.SC.Infra.ConsoleCommons.csproj", "{24A18421-7694-46DC-9412-52719C508EA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.SC.Infra.ConsoleCommons", "src\Lopes.SC.Infra.Console.Commons\Lopes.SC.Infra.ConsoleCommons.csproj", "{24A18421-7694-46DC-9412-52719C508EA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +60,6 @@ Global
 		{41F7A6B1-82D3-4A9E-9FC3-01A61C33DA71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41F7A6B1-82D3-4A9E-9FC3-01A61C33DA71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41F7A6B1-82D3-4A9E-9FC3-01A61C33DA71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B3BD8547-551E-4962-A837-8DF279FC7D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B3BD8547-551E-4962-A837-8DF279FC7D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3BD8547-551E-4962-A837-8DF279FC7D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -103,7 +97,6 @@ Global
 		{2214917F-A154-4D98-9B96-D74305D269D9} = {67E1DEA1-F354-478F-897D-A99D46AC4A25}
 		{41F7A6B1-82D3-4A9E-9FC3-01A61C33DA71} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
 		{C4446485-A85B-4B4A-9B52-2768E8351ECD} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
-		{0C1BC8D4-D12C-4A5A-AA21-33F5083302B7} = {F85F6353-2238-427B-9CCF-44E0DB7DD582}
 		{7D051D87-7FF2-458E-8EF0-2400DD9D4528} = {0DF06FE8-4877-40D4-958C-8A2C660484EE}
 		{B3BD8547-551E-4962-A837-8DF279FC7D6F} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
 		{0EA037BD-9624-4697-9561-586ACF785AE2} = {C4446485-A85B-4B4A-9B52-2768E8351ECD}

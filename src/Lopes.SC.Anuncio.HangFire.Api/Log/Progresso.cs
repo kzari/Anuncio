@@ -3,7 +3,7 @@ using Hangfire.Console.Progress;
 using Hangfire.Server;
 using Lopes.SC.Domain.Commons;
 
-namespace Lopes.SC.Anuncio.HangFire.Api.Log
+namespace Lopes.SC.Jobs.Api.Log
 {
     public class Progresso : IProgressBar, IProgresso
     {

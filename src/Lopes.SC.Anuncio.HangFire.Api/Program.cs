@@ -1,9 +1,10 @@
 using Hangfire;
 using Hangfire.Console;
-using Lopes.SC.Anuncio.HangFire.Api.Log;
+using Lopes.SC.Jobs.Api;
+using Lopes.SC.Jobs.Api.Log;
 using Lopes.SC.Infra.IoC;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -18,13 +19,19 @@ builder.Services.AddHangfireServer();
 
 ServiceConfiguration.Configure<HangFireLog>(builder.Services);
 
+builder.Services.AddSingleton<IHostLifetime, NoopConsoleLifetime>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-    
+
+
+WebApplication? app = builder.Build();
+
+new Startup().Configure(app);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
