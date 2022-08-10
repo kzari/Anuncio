@@ -2,7 +2,7 @@
 
 namespace Lopes.SC.Anuncio.Domain.Models
 {
-    public class Anuncio
+    public class AnuncioImovel
     {
         public int IdAnuncio { get; set; }
         public int IdImovel { get; set; }

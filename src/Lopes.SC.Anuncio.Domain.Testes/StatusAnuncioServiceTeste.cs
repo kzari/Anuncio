@@ -1,4 +1,5 @@
 using Lopes.SC.Anuncio.Domain.Enums;
+using Lopes.SC.Anuncio.Domain.Models;
 using Lopes.SC.Anuncio.Domain.Services;
 using Lopes.SC.Anuncio.Domain.Testes.Mocks;
 
@@ -17,7 +18,7 @@ namespace Lopes.SC.Anuncio.Domain.Testes
         [Fact]
         public void VerificarAnuncioDesatualizado()
         {
-            var anuncioDesatualizado = new Models.Anuncio()
+            var anuncioDesatualizado = new AnuncioImovel()
             {
                 IdEmpresa = 1,
                 DataAtualizacaoAnuncioPortal = DateTime.Now.AddDays(-1),
@@ -33,7 +34,7 @@ namespace Lopes.SC.Anuncio.Domain.Testes
         [Fact]
         public void VerificarAnuncioAtualizado()
         {
-            Models.Anuncio anuncioAtualizado = AnuncioAtualizado();
+            Models.AnuncioImovel anuncioAtualizado = AnuncioAtualizado();
             StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncioAtualizado, true);
             Assert.True(status == StatusAnuncioPortal.Atualizado);
         }
@@ -99,10 +100,10 @@ namespace Lopes.SC.Anuncio.Domain.Testes
 
 
 
-        private static Models.Anuncio AnuncioAtualizado()
+        private static Models.AnuncioImovel AnuncioAtualizado()
         {
             var now = DateTime.Now;
-            var anuncioAtualizado = new Models.Anuncio()
+            var anuncioAtualizado = new AnuncioImovel()
             {
                 IdEmpresa = 1,
                 DataAtualizacaoAnuncioPortal = now,

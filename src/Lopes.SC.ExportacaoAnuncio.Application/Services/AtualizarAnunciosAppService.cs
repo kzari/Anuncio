@@ -34,28 +34,28 @@ namespace Lopes.SC.Anuncio.Application.Services
 
         public void AtualizarPorImoveis(int[] idImoveis, Portal? portal, ILogger log)
         {
-            IEnumerable<Anuncio> anuncios = _anuncioAppService.ObterAnunciosPorImoveis(idImoveis, portal).OrderBy(_ => _.IdImovel)
+            IEnumerable<AnuncioImovel> anuncios = _anuncioAppService.ObterAnunciosPorImoveis(idImoveis, portal).OrderBy(_ => _.IdImovel)
                                                                                                  .ToList();
             AtualizarImoveisXMLs(anuncios, log);
         }
 
         public void AtualizarPorCotas(int[] idCotas, ILogger log)
         {
-            IEnumerable<Anuncio> anuncios = _anuncioAppService.ObterAnunciosPorCotas(idCotas).OrderBy(_ => _.IdImovel)
+            IEnumerable<AnuncioImovel> anuncios = _anuncioAppService.ObterAnunciosPorCotas(idCotas).OrderBy(_ => _.IdImovel)
                                                                                              .ToList();
             AtualizarImoveisXMLs(anuncios, log);
         }
 
         public void AtualizarPorPortais(Portal[] portais, ILogger log)
         {
-            IEnumerable<Anuncio> anuncios = _anuncioAppService.ObterAnunciosPorPortais(portais).OrderBy(_ => _.Portal)
+            IEnumerable<AnuncioImovel> anuncios = _anuncioAppService.ObterAnunciosPorPortais(portais).OrderBy(_ => _.Portal)
                                                                                                .ThenBy(_ => _.IdEmpresa)
                                                                                                .ThenBy(_ => _.IdImovel)
                                                                                                .ToList();
             AtualizarImoveisXMLs(anuncios, log);
         }
 
-        private void AtualizarImoveisXMLs(IEnumerable<Anuncio> anuncios, ILogger log)
+        private void AtualizarImoveisXMLs(IEnumerable<AnuncioImovel> anuncios, ILogger log)
         {
             int totalAnuncios = anuncios.Count();
             int partitionIds = 0;
@@ -93,7 +93,7 @@ namespace Lopes.SC.Anuncio.Application.Services
 
                         int idEmpresa = portalEmpresa.IdEmpresa;
                         Portal portal = portalEmpresa.Portal;
-                        List<Anuncio> anuncios = portalEmpresa.Anuncios;
+                        List<AnuncioImovel> anuncios = portalEmpresa.Anuncios;
                         int qtdeAnuncios = anuncios.Count;
 
                         List<int> imoveisParaRemover = new();
@@ -109,7 +109,7 @@ namespace Lopes.SC.Anuncio.Application.Services
 
                         int[] idImoveisNoPortal = atualizador.ObterIdImoveisNoPortal().ToArray();
 
-                        foreach (Anuncio anuncio in anuncios)
+                        foreach (AnuncioImovel anuncio in anuncios)
                         {
                             bool imovelNoPortal = idImoveisNoPortal.Contains(anuncio.IdImovel);
 
@@ -159,7 +159,7 @@ namespace Lopes.SC.Anuncio.Application.Services
             progressoGeral.Atualizar($"Atualização concluída. {qtdeCotas} cotas, {totalAnuncios} anúncios.", percentualConcluido: 100);
         }
         
-        private List<AnuncioAtualizacao> Atualizar(IEnumerable<Anuncio> anuncios,
+        private List<AnuncioAtualizacao> Atualizar(IEnumerable<AnuncioImovel> anuncios,
                                                    IEnumerable<int> imoveisParaAtualizar,
                                                    int idEmpresa,
                                                    Portal portal,

@@ -5,6 +5,6 @@ namespace Lopes.SC.Anuncio.Domain.Services
 {
     public interface IStatusAnuncioService
     {
-        StatusAnuncioPortal VerificarStatusImovelPortal(Models.Anuncio anuncio, bool imovelNoXml);
+        StatusAnuncioPortal VerificarStatusImovelPortal(Models.AnuncioImovel anuncio, bool imovelNoXml);
     }
 }

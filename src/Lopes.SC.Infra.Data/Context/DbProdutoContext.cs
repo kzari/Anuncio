@@ -16,7 +16,7 @@ namespace Lopes.SC.Infra.Data.Context
         }
 
 
-        public DbSet<Anuncio.Domain.Models.Anuncio> Anuncios { get; set; }
+        public DbSet<Anuncio.Domain.Models.AnuncioImovel> Anuncios { get; set; }
         public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
         public DbSet<DadosPrincipais> Imoveis { get; set; }
         public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }

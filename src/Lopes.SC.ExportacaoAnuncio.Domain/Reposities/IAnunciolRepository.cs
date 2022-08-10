@@ -5,8 +5,8 @@ namespace Lopes.SC.Anuncio.Domain.Reposities
 {
     public interface IAnuncioRepository
     {
-        IEnumerable<Models.Anuncio> ObterPorImoveis(int[] idImoveis, Portal? portal);
-        IEnumerable<Models.Anuncio> ObterPorCotas(int[] idCotas);
-        IEnumerable<Models.Anuncio> ObterPorPortais(Portal[] portais);
+        IEnumerable<AnuncioImovel> ObterPorImoveis(int[] idImoveis, Portal? portal);
+        IEnumerable<AnuncioImovel> ObterPorCotas(int[] idCotas);
+        IEnumerable<AnuncioImovel> ObterPorPortais(Portal[] portais);
     }
 }

@@ -5,8 +5,8 @@ namespace Lopes.SC.Anuncio.Application.Services
 {
     public interface IAnuncioAppService
     {
-        IEnumerable<Anuncio> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null);
-        IEnumerable<Anuncio> ObterAnunciosPorCotas(int[] idCotas);
-        IEnumerable<Anuncio> ObterAnunciosPorPortais(Portal[] portais);
+        IEnumerable<AnuncioImovel> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null);
+        IEnumerable<AnuncioImovel> ObterAnunciosPorCotas(int[] idCotas);
+        IEnumerable<AnuncioImovel> ObterAnunciosPorPortais(Portal[] portais);
     }
 }

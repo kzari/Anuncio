@@ -14,17 +14,17 @@ namespace Lopes.SC.Anuncio.Application.Services
         }
 
 
-        public IEnumerable<Anuncio> ObterAnunciosPorCotas(int[] idCotas)
+        public IEnumerable<AnuncioImovel> ObterAnunciosPorCotas(int[] idCotas)
         {
             return _anuncioRepository.ObterPorCotas(idCotas);
         }
 
-        public IEnumerable<Anuncio> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null)
+        public IEnumerable<AnuncioImovel> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null)
         {
             return _anuncioRepository.ObterPorImoveis(idImoveis, portal);
         }
 
-        public IEnumerable<Anuncio> ObterAnunciosPorPortais(Portal[] portais)
+        public IEnumerable<AnuncioImovel> ObterAnunciosPorPortais(Portal[] portais)
         {
             return _anuncioRepository.ObterPorPortais(portais);
         }

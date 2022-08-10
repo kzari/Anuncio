@@ -15,7 +15,7 @@ namespace Lopes.SC.Anuncio.Domain.Services
         }
 
 
-        public StatusAnuncioPortal VerificarStatusImovelPortal(Models.Anuncio anuncio, bool imovelNoXml)
+        public StatusAnuncioPortal VerificarStatusImovelPortal(Models.AnuncioImovel anuncio, bool imovelNoXml)
         {
             if (!anuncio.Ativo ||
                 !anuncio.CotaAtiva ||
@@ -33,7 +33,7 @@ namespace Lopes.SC.Anuncio.Domain.Services
             return StatusAnuncioPortal.Atualizado;
         }
 
-        private bool PodeAnunciarOutraEmpresa(Models.Anuncio anuncio)
+        private bool PodeAnunciarOutraEmpresa(Models.AnuncioImovel anuncio)
         {
             if (anuncio.PodeAnunciarOutraEmpresa)
                 return true;
