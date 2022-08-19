@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.Anuncio.Domain.csproj" />
+    <ProjectReference Include="..\Lopes.SC.Anuncio.Domain\Lopes.SC.Anuncio.Domain.csproj" />
   </ItemGroup>
 
 </Project>

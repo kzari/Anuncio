@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lopes.SC.Commons\Lopes.SC.Infra.Commons.csproj" />
-    <ProjectReference Include="..\Lopes.SC.ExportacaoAnuncio.Domain\Lopes.SC.Anuncio.Domain.csproj" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lopes.SC.Anuncio.Domain\Lopes.SC.Anuncio.Domain.csproj" />
   </ItemGroup>
 
 </Project>
