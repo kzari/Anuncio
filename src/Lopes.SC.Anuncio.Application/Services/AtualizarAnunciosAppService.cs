@@ -6,6 +6,7 @@ using Lopes.SC.Anuncio.Domain.Models;
 using Lopes.SC.Anuncio.Domain.Reposities;
 using Lopes.SC.Anuncio.Domain.Services;
 using System.Collections.Concurrent;
+using Lopes.SC.Commons.Extensions;
 
 namespace Lopes.SC.Anuncio.Application.Services
 {
@@ -58,8 +59,6 @@ namespace Lopes.SC.Anuncio.Application.Services
         private void AtualizarImoveisXMLs(IEnumerable<AnuncioImovel> anuncios, ILogger log)
         {
             int totalAnuncios = anuncios.Count();
-            int partitionIds = 0;
-            int cotaAtual = 0;
 
             var anunciosAgrupados = anuncios.GroupBy(_ => new { _.Portal, _.IdEmpresa }, (key, group) => new
             {
@@ -71,13 +70,16 @@ namespace Lopes.SC.Anuncio.Application.Services
 
             (log ?? _logger).Info($"{totalAnuncios} anúncios encontrados para atualização");
 
-            IProgresso progressoGeral = (log ?? _logger).ObterProgresso(anunciosAgrupados.Count(), 95, $">> Atualização de imóveis nos portais.");
+            IProgresso progressoGeral = (log ?? _logger).ObterProgresso(anunciosAgrupados.Count, 95, $">> Atualização de imóveis nos portais.");
             progressoGeral.Atualizar($"Processando {qtdeCotas} cotas.");
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
             var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
             //var partitions = partitioner.GetPartitions(1);
 
+            int partitionIds = 0;
+            int cotaAtual = 0;
+            
             Task[] tasks = partitions.Select(partition => Task.Run(() =>
             {
                 int partitionId = partitionIds++;
@@ -86,6 +88,7 @@ namespace Lopes.SC.Anuncio.Application.Services
                 IImovelAtualizacaoPortaisRepository imovelAtualizacaoPortaisRepository = (IImovelAtualizacaoPortaisRepository)_serviceProvider.GetService(typeof(IImovelAtualizacaoPortaisRepository));
 
                 using (partition)
+                {
                     while (partition.MoveNext())
                     {
                         cotaAtual++;
@@ -106,7 +109,6 @@ namespace Lopes.SC.Anuncio.Application.Services
                         progresso.Atualizar("1. Verificando o status...", percentualConcluido: 10);
 
                         IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portal, idEmpresa);
-
                         int[] idImoveisNoPortal = atualizador.ObterIdImoveisNoPortal().ToArray();
 
                         foreach (AnuncioImovel anuncio in anuncios)
@@ -153,6 +155,7 @@ namespace Lopes.SC.Anuncio.Application.Services
 
                         progressoGeral.Atualizar($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }
+                }
             })).ToArray();
             Task.WaitAll(tasks);
 
@@ -168,7 +171,7 @@ namespace Lopes.SC.Anuncio.Application.Services
         {
             progresso.Atualizar($"3. Obtendo dados dos {imoveisParaAtualizar.Count()} imóveis.", percentualConcluido: 20);
 
-            IDadosImovelAppService dadosImovelAppService = (IDadosImovelAppService)_serviceProvider.GetService(typeof(IDadosImovelAppService));
+            IDadosImovelAppService dadosImovelAppService = _serviceProvider.ObterServico<IDadosImovelAppService>();
 
             IEnumerable<DadosImovel> imoveis = ObterDadosImoveis(imoveisParaAtualizar.ToArray(), dadosImovelAppService, progresso);
 
