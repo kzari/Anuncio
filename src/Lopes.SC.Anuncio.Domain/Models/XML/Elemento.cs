@@ -28,10 +28,10 @@
         public List<Elemento> Filhos { get; set; }
 
         public Elemento? AdicionarElemento(string nome, 
-                                          string valor = null, 
-                                          IEnumerable<Atributo> atributos = null, 
-                                          IEnumerable<Elemento> elementosFilhos = null,
-                                          bool naoAdicionarSeNuloOuVazio = false)
+                                           string? valor = null, 
+                                           IEnumerable<Atributo> atributos = null, 
+                                           IEnumerable<Elemento> elementosFilhos = null,
+                                           bool naoAdicionarSeNuloOuVazio = false)
         {
             if (naoAdicionarSeNuloOuVazio && string.IsNullOrEmpty(valor))
                 return null;

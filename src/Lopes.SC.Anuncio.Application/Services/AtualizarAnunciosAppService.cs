@@ -174,7 +174,7 @@ namespace Lopes.SC.Anuncio.Application.Services
 
             //TODO: tratar imóveis não encontrados
 
-            List<AnuncioAtualizacao> atualizacoes = new List<AnuncioAtualizacao>();
+            List<AnuncioAtualizacao> atualizacoes = new();
 
             if (!imoveis.Any())
                 return atualizacoes;

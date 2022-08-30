@@ -61,15 +61,15 @@ namespace Lopes.SC.Anuncio.Domain.Services
             return estados.Any(a => a.Equals(estado));
         }
 
-        public static string? FormatarDecimal(decimal? valor)
+        public static string FormatarDecimal(decimal? valor)
         {
             if (!valor.HasValue)
-                return null;
+                return string.Empty;
 
-            return string.Format("{0},00", valor.Value);
+            return string.Format("{0,00}", valor.Value);
         }
 
-        public static string RemoverCaracteresInvalidosUnicode(string input, string replacement)
+        public static string RemoverCaracteresInvalidosUnicode(string? input, string replacement)
         {
             if (string.IsNullOrEmpty(input))
                 return string.Empty;

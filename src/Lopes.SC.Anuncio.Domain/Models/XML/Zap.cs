@@ -84,7 +84,7 @@ namespace Lopes.SC.Anuncio.Domain.XML
             }
         }
 
-        private void AdicionarValores(DadosPrincipais dados, ElementoImovel eImovel)
+        private static void AdicionarValores(DadosPrincipais dados, ElementoImovel eImovel)
         {
             eImovel.AdicionarElemento("PrecoVenda", FormatarDecimal(dados.ValorVenda));
             eImovel.AdicionarElemento("PrecoLocacao", FormatarDecimal(dados.ValorLocacao));
@@ -162,210 +162,98 @@ namespace Lopes.SC.Anuncio.Domain.XML
                 eImovel.AdicionarElemento(tag, "1");
         }
 
-        private bool Terreno(string descrition) => descrition.Contains("Terreno");
+        private static bool Terreno(string descrition) => descrition.Contains("Terreno");
 
 
-        private string DeterminaSubTipoDoImovelParaTipoApartamento(string subtipo)
+        private static string DeterminaSubTipoDoImovelParaTipoApartamento(string subtipo)
         {
-            switch (subtipo?.Trim())
+            return (subtipo?.Trim()) switch
             {
-                case "Flat":
-                case "Loft":
-                    return "Loft";
-                case "Kitnet":
-                    return "Kitchenette/Conjugados";
-                case "Diferenciada":
-                case "Padrão":
-                case "Cobertura":
-                case "Duplex":
-                case "Piso único":
-                case "Triplex":
-                case "Cobertura Duplex":
-                case "Cobertura Triplex":
-                default:
-                    return "Apartamento Padrão";
-            }
+                "Flat" or "Loft" => "Loft",
+                "Kitnet" => "Kitchenette/Conjugados",
+                _ => "Apartamento Padrão",
+            };
         }
-        private string DeterminaCategoriaParaTipoApartamento(string subtipo)
+        private static string DeterminaCategoriaParaTipoApartamento(string? subtipo)
         {
-            switch (subtipo)
+            return subtipo switch
             {
-                case "Cobertura":
-                    return "Cobertura";
-                case "Cobertura Duplex":
-                    return "Cobertura Duplex";
-                case "Cobertura Triplex":
-                    return "Cobertura Triplex";
-                case "Duplex":
-                    return "Duplex";
-                case "Triplex":
-                    return "Triplex";
-                case "Diferenciada":
-                case "Padrão":
-                case "Piso único":
-                case "Kitnet":
-                case "Flat":
-                case "Loft":
-                default:
-                    return "Padrão";
-            }
+                "Cobertura" => "Cobertura",
+                "Cobertura Duplex" => "Cobertura Duplex",
+                "Cobertura Triplex" => "Cobertura Triplex",
+                "Duplex" => "Duplex",
+                "Triplex" => "Triplex",
+                _ => "Padrão",
+            };
         }
 
-        private string DeterminaSubTipoDoImovelParaTipoCasa(string subtipo)
+        private static string DeterminaSubTipoDoImovelParaTipoCasa(string? subtipo)
         {
-            switch (subtipo.Trim())
+            return subtipo.Trim() switch
             {
-                case "Condomínio fechado":
-                case "Condomínio":
-                    return "Casa de Condomínio";
-                case "Casa de vila":
-                    return "Casa de Vila";
-                case "Assobradada":
-                case "Cobertura":
-                case "Diferenciada":
-                case "Térrea":
-                case "Sobreposta":
-                case "Rua fechada":
-                case "Geminada":
-                case "Isolada":
-                case "Frente":
-                case "Fundos":
-                case "Sobrado":
-                case "Villagio":
-                case "Padrão":
-                default:
-                    return "Casa Padrão";
-            }
+                "Condomínio fechado" or "Condomínio" => "Casa de Condomínio",
+                "Casa de vila" => "Casa de Vila",
+                _ => "Casa Padrão",
+            };
         }
-        private string DeterminaCategoriaParaTipoCasa(string subtipo)
+        private static string DeterminaCategoriaParaTipoCasa(string? subtipo)
         {
-            switch (subtipo.Trim())
+            return subtipo.Trim() switch
             {
-                case "Condomínio fechado":
-                case "Condomínio":
-                    return "Térrea";
-                case "Casa de vila":
-                    return "Térrea";
-                case "Assobradada":
-                case "Cobertura":
-                case "Sobrado":
-                    return "Sobrado/Duplex";
-                case "Diferenciada":
-                case "Térrea":
-                case "Sobreposta":
-                case "Rua fechada":
-                case "Geminada":
-                case "Isolada":
-                case "Frente":
-                case "Fundos":
-                case "Villagio":
-                case "Padrão":
-                default:
-                    return "Térrea";
-            }
+                "Condomínio fechado" or "Condomínio" => "Térrea",
+                "Casa de vila" => "Térrea",
+                "Assobradada" or "Cobertura" or "Sobrado" => "Sobrado/Duplex",
+                _ => "Térrea",
+            };
         }
 
-        private string DeterminaSubTipoDoImovelParaTipoComercial(string subtipo)
+        private static string DeterminaSubTipoDoImovelParaTipoComercial(string? subtipo)
         {
-            switch (subtipo.Trim())
+            return subtipo.Trim() switch
             {
-                case "Estúdio":
-                case "Studio":
-                    return "Studio";
-                case "Galpão":
-                    return "Galpão/Depósito/Armazém";
-                case "Loja":
-                    return "Loja/Salão";
-                case "Prédio inteiro":
-                    return "Prédio Inteiro";
-                case "Sala":
-                    return "Conjunto Comercial/Sala";
-                case "Vaga":
-                case "Vagas cobertas":
-                    return "Box/Garagem";
-                case "Padrão":
-                case "Sobreposta":
-                case "Casa":
-                case "Cobertura":
-                case "Diferenciada":
-                case "Duplex":
-                case "Triplex":
-                case "Andar inteiro":
-                case "Piso único":
-                default:
-                    return "Casa Comercial";
-            }
-
+                "Estúdio" or "Studio" => "Studio",
+                "Galpão" => "Galpão/Depósito/Armazém",
+                "Loja" => "Loja/Salão",
+                "Prédio inteiro" => "Prédio Inteiro",
+                "Sala" => "Conjunto Comercial/Sala",
+                "Vaga" or "Vagas cobertas" => "Box/Garagem",
+                _ => "Casa Comercial",
+            };
         }
-        private string DeterminaCategoriaParaTipoComercial(string subtipo)
+        private static string DeterminaCategoriaParaTipoComercial(string? subtipo)
         {
-            switch (subtipo.Trim())
+            return subtipo.Trim() switch
             {
-                case "Sobreposta":
-                case "Duplex":
-                case "Triplex":
-                    return "Sobrado/Duplex";
-                case "Casa":
-                    return "Térrea";
-                case "Galpão":
-                case "Loja":
-                case "Prédio inteiro":
-                case "Sala":
-                case "Vaga":
-                case "Vagas cobertas":
-                case "Padrão":
-                case "Cobertura":
-                case "Diferenciada":
-                case "Andar inteiro":
-                case "Piso único":
-                case "Estúdio":
-                case "Studio":
-                default:
-                    return "Padrão";
-            }
+                "Sobreposta" or "Duplex" or "Triplex" => "Sobrado/Duplex",
+                "Casa" => "Térrea",
+                _ => "Padrão",
+            };
         }
 
-        private string DeterminaSubTipoDoImovelParaTipoPropriedadeRural(string subtipo)
+        private static string DeterminaSubTipoDoImovelParaTipoPropriedadeRural(string? subtipo)
         {
-            switch (subtipo)
+            return subtipo switch
             {
-                case "Sítio":
-                    return "Sítio";
-                case "Chácara":
-                    return "Chácara";
-                case "Fazenda":
-                default:
-                    return "Fazenda";
-            }
-
+                "Sítio" => "Sítio",
+                "Chácara" => "Chácara",
+                _ => "Fazenda",
+            };
         }
-        private string DeterminaSubTipoDoImovelParaTipoTerreno(string subtipo)
+        private static string DeterminaSubTipoDoImovelParaTipoTerreno(string subtipo)
         {
-            switch (subtipo)
+            return subtipo switch
             {
-                case "Loteamento":
-                case "Condomínio fechado":
-                    return "Loteamento/Condomínio";
-                case "Padrão":
-                default:
-                    return "Terreno Padrão";
-            }
+                "Loteamento" or "Condomínio fechado" => "Loteamento/Condomínio",
+                _ => "Terreno Padrão",
+            };
         }
-        private string DeterminaSubTipoDoImovelParaTipoHotel(string subtipo)
+        private static string DeterminaSubTipoDoImovelParaTipoHotel(string subtipo)
         {
-            switch (subtipo.Trim())
+            return subtipo.Trim() switch
             {
-                case "Pousada":
-                    return "Pousada/Chalé";
-                case "Padrão":
-                case "Cobertura":
-                case "Diferenciada":
-                case "Duplex":
-                case "Triplex":
-                case "Piso único":
-                default:
-                    return "Hotel";
-            }
+                "Pousada" => "Pousada/Chalé",
+                _ => "Hotel",
+            };
         }
 
         private void DeterminaTipoSubtipoCategoriaDoImovel(DadosPrincipais imovel, out string tipo, out string subtipo, out string categoria)
