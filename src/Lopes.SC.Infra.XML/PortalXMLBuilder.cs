@@ -52,6 +52,8 @@ namespace Lopes.SC.Infra.XML
             doc.Load(CaminhoArquivo);
 
             XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
+            if(eImoveis == null)
+                throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiImoveis}'.");
 
             if (progresso != null)
                 progresso.Atualizar($"Montando elementos...");
@@ -84,6 +86,8 @@ namespace Lopes.SC.Infra.XML
             doc.Load(CaminhoArquivo);
 
             XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
+            if(eImoveis == null)
+                throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiImoveis}'.");
 
             int i = 0;
             foreach (int id in idImoveis)
@@ -102,7 +106,7 @@ namespace Lopes.SC.Infra.XML
         {
             string query = QueryIdImovel("REO" + idImovel);
             XmlNode? eImovelExistente = doc.SelectSingleNode(query);
-            if (eImovelExistente != null)
+            if (eImovelExistente?.ParentNode != null)
                 eImoveis.RemoveChild(eImovelExistente.ParentNode);
         }
 
@@ -129,18 +133,21 @@ namespace Lopes.SC.Infra.XML
             XmlNode docNode = doc.CreateXmlDeclaration(versao, codificacao, null);
             doc.AppendChild(docNode);
 
-            XmlElement eRoot = CriarElemento(doc, elemento);
-            doc.AppendChild(eRoot);
-
-            AdicionarElementos(doc, eRoot, elemento.Filhos);
+            XmlElement? eRoot = CriarElemento(doc, elemento);
+            if(eRoot != null)
+            {
+                doc.AppendChild(eRoot);
+                AdicionarElementos(doc, eRoot, elemento.Filhos);
+            }
 
             doc.Save(caminhoArquivo);
         }
 
         private static void AdicionarElemento(XmlDocument doc, XmlNode node, ElementoImovel elemento)
         {
-            XmlElement eImovel = CriarElemento(doc, elemento);
-            node.AppendChild(eImovel);
+            XmlElement? eImovel = CriarElemento(doc, elemento);
+            if(eImovel != null)
+                node.AppendChild(eImovel);
         }
         private static void AdicionarElementos(XmlDocument doc, XmlElement elementoPai, IEnumerable<Elemento> elementos)
         {
@@ -149,11 +156,12 @@ namespace Lopes.SC.Infra.XML
         }
         private static void AdicionarElemento(XmlDocument doc, XmlElement elementoPai, Elemento elemento)
         {
-            XmlElement eCabecalho = CriarElemento(doc, elemento);
-            elementoPai.AppendChild(eCabecalho);
+            XmlElement? eCabecalho = CriarElemento(doc, elemento);
+            if(eCabecalho != null)
+                elementoPai.AppendChild(eCabecalho);
         }
         
-        private static XmlElement CriarElemento(XmlDocument doc, Elemento elemento)
+        private static XmlElement? CriarElemento(XmlDocument doc, Elemento elemento)
         {
             if (elemento == null)
                 return null;

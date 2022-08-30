@@ -277,7 +277,7 @@ namespace Lopes.SC.Anuncio.Domain.XML
                     break;
                 case "Hotel":
                     tipo = "Comercial/Industrial";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoHotel(imovel.Subtipo);
+                    subtipo = DeterminaSubTipoDoImovelParaTipoHotel(imovel.Subtipo ?? string.Empty);
                     categoria = "Padrão";
                     break;
                 case "Prédio":
@@ -303,7 +303,7 @@ namespace Lopes.SC.Anuncio.Domain.XML
                 case "Loteamento":
                 case "Terreno":
                     tipo = "Terreno";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoTerreno(imovel.Subtipo);
+                    subtipo = DeterminaSubTipoDoImovelParaTipoTerreno(imovel.Subtipo ?? string.Empty);
                     categoria = "Padrão";
                     break;
                 case "Flat":
@@ -314,7 +314,7 @@ namespace Lopes.SC.Anuncio.Domain.XML
                 case "Apartamento":
                 default:
                     tipo = "Apartamento";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoApartamento(imovel.Subtipo);
+                    subtipo = DeterminaSubTipoDoImovelParaTipoApartamento(imovel.Subtipo ?? string.Empty);
                     categoria = DeterminaCategoriaParaTipoApartamento(imovel.Subtipo);
                     break;
             }

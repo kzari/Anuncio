@@ -6,13 +6,6 @@ namespace Lopes.SC.Anuncio.Application.Interfaces
     public interface IDadosImovelAppService
     {
         /// <summary>
-        /// Retorna os dados do imóvel
-        /// </summary>
-        /// <param name="idImovel"></param>
-        /// <returns></returns>
-        DadosImovel ObterDadosImovel(int idImovel);
-
-        /// <summary>
         /// Retorna os dados dos imóveis
         /// </summary>
         /// <param name="idImovel"></param>

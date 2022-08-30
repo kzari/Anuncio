@@ -79,7 +79,7 @@ namespace Lopes.SC.Anuncio.Application.Services
 
             int partitionIds = 0;
             int cotaAtual = 0;
-            
+
             Task[] tasks = partitions.Select(partition => Task.Run(() =>
             {
                 int partitionId = partitionIds++;
@@ -109,14 +109,14 @@ namespace Lopes.SC.Anuncio.Application.Services
                         progresso.Atualizar("1. Verificando o status...", percentualConcluido: 10);
 
                         IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portal, idEmpresa);
+
                         int[] idImoveisNoPortal = atualizador.ObterIdImoveisNoPortal().ToArray();
 
                         foreach (AnuncioImovel anuncio in anuncios)
                         {
                             bool imovelNoPortal = idImoveisNoPortal.Contains(anuncio.IdImovel);
 
-                            StatusAnuncioPortal statusImovelPortal = statusAnuncioService.VerificarStatusImovelPortal(anuncio, imovelNoPortal);
-                            switch (statusImovelPortal)
+                            switch (statusAnuncioService.VerificarStatusImovelPortal(anuncio, imovelNoPortal))
                             {
                                 case StatusAnuncioPortal.Atualizado:
                                     jaAtualizados++;
@@ -142,8 +142,8 @@ namespace Lopes.SC.Anuncio.Application.Services
 
                         List<AnuncioAtualizacao> atualizacoes = imoveisParaRemover.Select(_ => new AnuncioAtualizacao(portal, _, idEmpresa, AtualizacaoAcao.Exclusao)).ToList();
                         atualizacoes.AddRange(Atualizar(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, progresso));
-                        
-                        
+
+
                         progresso.Atualizar($"3. Registrando o status...", percentualConcluido: 30);
                         imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes, progresso);
 

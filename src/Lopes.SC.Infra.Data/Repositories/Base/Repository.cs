@@ -21,7 +21,7 @@ namespace Lopes.SC.Infra.Data.Repositories
             DbSet.Add(obj);
         }
 
-        public virtual TEntidade ObterPorId(int id)
+        public virtual TEntidade? ObterPorId(int id)
         {
             return DbSet.Find(id);
         }
@@ -37,7 +37,9 @@ namespace Lopes.SC.Infra.Data.Repositories
 
         public virtual void Excluir(int id)
         {
-            DbSet.Remove(DbSet.Find(id));
+            TEntidade entidade = DbSet.Find(id);
+            if(entidade != null)
+                DbSet.Remove(entidade);
         }
 
         public int SalvarAlteracoes()

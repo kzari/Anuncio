@@ -14,8 +14,7 @@ namespace Lopes.SC.Infra.Data.Repositories
         {
             Db = context;
         }
-
-        public DadosPrincipais ObterDadosImovel(int idImovel) => ObterDadosImoveis(new int[] { idImovel }).FirstOrDefault();
+        
         public IEnumerable<DadosPrincipais> ObterDadosImoveis(int[] idImoveis)
         {
             return Db.Imoveis.Where(_ => idImoveis.Contains(_.IdImovel));
