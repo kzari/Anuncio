@@ -6,7 +6,7 @@ using Lopes.SC.Anuncio.Domain.Models;
 using Lopes.SC.Anuncio.Domain.Reposities;
 using Lopes.SC.Anuncio.Domain.Services;
 using System.Collections.Concurrent;
-using Lopes.SC.Commons.Extensions;
+using Lopes.SC.Infra.Commons;
 
 namespace Lopes.SC.Anuncio.Application.Services
 {
@@ -36,27 +36,29 @@ namespace Lopes.SC.Anuncio.Application.Services
         public void AtualizarPorImoveis(int[] idImoveis, Portal? portal, ILogger log)
         {
             IEnumerable<AnuncioImovel> anuncios = _anuncioAppService.ObterAnunciosPorImoveis(idImoveis, portal).OrderBy(_ => _.IdImovel)
-                                                                                                 .ToList();
+                                                                                                               .ToList();
             AtualizarImoveisXMLs(anuncios, log);
         }
 
         public void AtualizarPorCotas(int[] idCotas, ILogger log)
         {
             IEnumerable<AnuncioImovel> anuncios = _anuncioAppService.ObterAnunciosPorCotas(idCotas).OrderBy(_ => _.IdImovel)
-                                                                                             .ToList();
+                                                                                                   .ToList();
             AtualizarImoveisXMLs(anuncios, log);
         }
 
-        public void AtualizarPorPortais(Portal[] portais, ILogger log)
+        public void AtualizarPorPortais(Portal[] portais, ILogger? log)
         {
+            (log ?? _logger).Info($"Buscando anúncios para atualização para os portais: '{string.Join(", ", portais)}'...");
+
             IEnumerable<AnuncioImovel> anuncios = _anuncioAppService.ObterAnunciosPorPortais(portais).OrderBy(_ => _.Portal)
-                                                                                               .ThenBy(_ => _.IdEmpresa)
-                                                                                               .ThenBy(_ => _.IdImovel)
-                                                                                               .ToList();
+                                                                                                     .ThenBy(_ => _.IdEmpresa)
+                                                                                                     .ThenBy(_ => _.IdImovel)
+                                                                                                     .ToList();
             AtualizarImoveisXMLs(anuncios, log);
         }
 
-        private void AtualizarImoveisXMLs(IEnumerable<AnuncioImovel> anuncios, ILogger log)
+        private void AtualizarImoveisXMLs(IEnumerable<AnuncioImovel> anuncios, ILogger? log)
         {
             int totalAnuncios = anuncios.Count();
 
@@ -66,7 +68,7 @@ namespace Lopes.SC.Anuncio.Application.Services
                 IdEmpresa = key.IdEmpresa,
                 Anuncios = group.ToList()
             }).ToList();
-            int qtdeCotas = anunciosAgrupados.Count();
+            int qtdeCotas = anunciosAgrupados.Count;
 
             (log ?? _logger).Info($"{totalAnuncios} anúncios encontrados para atualização");
 
@@ -138,20 +140,15 @@ namespace Lopes.SC.Anuncio.Application.Services
 
                         progresso.Atualizar($"2. Removendo {imoveisParaRemover.Count} anúncios...", percentualConcluido: 10);
                         atualizador.RemoverImoveis(imoveisParaRemover.ToArray(), progresso);
-
-
                         List<AnuncioAtualizacao> atualizacoes = imoveisParaRemover.Select(_ => new AnuncioAtualizacao(portal, _, idEmpresa, AtualizacaoAcao.Exclusao)).ToList();
-                        atualizacoes.AddRange(Atualizar(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, progresso));
 
+                        progresso.Atualizar($"3. Atualizando/Adicionando {imoveisParaAtualizar.Count} anúncios...", percentualConcluido: 50);
+                        atualizacoes.AddRange(AtualizarAdicionarAnuncios(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, progresso));
 
-                        progresso.Atualizar($"3. Registrando o status...", percentualConcluido: 30);
+                        progresso.Atualizar($"4. Registrando o status...", percentualConcluido: 80);
                         imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes, progresso);
-
 
                         progresso.Atualizar($"Concluído. R: {imoveisParaRemover.Count.ToString().PadLeft(5)} ° {jaRemovidos.ToString().PadLeft(5)} A: {imoveisParaAtualizar.Count.ToString().PadLeft(5)} ° {jaAtualizados.ToString().PadLeft(5)}).", percentualConcluido: 100);
-
-
-                        imovelAtualizacaoPortaisRepository.AtualizarOuAdicionar(atualizacoes, progresso);
 
                         progressoGeral.Atualizar($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }
@@ -162,18 +159,21 @@ namespace Lopes.SC.Anuncio.Application.Services
             progressoGeral.Atualizar($"Atualização concluída. {qtdeCotas} cotas, {totalAnuncios} anúncios.", percentualConcluido: 100);
         }
         
-        private List<AnuncioAtualizacao> Atualizar(IEnumerable<AnuncioImovel> anuncios,
-                                                   IEnumerable<int> imoveisParaAtualizar,
-                                                   int idEmpresa,
-                                                   Portal portal,
-                                                   IPortalAtualizador atualizador,
-                                                   IProgresso progresso)
+        private List<AnuncioAtualizacao> AtualizarAdicionarAnuncios(IEnumerable<AnuncioImovel> anuncios,
+                                                           IEnumerable<int> imoveisParaAtualizar,
+                                                           int idEmpresa,
+                                                           Portal portal,
+                                                           IPortalAtualizador atualizador,
+                                                           IProgresso progresso)
         {
+            if (!imoveisParaAtualizar.Any())
+                return new List<AnuncioAtualizacao>();
+
             progresso.Atualizar($"3. Obtendo dados dos {imoveisParaAtualizar.Count()} imóveis.", percentualConcluido: 20);
 
             IDadosImovelAppService dadosImovelAppService = _serviceProvider.ObterServico<IDadosImovelAppService>();
 
-            IEnumerable<DadosImovel> imoveis = ObterDadosImoveis(imoveisParaAtualizar.ToArray(), dadosImovelAppService, progresso);
+            IEnumerable<DadosImovel> imoveis = ObterDadosImoveisCache(imoveisParaAtualizar.ToArray(), dadosImovelAppService, progresso);
 
             //TODO: tratar imóveis não encontrados
 
@@ -194,7 +194,7 @@ namespace Lopes.SC.Anuncio.Application.Services
             return atualizacoes;
         }
 
-        private IEnumerable<DadosImovel> ObterDadosImoveis(int[] idImoveis, IDadosImovelAppService dadosImovelAppService, IProgresso progresso)
+        private IEnumerable<DadosImovel> ObterDadosImoveisCache(int[] idImoveis, IDadosImovelAppService dadosImovelAppService, IProgresso progresso)
         {
             IEnumerable<DadosImovel> imoveisCacheados;
             lock (_dadosImoveisCache)

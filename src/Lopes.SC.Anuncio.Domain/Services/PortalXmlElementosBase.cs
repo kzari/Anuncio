@@ -38,9 +38,10 @@ namespace Lopes.SC.Anuncio.Domain.Services
             switch (portal)
             {
                 case Portal.Zap:
-                    return new Zap(portal, portalCaracteristicas, urlFotosImoveis);
                 default:
-                    throw new NotImplementedException();
+                    return new Zap(portal, portalCaracteristicas, urlFotosImoveis);
+                //default:
+                    //throw new NotImplementedException();
             }
         }
 

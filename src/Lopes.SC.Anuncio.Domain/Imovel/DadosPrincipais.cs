@@ -39,8 +39,6 @@
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
 
-        public string? SA { get; set; }
-
         public int? AnoConstrucao { get; set; }
         public string? InscricaoMunicipal { get; set; }
         public string? ZonaValor { get; set; }

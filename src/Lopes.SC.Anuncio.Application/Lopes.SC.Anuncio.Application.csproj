@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lopes.SC.Anuncio.Domain\Lopes.SC.Anuncio.Domain.csproj" />
-    <ProjectReference Include="..\Lopes.SC.Commons\Lopes.SC.Commons.csproj" />
+    <ProjectReference Include="..\Lopes.SC.Infra.Commons\Lopes.SC.Infra.Commons.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@ using Lopes.SC.Infra.XML;
 using Microsoft.Extensions.DependencyInjection;
 using Lopes.SC.Domain.Commons;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.SC.Infra.IoC
 {
@@ -55,8 +56,8 @@ namespace Lopes.SC.Infra.IoC
 
         private static void ConfigurarDbContexts(IServiceCollection services)
         {
-            services.AddDbContext<DbProdutoContext>(ServiceLifetime.Transient);
-            services.AddDbContext<DbLopesnetContext>(ServiceLifetime.Transient);
+            services.AddDbContext<DbProdutoContext>(options =>  options.UseSqlServer(_ => _.CommandTimeout(3600)), ServiceLifetime.Transient);
+            services.AddDbContext<DbLopesnetContext>(options => options.UseSqlServer(_ => _.CommandTimeout(3600)), ServiceLifetime.Transient);
         }
 
         private static void ConfigurarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger

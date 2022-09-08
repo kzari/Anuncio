@@ -25,5 +25,5 @@ using (IServiceScope scope = provider.CreateScope())
 
     //atualizarAnuncioService.AtualizarPorCotas(new [] { 788 });
 
-    //atualizarAnuncioService.AtualizarPorImoveis(new[] { 43495 });
+    //atualizarAnuncioService.AtualizarPorImoveis(new[] { 569521 }, null, null);
 }
