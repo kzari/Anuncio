@@ -1,5 +1,4 @@
-﻿using Lopes.Anuncio.Domain.Models;
-using Lopes.Anuncio.Domain.Commands.Requests;
+﻿using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using MediatR;
 

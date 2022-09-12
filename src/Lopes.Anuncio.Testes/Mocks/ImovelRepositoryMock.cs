@@ -1,8 +1,8 @@
-﻿using Lopes.SC.Anuncio.Domain.Imovel;
-using Lopes.SC.Anuncio.Domain.Models;
-using Lopes.SC.Anuncio.Domain.Reposities;
+﻿using Lopes.Anuncio.Domain.Imovel;
+using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.Reposities;
 
-namespace Lopes.SC.Anuncio.Domain.Testes.Mocks
+namespace Lopes.Anuncio.Domain.Testes.Mocks
 {
     public class ImovelRepositoryMock : IImovelRepository
     {

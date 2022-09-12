@@ -13,7 +13,7 @@ namespace Lopes.Anuncio.Domain.Commands.Requests
             IdEmpresa = idEmpresa;
             Acao = acao;
             Data = data ?? DateTime.Now;
-            Id = id ?? new Guid();
+            Id = id ?? Guid.NewGuid();
         }
 
         public Guid Id { get; set; }

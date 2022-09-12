@@ -1,7 +1,7 @@
-using Lopes.SC.Anuncio.Domain.Enums;
-using Lopes.SC.Anuncio.Domain.Models;
-using Lopes.SC.Anuncio.Domain.Services;
-using Lopes.SC.Anuncio.Domain.Testes.Mocks;
+using Lopes.Anuncio.Domain.Enums;
+using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.Services;
+using Lopes.Anuncio.Domain.Testes.Mocks;
 
 namespace Lopes.SC.Anuncio.Domain.Testes
 {
