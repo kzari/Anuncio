@@ -1,12 +1,12 @@
-﻿using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.ObjetosValor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Lopes.Infra.Data.Mappings
 {
-    public class AnuncioMap : IEntityTypeConfiguration<Anuncio.Domain.Models.AnuncioImovel>
+    public class AnuncioMap : IEntityTypeConfiguration<AnuncioCota>
     {
-        public void Configure(EntityTypeBuilder<Anuncio.Domain.Models.AnuncioImovel> builder)
+        public void Configure(EntityTypeBuilder<AnuncioCota> builder)
         {
             builder.ToView("VW_ImovelPortais");
             builder.HasKey(_ => _.IdAnuncio);

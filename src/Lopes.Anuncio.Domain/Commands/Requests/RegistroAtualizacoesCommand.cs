@@ -1,12 +1,23 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using MediatR;
+using Lopes.Anuncio.Domain.Entidades;
 
 namespace Lopes.Anuncio.Domain.Commands.Requests
 {
-    public class AtualizarStatusAnuncioRequest : IRequest<AtualizarStatusAnuncioResponse>
+    public class RegistroAtualizacoesCommand : IRequest<bool>
     {
-        public AtualizarStatusAnuncioRequest(Portal idPortal, int idImovel, int idEmpresa, AtualizacaoAcao acao, DateTime? data = null, Guid? id = null)
+        public RegistroAtualizacoesCommand(IEnumerable<AnuncioAtualizacao> entidades)
+        {
+            Entidades = entidades;
+        }
+
+        public IEnumerable<AnuncioAtualizacao> Entidades { get; set; }
+    }
+
+    public class RegistroAtualizacaoCommand : IRequest<AtualizarStatusAnuncioResponse>
+    {
+        public RegistroAtualizacaoCommand(Portal idPortal, int idImovel, int idEmpresa, AtualizacaoAcao acao, DateTime? data = null, Guid? id = null)
         {
             IdPortal = idPortal;
             IdImovel = idImovel;

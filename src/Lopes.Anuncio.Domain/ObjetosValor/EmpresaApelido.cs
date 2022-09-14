@@ -1,6 +1,6 @@
-﻿namespace Lopes.Anuncio.Domain.Models
+﻿namespace Lopes.Anuncio.Domain.ObjetosValor
 {
-    public class EmpresaApelidoPortal
+    public class EmpresaApelido
     {
         public int Id { get; set; }
         public int IdEmpresa { get; set; }

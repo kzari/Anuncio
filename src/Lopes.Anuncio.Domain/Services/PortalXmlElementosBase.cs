@@ -1,7 +1,8 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Imovel;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.Models.Imovel;
 using Lopes.Anuncio.Domain.Models.XML;
+using Lopes.Anuncio.Domain.Models.XML.Portais;
+using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.XML;
 using System.Text.RegularExpressions;
 

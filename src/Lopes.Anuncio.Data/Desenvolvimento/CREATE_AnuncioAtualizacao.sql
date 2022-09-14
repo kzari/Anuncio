@@ -1,5 +1,7 @@
+USE [Lopes]
+GO
 
-/****** Object:  Table [dbo].[AnuncioAtualizacao]    Script Date: 05/09/2022 10:25:39 ******/
+/****** Object:  Table [dbo].[AnuncioAtualizacao]    Script Date: 12/09/2022 13:56:54 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -7,7 +9,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[AnuncioAtualizacao](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Id] [varchar](40) NOT NULL,
 	[IdImovel] [int] NOT NULL,
 	[IdEmpresa] [int] NOT NULL,
 	[IdPortal] [int] NOT NULL,

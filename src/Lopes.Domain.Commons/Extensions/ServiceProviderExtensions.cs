@@ -1,4 +1,4 @@
-﻿namespace Lopes.Infra.Commons
+﻿namespace Lopes.Domain.Commons
 {
     public static class ServiceProviderExtensions
     {

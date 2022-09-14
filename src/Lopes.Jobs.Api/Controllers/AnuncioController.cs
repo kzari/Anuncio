@@ -5,6 +5,7 @@ using Lopes.Jobs.Api.Log;
 using Lopes.Anuncio.Application.Interfaces;
 using Lopes.Anuncio.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Lopes.Anuncio.Domain.Commands.Requests;
 
 namespace Lopes.Jobs.Api.Controllers
 {
@@ -14,9 +15,9 @@ namespace Lopes.Jobs.Api.Controllers
     {
 
         private readonly ILogger<AnuncioController> _logger;
-        private readonly IAtualizarAnunciosAppService _service;
+        private readonly IAtualizacaoAppService _service;
 
-        public AnuncioController(ILogger<AnuncioController> logger, IAtualizarAnunciosAppService service)
+        public AnuncioController(ILogger<AnuncioController> logger, IAtualizacaoAppService service)
         {
             _logger = logger;
             _service = service;
@@ -76,21 +77,21 @@ namespace Lopes.Jobs.Api.Controllers
         public void AtualizarPorPortal([FromQuery] Portal[] portal, PerformContext context)
         {
             var log = new HangFireLog(context);
-            _service.AtualizarPorPortais(portal, log);
+            _service.Atualizar(new AnuncioCotaRequest(portal), log);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public void AtualizarPorCotas([FromQuery] int[] cotas, PerformContext context)
         {
             var log = new HangFireLog(context);
-            _service.AtualizarPorCotas(cotas, log);
+            _service.Atualizar(new AnuncioCotaRequest(idCotas: cotas), log);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public void AtualizarPorImoveis([FromQuery] int[] idImoveis, PerformContext context, Portal? portal = null)
         {
             var log = new HangFireLog(context);
-            _service.AtualizarPorImoveis(idImoveis, portal, log);
+            _service.Atualizar(new AnuncioCotaRequest(idImoveis: idImoveis), log);
         }
 
 

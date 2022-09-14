@@ -1,6 +1,6 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
 
-namespace Lopes.Anuncio.Domain.Models
+namespace Lopes.Anuncio.Domain.ObjetosValor
 {
     public class PortalCaracteristica
     {

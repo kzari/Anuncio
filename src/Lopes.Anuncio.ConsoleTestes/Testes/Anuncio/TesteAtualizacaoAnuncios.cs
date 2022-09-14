@@ -1,6 +1,5 @@
 ﻿using Lopes.Anuncio.Application.Interfaces;
-using Lopes.Infra.ConsoleCommons.Log;
-using Lopes.Infra.IoC;
+using Lopes.Anuncio.Domain.Commands.Requests;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lopes.ConsoleTestes.Testes.Anuncio
@@ -9,18 +8,12 @@ namespace Lopes.ConsoleTestes.Testes.Anuncio
     {
         public static void Atualizar()
         {
-            ServiceCollection services = new();
-            ServiceConfiguration.Configure<ConsoleLogger>(services);
-
-            IServiceProvider provider = services.BuildServiceProvider(validateScopes: true);
-            using (IServiceScope scope = provider.CreateScope())
+            using (IServiceScope escopo = TesteBase.CriarEscopo())
             {
-                IAtualizarAnunciosAppService atualizarAnuncioService = scope.ServiceProvider.GetService<IAtualizarAnunciosAppService>();
-                // atualizarAnuncioService.AtualizarPorPortais(new Portal[] { Portal.Zap }, null);
+                IAtualizacaoAppService atualizarAnuncioService = escopo.ServiceProvider.GetService<IAtualizacaoAppService>();
 
-                //atualizarAnuncioService.AtualizarPorCotas(new [] { 48 }, null);
-
-                atualizarAnuncioService.AtualizarPorImoveis(new[] { 569521 }, null, null);
+                //atualizarAnuncioService.Atualizar(new AnuncioCotaRequest(idImoveis:new[] { 569521 }), null);
+                atualizarAnuncioService.Atualizar(new AnuncioCotaRequest(idCotas:new[] { 863 }), null);
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Domain.Reposities
 {

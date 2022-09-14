@@ -1,6 +1,6 @@
 ﻿using Lopes.Anuncio.Domain.Models;
 
-namespace Lopes.Anuncio.Domain.Imovel
+namespace Lopes.Anuncio.Domain.Models.Imovel
 {
     public class DadosImovel
     {

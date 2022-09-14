@@ -1,6 +1,6 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
 using Lopes.Anuncio.Domain.Reposities;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Application.Services
 {
@@ -13,20 +13,19 @@ namespace Lopes.Anuncio.Application.Services
             _anuncioRepository = anuncioRepository;
         }
 
-
-        public IEnumerable<AnuncioImovel> ObterAnunciosPorCotas(int[] idCotas)
+        public IEnumerable<AnuncioCota> ObterAnunciosPorCotas(int[] idCotas)
         {
-            return _anuncioRepository.ObterPorCotas(idCotas);
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<AnuncioImovel> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null)
+        public IEnumerable<AnuncioCota> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null)
         {
-            return _anuncioRepository.ObterPorImoveis(idImoveis, portal);
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<AnuncioImovel> ObterAnunciosPorPortais(Portal[] portais)
+        public IEnumerable<AnuncioCota> ObterAnunciosPorPortais(Portal[] portais)
         {
-            return _anuncioRepository.ObterPorPortais(portais);
+            throw new NotImplementedException();
         }
     }
 }

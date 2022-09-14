@@ -1,12 +1,11 @@
 ﻿using Lopes.Domain.Commons;
 using Lopes.Anuncio.Application.Interfaces;
-using Lopes.Anuncio.Domain.Imovel;
 using Lopes.Anuncio.Domain.Models;
 using Lopes.Anuncio.Domain.Reposities;
+using Lopes.Anuncio.Domain.Models.Imovel;
 
 namespace Lopes.Anuncio.Application.Services
 {
-
     public class DadosImovelAppService : IDadosImovelAppService
     {
         private readonly IImovelRepository _imovelRepository;

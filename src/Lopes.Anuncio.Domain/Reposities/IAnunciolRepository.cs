@@ -1,12 +1,10 @@
-﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.Commands.Requests;
+using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Domain.Reposities
 {
     public interface IAnuncioRepository
     {
-        IEnumerable<AnuncioImovel> ObterPorImoveis(int[] idImoveis, Portal? portal);
-        IEnumerable<AnuncioImovel> ObterPorCotas(int[] idCotas);
-        IEnumerable<AnuncioImovel> ObterPorPortais(Portal[] portais);
+        IEnumerable<AnuncioCota> Obter(AnuncioCotaRequest request);
     }
 }

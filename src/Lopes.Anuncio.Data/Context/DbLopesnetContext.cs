@@ -1,27 +1,16 @@
-﻿using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Infra.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Lopes.Infra.Data.Context
 {
     public class DbLopesnetContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
-
-        public DbLopesnetContext(IConfiguration configuration)
+        public DbLopesnetContext(DbContextOptions<DbLopesnetContext> options) : base(options)
         {
-            Configuration = configuration;
         }
 
-
-        public DbSet<EmpresaApelidoPortal> EmpresasApelidoPortal { get; set; }
-
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseSqlServer(Configuration.GetConnectionString("DbLopesnet"));
-        }
+        public DbSet<EmpresaApelido> EmpresasApelidoPortal { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

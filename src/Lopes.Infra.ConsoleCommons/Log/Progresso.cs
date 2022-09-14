@@ -32,7 +32,7 @@ namespace Lopes.Infra.ConsoleCommons.Log
             progressBar.Next(texto);
         }
 
-        public void Atualizar(string item, decimal percentualConcluido)
+        public void Mensagem(string item, decimal percentualConcluido)
         {
             int qtde = ObterQuantidadePorPercentual(percentualConcluido);
             Atualizar(item, qtde);

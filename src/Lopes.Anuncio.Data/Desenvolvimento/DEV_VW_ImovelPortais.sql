@@ -31,11 +31,15 @@ AS
 		,PodeAnunciarOutraEmpresa
 		,CodigoClientePortal
 
-		,AA.Data AS DataAtualizacaoAnuncioPortal
-		,AA.Acao AS AcaoAtualizacaoAnuncioPortal
+		,AnuncioAtualizacao.Data AS DataAtualizacaoAnuncioPortal
+		,AnuncioAtualizacao.Acao AS AcaoAtualizacaoAnuncioPortal
 	FROM 
 		ImovelPortais IP
-		LEFT JOIN AnuncioAtualizacao AA ON IP.IdImovel = AA.IdImovel AND IP.IdEmpresa = AA.IdEmpresa AND IP.Portal = AA.IdPortal
+		OUTER APPLY
+			(SELECT TOP 1 * 
+			 FROM AnuncioAtualizacao AA 
+			 WHERE IP.IdImovel = AA.IdImovel AND IP.IdEmpresa = AA.IdEmpresa AND IP.Portal = AA.IdPortal 
+			 ORDER BY AA.Data DESC) AS AnuncioAtualizacao
 GO
 --select TOP 100 * from VW_ImovelPortais where IdImovel = 627841
 select * from VW_ImovelPortais where Portal = 68

@@ -1,5 +1,5 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Reposities;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Infra.XML;
@@ -23,8 +23,8 @@ namespace Lopes.Infra.IoC
 
 
 
-        private IEnumerable<EmpresaApelidoPortal> apelidos;
-        public IEnumerable<EmpresaApelidoPortal> Apelidos => apelidos ??= ((IEmpresaApelidoPortalRepository)_serviceProvider.GetService(typeof(IEmpresaApelidoPortalRepository))).Obter();
+        private IEnumerable<EmpresaApelido> apelidos;
+        public IEnumerable<EmpresaApelido> Apelidos => apelidos ??= ((IEmpresaApelidoPortalRepository)_serviceProvider.GetService(typeof(IEmpresaApelidoPortalRepository))).Obter();
 
         public IPortalAtualizador ObterAtualizador(Portal portal, int idEmpresa)
         {

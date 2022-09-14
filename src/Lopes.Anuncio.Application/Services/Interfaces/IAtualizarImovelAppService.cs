@@ -1,12 +1,10 @@
 ﻿using Lopes.Domain.Commons;
-using Lopes.Anuncio.Domain.Enums;
+using Lopes.Anuncio.Domain.Commands.Requests;
 
 namespace Lopes.Anuncio.Application.Interfaces
 {
-    public interface IAtualizarAnunciosAppService
+    public interface IAtualizacaoAppService
     {
-        void AtualizarPorCotas(int[] idCotas, ILogger log);
-        void AtualizarPorImoveis(int[] idImoveis, Portal? portal, ILogger log);
-        void AtualizarPorPortais(Portal[] portais, ILogger log);
+        void Atualizar(AnuncioCotaRequest request, ILogger? logger);
     }
 }

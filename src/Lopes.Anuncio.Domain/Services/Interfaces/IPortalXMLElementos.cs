@@ -1,4 +1,4 @@
-﻿using Lopes.Anuncio.Domain.Imovel;
+﻿using Lopes.Anuncio.Domain.Models.Imovel;
 using Lopes.Anuncio.Domain.Models.XML;
 
 namespace Lopes.Anuncio.Domain.Services

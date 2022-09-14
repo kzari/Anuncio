@@ -1,6 +1,6 @@
 ﻿using Lopes.Domain.Commons;
-using Lopes.Anuncio.Domain.Imovel;
 using Lopes.Anuncio.Domain.Services;
+using Lopes.Anuncio.Domain.Models.Imovel;
 
 namespace Lopes.Infra.XML
 {

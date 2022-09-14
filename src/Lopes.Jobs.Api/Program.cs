@@ -17,7 +17,12 @@ builder.Services.AddHangfire(x =>
 });
 builder.Services.AddHangfireServer();
 
-ServiceConfiguration.Configure<HangFireLog>(builder.Services);
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile($"appsettings.json")
+    .Build();
+
+ConfiguracaoServicos.ConfigurarServicos<HangFireLog>(configuration, builder.Services);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

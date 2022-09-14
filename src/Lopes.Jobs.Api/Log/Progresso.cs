@@ -21,7 +21,7 @@ namespace Lopes.Jobs.Api.Log
             //progressBar.Next(texto);
         }
 
-        public void Atualizar(string item, decimal percentualConcluido)
+        public void Mensagem(string item, decimal percentualConcluido)
         {
             if (percentualConcluido > 100)
                 percentualConcluido = 100;
@@ -57,7 +57,7 @@ namespace Lopes.Jobs.Api.Log
             Console.WriteLine(item);
         }
 
-        public void Atualizar(string item, decimal percentualConcluido)
+        public void Mensagem(string item, decimal percentualConcluido)
         {
             string texto = ObterTexto(item);
             _performContext.WriteLine(texto);

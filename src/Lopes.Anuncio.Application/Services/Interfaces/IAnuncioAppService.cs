@@ -1,12 +1,12 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Application.Services
 {
     public interface IAnuncioAppService
     {
-        IEnumerable<AnuncioImovel> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null);
-        IEnumerable<AnuncioImovel> ObterAnunciosPorCotas(int[] idCotas);
-        IEnumerable<AnuncioImovel> ObterAnunciosPorPortais(Portal[] portais);
+        IEnumerable<AnuncioCota> ObterAnunciosPorImoveis(int[] idImoveis, Portal? portal = null);
+        IEnumerable<AnuncioCota> ObterAnunciosPorCotas(int[] idCotas);
+        IEnumerable<AnuncioCota> ObterAnunciosPorPortais(Portal[] portais);
     }
 }

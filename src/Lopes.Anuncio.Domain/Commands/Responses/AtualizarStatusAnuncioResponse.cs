@@ -4,7 +4,7 @@ namespace Lopes.Anuncio.Domain.Commands.Responses
 {
     public class AtualizarStatusAnuncioResponse
     {
-        public AtualizarStatusAnuncioResponse(AtualizarStatusAnuncioRequest request)
+        public AtualizarStatusAnuncioResponse(RegistroAtualizacaoCommand request)
         {
             Id = request.Id;
             DataHora = request.Data;

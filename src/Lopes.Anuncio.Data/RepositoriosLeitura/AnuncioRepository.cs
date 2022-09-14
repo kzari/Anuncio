@@ -1,32 +1,30 @@
-﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.Commands.Requests;
+using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Reposities;
 using Lopes.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.Infra.Data.Repositories
 {
-    public class AnuncioRepository : Repository<AnuncioImovel>, IAnuncioRepository
+    public class AnuncioRepository : Repository<AnuncioCota>, IAnuncioRepository
     {
         public AnuncioRepository(DbProdutoContext context) : base(context)
         {
         }
 
-        public IEnumerable<AnuncioImovel> ObterPorImoveis(int[] idImoveis, Portal? portal = null)
+        public IEnumerable<AnuncioCota> Obter(AnuncioCotaRequest request)
         {
-            IQueryable<AnuncioImovel> query = base.ObterTodos().Where(_ => idImoveis.Contains(_.IdImovel) && (!portal.HasValue || _.Portal == portal.Value));
-            return query.ToList();
-        }
+            IQueryable<AnuncioCota> query = base.ObterTodos();
 
-        public IEnumerable<AnuncioImovel> ObterPorCotas(int[] idCotas)
-        {
-            IQueryable<AnuncioImovel> query = base.ObterTodos().Where(_ => idCotas.Contains(_.IdCota));
-            return query.ToList();
-        }
+            if (request.IdImoveis != null && request.IdImoveis.Any())
+                query = query.Where(_ => request.IdImoveis.Contains(_.IdImovel));
 
-        public IEnumerable<AnuncioImovel> ObterPorPortais(Portal[] idPortais)
-        {
-            IQueryable<AnuncioImovel> query = base.ObterTodos().Where(_ => idPortais.Contains(_.Portal));
+            if (request.IdCotas != null && request.IdCotas.Any())
+                query = query.Where(_ => request.IdCotas.Contains(_.IdCota));
+
+            if (request.Portais != null && request.Portais.Any())
+                query = query.Where(_ => request.Portais.Contains(_.Portal));
+
             return query.ToList();
         }
     }

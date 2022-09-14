@@ -1,4 +1,4 @@
-﻿using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.ObjetosValor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

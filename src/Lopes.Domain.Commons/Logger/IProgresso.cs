@@ -3,7 +3,7 @@
     public interface IProgresso
     {
         //int ValorMaximo { get; }
-        void Atualizar(string texto, decimal percentualConcluido);
+        void Mensagem(string texto, decimal percentualConcluido);
         void Atualizar(string texto);
     }
 }

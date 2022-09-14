@@ -1,8 +1,8 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
 
-namespace Lopes.Anuncio.Domain.Models
+namespace Lopes.Anuncio.Domain.ObjetosValor
 {
-    public class AnuncioImovel
+    public class AnuncioCota
     {
         public int IdAnuncio { get; set; }
         public int IdImovel { get; set; }

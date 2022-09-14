@@ -1,12 +1,12 @@
-﻿using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.ObjetosValor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Lopes.Infra.Data.Mappings
 {
-    public class EmpresaApelidoPortalMap : IEntityTypeConfiguration<EmpresaApelidoPortal>
+    public class EmpresaApelidoPortalMap : IEntityTypeConfiguration<EmpresaApelido>
     {
-        public void Configure(EntityTypeBuilder<EmpresaApelidoPortal> builder)
+        public void Configure(EntityTypeBuilder<EmpresaApelido> builder)
         {
             builder.ToTable("tb_EMCP_empresa_carga_portal");
             builder.HasKey(_ => _.Id);

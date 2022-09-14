@@ -1,22 +1,20 @@
-﻿using Lopes.Anuncio.Domain.Imovel;
+﻿using Lopes.Anuncio.Domain.Entidades;
 using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Infra.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Lopes.Infra.Data.Context
 {
     public class DbProdutoContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
-
-        public DbProdutoContext(IConfiguration configuration)
+        public DbProdutoContext(DbContextOptions<DbProdutoContext> options) : base(options)
         {
-            Configuration = configuration;
         }
 
 
-        public DbSet<Anuncio.Domain.Models.AnuncioImovel> Anuncios { get; set; }
+        public DbSet<AnuncioCota> Anuncios { get; set; }
         public DbSet<ImovelEmpresa> ImovelEmpresas { get; set; }
         public DbSet<DadosPrincipais> Imoveis { get; set; }
         public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }
@@ -25,12 +23,6 @@ namespace Lopes.Infra.Data.Context
         public DbSet<Video> ImovelVideos { get; set; }
         public DbSet<PortalCaracteristica> PortalCaracteristicas { get; set; }
         public DbSet<Fotos> ImovelImagens { get; set; }
-
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseSqlServer(Configuration.GetConnectionString("DbProduto"));
-        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

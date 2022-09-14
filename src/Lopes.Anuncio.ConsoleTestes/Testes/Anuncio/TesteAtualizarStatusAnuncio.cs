@@ -2,8 +2,6 @@
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Enums;
-using Lopes.Infra.ConsoleCommons.Log;
-using Lopes.Infra.IoC;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lopes.ConsoleTestes.Testes.Anuncio
@@ -12,15 +10,11 @@ namespace Lopes.ConsoleTestes.Testes.Anuncio
     {
         public static void AtualizarStatus()
         {
-            ServiceCollection services = new();
-            ServiceConfiguration.Configure<ConsoleLogger>(services);
-
-            IServiceProvider provider = services.BuildServiceProvider(validateScopes: true);
-            using (IServiceScope scope = provider.CreateScope())
+            using (IServiceScope scope = TesteBase.ObterServiceProvider().CreateScope())
             {
-                var service = scope.ServiceProvider.GetService<IAtualizarStatusAnuncioAppService>();
+                var service = scope.ServiceProvider.GetService<IRegistrarAtualizacaoAnunciosAppService>();
 
-                Task<AtualizarStatusAnuncioResponse> task = service.Atualizar(new AtualizarStatusAnuncioRequest(Portal.Zap, 569521, 1, AtualizacaoAcao.Atualizacao));
+                Task<AtualizarStatusAnuncioResponse> task = service.Registrar(new RegistroAtualizacaoCommand(Portal.Zap, 569521, 1, AtualizacaoAcao.Atualizacao));
 
                 AtualizarStatusAnuncioResponse response = task.Result;
             }

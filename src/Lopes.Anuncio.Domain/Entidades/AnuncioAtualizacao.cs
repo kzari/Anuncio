@@ -1,16 +1,17 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
 
-namespace Lopes.Anuncio.Domain.Models
+namespace Lopes.Anuncio.Domain.Entidades
 {
     public class AnuncioAtualizacao
     {
-        public AnuncioAtualizacao(Portal idPortal, int idImovel, int idEmpresa, AtualizacaoAcao acao, DateTime? data = null)
+        public AnuncioAtualizacao(Portal idPortal, int idImovel, int idEmpresa, AtualizacaoAcao acao, Guid? id = null, DateTime? data = null)
         {
             IdPortal = idPortal;
             IdImovel = idImovel;
             IdEmpresa = idEmpresa;
             Acao = acao;
             Data = data ?? DateTime.Now;
+            Id = id ?? Guid.NewGuid();
         }
 
         private AnuncioAtualizacao()
@@ -18,7 +19,7 @@ namespace Lopes.Anuncio.Domain.Models
             //EF ctor
         }
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public Portal IdPortal { get; set; }
         public int IdImovel { get; set; }
         public int IdEmpresa { get; set; }

@@ -4,26 +4,26 @@ using MediatR;
 
 namespace Lopes.Anuncio.Application.Services
 {
-    public class AtualizarStatusAnuncioAppService : IAtualizarStatusAnuncioAppService
+    public class RegistrarAtualizacaoAnunciosAppService : IRegistrarAtualizacaoAnunciosAppService
     {
         private readonly IMediator _mediator;
 
-        public AtualizarStatusAnuncioAppService(IMediator handler)
+        public RegistrarAtualizacaoAnunciosAppService(IMediator handler)
         {
             _mediator = handler;
         }
 
 
-        public Task<AtualizarStatusAnuncioResponse> Atualizar(AtualizarStatusAnuncioRequest request)
+        public Task<AtualizarStatusAnuncioResponse> Registrar(RegistroAtualizacaoCommand request)
         {
             return _mediator.Send(request);
         }
 
 
-        public IEnumerable<AtualizarStatusAnuncioResponse> Atualizar(IEnumerable<AtualizarStatusAnuncioRequest> atualizacoes)
+        public IEnumerable<AtualizarStatusAnuncioResponse> Registrar(IEnumerable<RegistroAtualizacaoCommand> atualizacoes)
         {
             List<AtualizarStatusAnuncioResponse> responses = new();
-            foreach (AtualizarStatusAnuncioRequest request in atualizacoes)
+            foreach (RegistroAtualizacaoCommand request in atualizacoes)
             {
                 responses.Add(_mediator.Send(request).Result);
             }

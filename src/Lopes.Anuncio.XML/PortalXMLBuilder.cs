@@ -1,7 +1,7 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Imovel;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.Models.Imovel;
 using Lopes.Anuncio.Domain.Models.XML;
+using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Anuncio.Domain.XML;
 using Lopes.Domain.Commons;
@@ -71,7 +71,7 @@ namespace Lopes.Infra.XML
                 AdicionarElemento(doc, eImoveis, eImovel);
 
                 if(progresso != null && i % 100 == 0)
-                    progresso.Atualizar($"Inserindo/atualizando no XML. {i} de {qtdeImoveis}", i);
+                    progresso.Mensagem($"Inserindo/atualizando no XML. {i} de {qtdeImoveis}", i);
             }
 
             doc.Save(CaminhoArquivo);
@@ -96,7 +96,7 @@ namespace Lopes.Infra.XML
                 RemoverImovel(doc, eImoveis, id);
                 
                 if (progresso != null)
-                    progresso.Atualizar($"{i} imóveis removido(s) no XML de {idImoveis.Length}.", i);
+                    progresso.Mensagem($"{i} imóveis removido(s) no XML de {idImoveis.Length}.", i);
             }
 
             doc.Save(CaminhoArquivo);

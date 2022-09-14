@@ -1,9 +1,10 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Imovel;
-using Lopes.Anuncio.Domain.Models;
+using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Services;
+using Lopes.Anuncio.Domain.XML;
 
-namespace Lopes.Anuncio.Domain.XML
+namespace Lopes.Anuncio.Domain.Models.XML.Portais
 {
     public class Zap : PortalXmlElementosBase, IPortalXMLElementos
     {
@@ -158,7 +159,7 @@ namespace Lopes.Anuncio.Domain.XML
             int[] idCaracteristicasImovel = dados.Caracteristicas.Select(_ => _.Id).ToArray();
 
             IEnumerable<PortalCaracteristica> caracteristicas = PortalCaracteristicas.Where(_ => idCaracteristicasImovel.Contains(_.IdCaracteristica));
-            foreach (string tag in caracteristicas.Select(_=> _.Tag))
+            foreach (string tag in caracteristicas.Select(_ => _.Tag))
                 eImovel.AdicionarElemento(tag, "1");
         }
 

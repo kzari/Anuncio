@@ -1,9 +1,9 @@
-﻿using Lopes.Anuncio.Domain.Models;
+﻿using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Domain.Reposities
 {
     public interface IEmpresaApelidoPortalRepository
     {
-        IEnumerable<EmpresaApelidoPortal> Obter();
+        IEnumerable<EmpresaApelido> Obter();
     }
 }
