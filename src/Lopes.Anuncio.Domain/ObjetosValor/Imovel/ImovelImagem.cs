@@ -12,8 +12,9 @@
         public string Descricao
         {
             get { return descricao; }
-            set { 
-                if(!string.IsNullOrEmpty(value) && value.ToLower() == "sem categoria")
+            set
+            {
+                if(!string.IsNullOrEmpty(value) && string.Equals(value, "sem categoria", StringComparison.OrdinalIgnoreCase))
                     descricao = string.Empty;
                 descricao = value;
             }

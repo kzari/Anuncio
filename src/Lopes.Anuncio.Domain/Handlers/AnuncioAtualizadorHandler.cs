@@ -122,7 +122,7 @@ namespace Lopes.Anuncio.Domain.Handlers
                         progresso.Mensagem($"4. Registrando o status...", percentualConcluido: 80);
                         RegistrarAtualizacao(atualizacoes, cancellationToken);
 
-                        progresso.Mensagem($"Concluído. R: {imoveisParaRemover.Count.ToString().PadLeft(5)} / {jaRemovidos.ToString().PadLeft(5)} A: {imoveisParaAtualizar.Count.ToString().PadLeft(5)} / {jaAtualizados.ToString().PadLeft(5)}).", percentualConcluido: 100);
+                        progresso.Mensagem($"Concluído. Removidos: {imoveisParaRemover.Count.ToString().PadLeft(5)} Atualizados/Inseridos: {imoveisParaAtualizar.Count.ToString().PadLeft(5)}.", percentualConcluido: 100);
 
                         progressoGeral.Atualizar($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }
@@ -153,8 +153,6 @@ namespace Lopes.Anuncio.Domain.Handlers
                 return new List<AnuncioAtualizacao>();
 
             progresso.Mensagem($"3. Obtendo dados dos {imoveisParaAtualizar.Count()} imóveis.", percentualConcluido: 20);
-
-            
 
             IEnumerable<DadosImovel> imoveis = ObterDadosImoveisCache(imoveisParaAtualizar.ToArray(), progresso);
 
