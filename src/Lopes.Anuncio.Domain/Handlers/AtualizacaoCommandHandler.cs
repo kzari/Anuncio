@@ -12,14 +12,17 @@ using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Domain.Handlers
 {
-    public class AnuncioAtualizadorHandler : IRequestHandler<AnunciosAtualizacaoCommand, bool>
+    /// <summary>
+    /// Faz a atualização dos anúncios nos portais
+    /// </summary>
+    public class AtualizacaoCommandHandler : IRequestHandler<AnunciosAtualizacaoCommand, bool>
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IPortalAtualizadorFactory _portalAtualizadorFactory;
         private readonly List<DadosImovel> _dadosImoveisCache;
 
-        public AnuncioAtualizadorHandler(ILogger logger,
+        public AtualizacaoCommandHandler(ILogger logger,
                                          IServiceProvider serviceProvider,
                                          IPortalAtualizadorFactory portalAtualizadorFactory)
         {

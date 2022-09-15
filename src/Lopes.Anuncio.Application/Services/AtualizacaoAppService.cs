@@ -18,7 +18,7 @@ namespace Lopes.Anuncio.Application.Services
             _repositorio = repositorio;
         }
 
-        public void Atualizar(AnuncioCotaRequest request, ILogger? logger)
+        public void AtualizarAnuncios(AnuncioCotaRequest request, ILogger? logger)
         {
             IEnumerable<AnuncioCota> anuncios = _repositorio.Obter(request).OrderBy(_ => _.IdImovel).ToList();
 

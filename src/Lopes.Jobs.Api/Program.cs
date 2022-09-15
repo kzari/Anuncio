@@ -9,18 +9,19 @@ WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 
-//Hangfire
-builder.Services.AddHangfire(x => 
-{
-    x.UseSqlServerStorage("DbLopesnet");
-    x.UseConsole();
-});
-builder.Services.AddHangfireServer();
 
-var configuration = new ConfigurationBuilder()
+IConfigurationRoot configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile($"appsettings.json")
     .Build();
+
+//Hangfire
+builder.Services.AddHangfire(x =>
+{
+    x.UseSqlServerStorage(configuration.GetConnectionString("DbLopesnet"));
+    x.UseConsole();
+});
+builder.Services.AddHangfireServer();
 
 ConfiguracaoServicos.ConfigurarServicos<HangFireLog>(configuration, builder.Services);
 

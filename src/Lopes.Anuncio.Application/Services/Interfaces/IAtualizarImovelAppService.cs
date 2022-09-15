@@ -5,6 +5,6 @@ namespace Lopes.Anuncio.Application.Interfaces
 {
     public interface IAtualizacaoAppService
     {
-        void Atualizar(AnuncioCotaRequest request, ILogger? logger);
+        void AtualizarAnuncios(AnuncioCotaRequest request, ILogger? logger);
     }
 }

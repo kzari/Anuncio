@@ -4,11 +4,11 @@ using MediatR;
 
 namespace Lopes.Anuncio.Application.Services
 {
-    public class RegistrarAtualizacaoAnunciosAppService : IRegistrarAtualizacaoAnunciosAppService
+    public class RegistrarAtualizacaoAppService : IRegistrarAtualizacaoAnunciosAppService
     {
         private readonly IMediator _mediator;
 
-        public RegistrarAtualizacaoAnunciosAppService(IMediator handler)
+        public RegistrarAtualizacaoAppService(IMediator handler)
         {
             _mediator = handler;
         }

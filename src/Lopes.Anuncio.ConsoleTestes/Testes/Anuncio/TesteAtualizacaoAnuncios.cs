@@ -13,7 +13,7 @@ namespace Lopes.ConsoleTestes.Testes.Anuncio
                 IAtualizacaoAppService atualizarAnuncioService = escopo.ServiceProvider.GetService<IAtualizacaoAppService>();
 
                 //atualizarAnuncioService.Atualizar(new AnuncioCotaRequest(idImoveis:new[] { 569521 }), null);
-                atualizarAnuncioService.Atualizar(new AnuncioCotaRequest(idCotas:new[] { 863 }), null);
+                atualizarAnuncioService.AtualizarAnuncios(new AnuncioCotaRequest(idCotas:new[] { 863 }), null);
             }
         }
     }

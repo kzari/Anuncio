@@ -77,21 +77,21 @@ namespace Lopes.Jobs.Api.Controllers
         public void AtualizarPorPortal([FromQuery] Portal[] portal, PerformContext context)
         {
             var log = new HangFireLog(context);
-            _service.Atualizar(new AnuncioCotaRequest(portal), log);
+            _service.AtualizarAnuncios(new AnuncioCotaRequest(portal), log);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public void AtualizarPorCotas([FromQuery] int[] cotas, PerformContext context)
         {
             var log = new HangFireLog(context);
-            _service.Atualizar(new AnuncioCotaRequest(idCotas: cotas), log);
+            _service.AtualizarAnuncios(new AnuncioCotaRequest(idCotas: cotas), log);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public void AtualizarPorImoveis([FromQuery] int[] idImoveis, PerformContext context, Portal? portal = null)
         {
             var log = new HangFireLog(context);
-            _service.Atualizar(new AnuncioCotaRequest(idImoveis: idImoveis), log);
+            _service.AtualizarAnuncios(new AnuncioCotaRequest(idImoveis: idImoveis), log);
         }
 
 

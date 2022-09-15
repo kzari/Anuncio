@@ -6,12 +6,12 @@ using Lopes.Anuncio.Domain.Entidades;
 
 namespace Lopes.Anuncio.Domain.Handlers
 {
-    public class RegistroAtualizacaoHandler : IRequestHandler<RegistroAtualizacoesCommand, bool>,
+    public class RegistroAtualizacaoCommandHandler : IRequestHandler<RegistroAtualizacoesCommand, bool>,
                                               IRequestHandler<RegistroAtualizacaoCommand, AtualizarStatusAnuncioResponse>
     {
         private readonly IAnuncioStatusRepositorioGravacao _repository;
 
-        public RegistroAtualizacaoHandler(IAnuncioStatusRepositorioGravacao repository)
+        public RegistroAtualizacaoCommandHandler(IAnuncioStatusRepositorioGravacao repository)
         {
             _repository = repository;
         }

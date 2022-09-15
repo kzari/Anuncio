@@ -59,9 +59,9 @@ namespace Lopes.Infra.IoC
 
         public virtual void RegistrarHandlers(IServiceCollection services)
         {
-            services.AddScoped<IRequestHandler<AnunciosAtualizacaoCommand, bool>, AnuncioAtualizadorHandler>();
-            services.AddScoped<IRequestHandler<RegistroAtualizacaoCommand, AtualizarStatusAnuncioResponse>, RegistroAtualizacaoHandler>();
-            services.AddScoped<IRequestHandler<RegistroAtualizacoesCommand, bool>, RegistroAtualizacaoHandler>();
+            services.AddScoped<IRequestHandler<AnunciosAtualizacaoCommand, bool>, AtualizacaoCommandHandler>();
+            services.AddScoped<IRequestHandler<RegistroAtualizacaoCommand, AtualizarStatusAnuncioResponse>, RegistroAtualizacaoCommandHandler>();
+            services.AddScoped<IRequestHandler<RegistroAtualizacoesCommand, bool>, RegistroAtualizacaoCommandHandler>();
         }
 
         public virtual void RegistrarDbContexts(IServiceCollection services, IConfiguration configuration)
@@ -82,11 +82,10 @@ namespace Lopes.Infra.IoC
 
         public virtual void RegistrarAppServices(IServiceCollection services)
         {
-            services.AddTransient<IAnuncioAppService, AnuncioAppService>();
             services.AddTransient<IAtualizacaoAppService, AtualizacaoAppService>();
-            services.AddTransient<IDadosImovelAppService, DadosImovelAppService>();
-            services.AddTransient<IRegistrarAtualizacaoAnunciosAppService, RegistrarAtualizacaoAnunciosAppService>();
+            services.AddTransient<IRegistrarAtualizacaoAnunciosAppService, RegistrarAtualizacaoAppService>();
         }
+
         public virtual void RegistrarRepositorios(IServiceCollection services)
         {
             services.AddTransient<IEmpresaApelidoPortalRepository, EmpresaApelidoPortalRepository>();
