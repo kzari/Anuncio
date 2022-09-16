@@ -1,6 +1,6 @@
-DROP TABLE dbo.Imoveis
+DROP TABLE dbo.Produtos
 GO
-CREATE TABLE [dbo].[Imoveis](
+CREATE TABLE [dbo].[Produtos](
 	[IdImovel] [int] NOT NULL,
 	[Titulo] [varchar](MAX) NULL,
 	[TextoSite] [varchar](MAX) NULL,
@@ -33,7 +33,7 @@ CREATE TABLE [dbo].[Imoveis](
 	[ZonaValor] [varchar](50) NULL,
 	[AnoConstrucao] [int] NULL,
 	[InscricaoMunicipal] [varchar](50) NULL,
- CONSTRAINT [PK_Imoveis] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Produtos] PRIMARY KEY CLUSTERED 
 (
 	[IdImovel] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

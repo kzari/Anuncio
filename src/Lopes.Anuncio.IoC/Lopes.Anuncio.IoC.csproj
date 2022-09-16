@@ -12,7 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lopes.Anuncio.Application\Lopes.Anuncio.Application.csproj" />
-    <ProjectReference Include="..\Lopes.Anuncio.Data\Lopes.Anuncio.Data.csproj" />
+    <ProjectReference Include="..\Lopes.Anuncio.Dados.Leitura\Lopes.Anuncio.Dados.Leitura.csproj" />
+    <ProjectReference Include="..\Lopes.Anuncio.Data\Lopes.Anuncio.Repositorio.csproj" />
     <ProjectReference Include="..\Lopes.Anuncio.XML\Lopes.Anuncio.XML.csproj" />
     <ProjectReference Include="..\Lopes.Infra.MemoryCache\Lopes.Infra.MemoryCache.csproj" />
   </ItemGroup>

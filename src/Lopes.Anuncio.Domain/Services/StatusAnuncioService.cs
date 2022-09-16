@@ -1,18 +1,19 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
 using Lopes.Anuncio.Domain.ObjetosValor;
-using Lopes.Anuncio.Domain.Reposities;
+using Lopes.Domain.Commons.Cache;
 
 namespace Lopes.Anuncio.Domain.Services
 {
     public class StatusAnuncioService : IStatusAnuncioService
     {
-        private readonly IImovelRepository _imovelRepository;
-        private readonly IDictionary<int, int[]> _imovelEmpresasCache;
+        private const string CHAVE_CACHE_FILIAIS_PRODUTO = "FranquiasProduto_[idProduto]";
+        private readonly IProdutoDadosService _produtoDadosService;
+        private readonly ICacheService _cacheService;
 
-        public StatusAnuncioService(IImovelRepository imovelRepository)
+        public StatusAnuncioService(IProdutoDadosService produtoDadosService, ICacheService cacheService)
         {
-            _imovelRepository = imovelRepository;
-            _imovelEmpresasCache = new Dictionary<int, int[]>();
+            _produtoDadosService = produtoDadosService;
+            _cacheService = cacheService;
         }
 
 
@@ -20,8 +21,8 @@ namespace Lopes.Anuncio.Domain.Services
         {
             if (!anuncio.Ativo ||
                 !anuncio.CotaAtiva ||
-                !anuncio.ImovelAtivo ||
-                !PodeAnunciarOutraEmpresa(anuncio))
+                !anuncio.ProdutoAtivo ||
+                !PodeAnunciarOutraFranquia(anuncio))
             {
                 return imovelNoXml
                     ? StatusAnuncioPortal.ARemover
@@ -34,24 +35,19 @@ namespace Lopes.Anuncio.Domain.Services
             return StatusAnuncioPortal.Atualizado;
         }
 
-        private bool PodeAnunciarOutraEmpresa(AnuncioCota anuncio)
+        private bool PodeAnunciarOutraFranquia(AnuncioCota anuncio)
         {
-            if (anuncio.PodeAnunciarOutraEmpresa)
+            if (anuncio.PodeAnunciarOutraFranquia)
                 return true;
 
-            int[] idEmpresas = ObterEmpresasImovel(anuncio.IdImovel);
-            return idEmpresas.Contains(anuncio.IdEmpresa);
-        }
+            string chave = CHAVE_CACHE_FILIAIS_PRODUTO.Replace("[idProduto]", anuncio.IdProduto.ToString());
 
-        public int[] ObterEmpresasImovel(int idImovel)
-        {
-            if (_imovelEmpresasCache.TryGetValue(idImovel, out int[] idEmpresas))
-                return idEmpresas;
+            int[] idFranquias = _cacheService.ObterOuGravar(CHAVE_CACHE_FILIAIS_PRODUTO, TimeSpan.FromDays(1), () =>
+            {
+                return _produtoDadosService.ObterFranquias(anuncio.IdProduto);
+            });
 
-            idEmpresas = _imovelRepository.ObterEmpresasImovel(idImovel).ToArray();
-            _imovelEmpresasCache.Add(idImovel, idEmpresas);
-
-            return idEmpresas;
+            return idFranquias?.Contains(anuncio.IdFranquia) ?? true;
         }
     }
 }

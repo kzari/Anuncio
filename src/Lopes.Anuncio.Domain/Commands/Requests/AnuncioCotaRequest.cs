@@ -15,14 +15,14 @@ namespace Lopes.Anuncio.Domain.Commands.Requests
             Portais = portal;
         }
 
-        public AnuncioCotaRequest(int[]? idImoveis = null, int[]? idCotas = null, Portal[]? portal = null)
+        public AnuncioCotaRequest(int[]? idProdutos = null, int[]? idCotas = null, Portal[]? portal = null)
         {
-            IdImoveis = idImoveis;
+            IdProdutos = idProdutos;
             IdCotas = idCotas;
             Portais = portal;
         }
 
-        public int[]? IdImoveis { get; set; }
+        public int[]? IdProdutos { get; set; }
         public int[]? IdCotas { get; set; }
         public Portal[]? Portais { get; set; }
     }

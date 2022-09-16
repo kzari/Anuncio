@@ -1,7 +1,9 @@
-﻿using Lopes.Anuncio.Domain.Enums;
+﻿using Lopes.Anuncio.Application.DadosService;
+using Lopes.Anuncio.Domain.Enums;
 using Lopes.Anuncio.Domain.ObjetosValor;
-using Lopes.Anuncio.Domain.Reposities;
 using Lopes.Anuncio.Domain.Services;
+using Lopes.Domain.Commons;
+using Lopes.Domain.Commons.Cache;
 using Lopes.Infra.XML;
 using Microsoft.Extensions.Configuration;
 
@@ -9,22 +11,22 @@ namespace Lopes.Infra.IoC
 {
     public class PortalAtualizadorFactory : IPortalAtualizadorFactory
     {
-        private readonly IDictionary<Portal,IEnumerable<PortalCaracteristica>> _portaisCaracteristicas;
+        private const string CHAVE_CACHE_CARACTERISTICAS_PORTAL = "CaracteristicasPortal_[portal]";
+        private const string CHAVE_CACHE_APELIDO_EMPRESAS = "ApelidoEmpresas";
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
+        private readonly ICacheService _cacheService;
 
 
-        public PortalAtualizadorFactory(IServiceProvider serviceProvider, IConfiguration configuration)
+        public PortalAtualizadorFactory(IServiceProvider serviceProvider, 
+                                        IConfiguration configuration, 
+                                        ICacheService cacheService)
         {
             _serviceProvider = serviceProvider;
-            _portaisCaracteristicas = new Dictionary<Portal, IEnumerable<PortalCaracteristica>>();
             _configuration = configuration;
+            _cacheService = cacheService;
         }
 
-
-
-        private IEnumerable<EmpresaApelido> apelidos;
-        public IEnumerable<EmpresaApelido> Apelidos => apelidos ??= ((IEmpresaApelidoPortalRepository)_serviceProvider.GetService(typeof(IEmpresaApelidoPortalRepository))).Obter();
 
         public IPortalAtualizador ObterAtualizador(Portal portal, int idEmpresa)
         {
@@ -36,9 +38,9 @@ namespace Lopes.Infra.IoC
                 default:
                     {
                         string caminhoPastaXmls = _configuration["CaminhoPastaXmls"].ToString();
-                        string urlImagens = _configuration["UrlFotosImoveis"].ToString();
+                        string urlImagens = _configuration["UrlFotosProdutos"].ToString();
 
-                        IEnumerable<PortalCaracteristica> portalCaracteristicas = ObterCaracteristicasPortal(portal);
+                        IEnumerable<PortalCaracteristica> portalCaracteristicas = ObterCaracteristicasPortal(portal) ?? Enumerable.Empty<PortalCaracteristica>();
                         string apelidoEmpresa = ObterApelidoEmpresa(idEmpresa);
 
                         return new PortalXMLBuilder(caminhoPastaXmls, portalCaracteristicas, apelidoEmpresa, portal, idEmpresa, urlImagens);
@@ -49,26 +51,21 @@ namespace Lopes.Infra.IoC
 
         public string ObterApelidoEmpresa(int idEmpresa)
         {
-            return Apelidos.FirstOrDefault(_ => _.IdEmpresa == idEmpresa)?.Apelido ?? string.Empty;
+            IEnumerable<FranquiaApelido>? apelidos = _cacheService.ObterOuGravar(CHAVE_CACHE_APELIDO_EMPRESAS, TimeSpan.FromDays(1), () =>
+            {
+                return _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosService>().Obter();
+            });
+            return apelidos?.FirstOrDefault(_ => _.IdEmpresa == idEmpresa)?.Apelido ?? string.Empty;
         }
 
-        public IEnumerable<PortalCaracteristica> ObterCaracteristicasPortal(Portal portal)
+        public IEnumerable<PortalCaracteristica>? ObterCaracteristicasPortal(Portal portal)
         {
-            IEnumerable<PortalCaracteristica> caracteristicas;
+            string chave = CHAVE_CACHE_CARACTERISTICAS_PORTAL.Replace("[portal]", portal.ToString());
 
-            lock (_portaisCaracteristicas)
+            return _cacheService.ObterOuGravar(chave, TimeSpan.FromDays(1), () =>
             {
-                if(_portaisCaracteristicas.TryGetValue(portal, out caracteristicas))
-                    return caracteristicas;
-
-                IPortalCaracteristicaRepository portalCaracteristicaRepository = (IPortalCaracteristicaRepository)_serviceProvider.GetService(typeof(IPortalCaracteristicaRepository));
-                caracteristicas = portalCaracteristicaRepository.Obter(portal) ?? new List<PortalCaracteristica>();
-
-                lock (_portaisCaracteristicas)
-                    _portaisCaracteristicas.Add(portal, caracteristicas);
-            }
-
-            return caracteristicas;
+                return _serviceProvider.ObterServico<IPortalCaracteristicaDadosService>().Obter(portal);
+            })?.ToList();
         }
     }
 }

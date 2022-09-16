@@ -7,7 +7,7 @@ using Lopes.Domain.Commons;
 using MediatR;
 using System.Collections.Concurrent;
 using Lopes.Anuncio.Domain.Entidades;
-using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.Models.DadosProduto;
 using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Domain.Commons.Cache;
 
@@ -18,11 +18,11 @@ namespace Lopes.Anuncio.Domain.Handlers
     /// </summary>
     public class AtualizacaoCommandHandler : IRequestHandler<AnunciosAtualizacaoCommand, bool>
     {
-        private const string CHAVE_CACHE_DADOS_IMOVEIS = "DadosImoveis";
+        private const string CHAVE_CACHE_DADOS_IMOVEIS = "DadosProdutos";
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IPortalAtualizadorFactory _portalAtualizadorFactory;
-        private readonly List<DadosImovel> _dadosImoveisCache;
+        private readonly List<Produto> _dadosProdutosCache;
         private readonly ICacheService _cacheService;
 
         public AtualizacaoCommandHandler(ILogger logger,
@@ -33,7 +33,7 @@ namespace Lopes.Anuncio.Domain.Handlers
             _logger = logger;
             _serviceProvider = serviceProvider;
             _portalAtualizadorFactory = portalAtualizadorFactory;
-            _dadosImoveisCache = new List<DadosImovel>();
+            _dadosProdutosCache = new List<Produto>();
             _cacheService = cacheService;
         }
 
@@ -51,10 +51,10 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             int totalAnuncios = anuncios.Count();
 
-            var anunciosAgrupados = anuncios.GroupBy(_ => new { _.Portal, _.IdEmpresa }, (key, group) => new
+            var anunciosAgrupados = anuncios.GroupBy(_ => new { _.Portal, _.IdFranquia }, (key, group) => new
             {
                 Portal = key.Portal,
-                IdEmpresa = key.IdEmpresa,
+                IdFranquia = key.IdFranquia,
                 Anuncios = group.ToList()
             }).ToList();
             int qtdeCotas = anunciosAgrupados.Count;
@@ -62,7 +62,7 @@ namespace Lopes.Anuncio.Domain.Handlers
             logger.Info($"{totalAnuncios} anúncios encontrados para atualização. {qtdeCotas} cota(s).");
 
             IProgresso progressoGeral = logger.ObterProgresso(anunciosAgrupados.Count, 95, $">> Atualização de imóveis nos portais.");
-            progressoGeral.Atualizar($"Processando {qtdeCotas} cota(s).");
+            progressoGeral.NovaMensagem($"Processando {qtdeCotas} cota(s).");
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
             var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
@@ -76,7 +76,7 @@ namespace Lopes.Anuncio.Domain.Handlers
                 int partitionId = partitionIds++;
 
                 IStatusAnuncioService statusAnuncioService = (IStatusAnuncioService)_serviceProvider.GetService(typeof(IStatusAnuncioService));
-                IAnuncioStatusRepositorioGravacao imovelAtualizacaoPortaisRepository = (IAnuncioStatusRepositorioGravacao)_serviceProvider.GetService(typeof(IAnuncioStatusRepositorioGravacao));
+                IAnuncioStatusRepositorio imovelAtualizacaoPortaisDadosService = (IAnuncioStatusRepositorio)_serviceProvider.GetService(typeof(IAnuncioStatusRepositorio));
 
                 using (partition)
                 {
@@ -85,7 +85,7 @@ namespace Lopes.Anuncio.Domain.Handlers
                         cotaAtual++;
                         var portalEmpresa = partition.Current;
 
-                        int idEmpresa = portalEmpresa.IdEmpresa;
+                        int idEmpresa = portalEmpresa.IdFranquia;
                         Portal portal = portalEmpresa.Portal;
                         List<AnuncioCota> anuncios = portalEmpresa.Anuncios;
                         int qtdeAnuncios = anuncios.Count;
@@ -100,11 +100,11 @@ namespace Lopes.Anuncio.Domain.Handlers
 
                         IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portal, idEmpresa);
 
-                        int[] idImoveisNoPortal = atualizador.ObterIdImoveisNoPortal().ToArray();
+                        int[] idProdutosNoPortal = atualizador.ObterIdProdutosNoPortal().ToArray();
 
                         foreach (AnuncioCota anuncio in anuncios)
                         {
-                            bool imovelNoPortal = idImoveisNoPortal.Contains(anuncio.IdImovel);
+                            bool imovelNoPortal = idProdutosNoPortal.Contains(anuncio.IdProduto);
 
                             switch (statusAnuncioService.VerificarStatusImovelPortal(anuncio, imovelNoPortal))
                             {
@@ -117,28 +117,28 @@ namespace Lopes.Anuncio.Domain.Handlers
                                     continue;
 
                                 case StatusAnuncioPortal.ARemover:
-                                    imoveisParaRemover.Add(anuncio.IdImovel);
+                                    imoveisParaRemover.Add(anuncio.IdProduto);
                                     break;
 
                                 case StatusAnuncioPortal.Desatualizado:
-                                    imoveisParaAtualizar.Add(anuncio.IdImovel);
+                                    imoveisParaAtualizar.Add(anuncio.IdProduto);
                                     break;
                             }
                         }
 
                         progresso.Mensagem($"2. Removendo {imoveisParaRemover.Count} anúncios...", percentualConcluido: 10);
-                        atualizador.RemoverImoveis(imoveisParaRemover.ToArray(), progresso);
+                        atualizador.RemoverProdutos(imoveisParaRemover.ToArray(), progresso);
                         List<AnuncioAtualizacao> atualizacoes = imoveisParaRemover.Select(_ => new AnuncioAtualizacao(portal, _, idEmpresa, AtualizacaoAcao.Exclusao)).ToList();
 
                         progresso.Mensagem($"3. Atualizando/Adicionando {imoveisParaAtualizar.Count} anúncios...", percentualConcluido: 50);
                         atualizacoes.AddRange(AtualizarAdicionarAnuncios(anuncios, imoveisParaAtualizar, idEmpresa, portal, atualizador, progresso));
 
                         progresso.Mensagem($"4. Registrando o status...", percentualConcluido: 80);
-                        RegistrarAtualizacao(atualizacoes, cancellationToken);
+                        RegistrarAtualizacao(atualizacoes, progresso, cancellationToken);
 
                         progresso.Mensagem($"Concluído. Removidos: {imoveisParaRemover.Count.ToString().PadLeft(5)} Atualizados/Inseridos: {imoveisParaAtualizar.Count.ToString().PadLeft(5)}.", percentualConcluido: 100);
 
-                        progressoGeral.Atualizar($"Processando cotas {cotaAtual} de {qtdeCotas}.");
+                        progressoGeral.NovaMensagem($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }
                 }
             })).ToArray();
@@ -150,10 +150,10 @@ namespace Lopes.Anuncio.Domain.Handlers
             return Task.FromResult(true);
         }
 
-        private bool RegistrarAtualizacao(List<AnuncioAtualizacao> atualizacoes, CancellationToken cancellationToken)
+        private bool RegistrarAtualizacao(List<AnuncioAtualizacao> atualizacoes, IProgresso progresso, CancellationToken cancellationToken)
         {
-            var registrarAtualizacaoHandler = _serviceProvider.ObterServico<IRequestHandler<RegistroAtualizacoesCommand, bool>>();
-            return registrarAtualizacaoHandler.Handle(new RegistroAtualizacoesCommand(atualizacoes), cancellationToken).Result;
+            var handler = _serviceProvider.ObterServico<IRequestHandler<RegistroAtualizacoesCommand, bool>>();
+            return handler.Handle(new RegistroAtualizacoesCommand(atualizacoes, progresso), cancellationToken).Result;
         }
 
         private List<AnuncioAtualizacao> AtualizarAdicionarAnuncios(IEnumerable<AnuncioCota> anuncios,
@@ -168,7 +168,7 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             progresso.Mensagem($"3. Obtendo dados dos {imoveisParaAtualizar.Count()} imóveis.", percentualConcluido: 20);
 
-            IEnumerable<DadosImovel> imoveis = ObterDadosImoveisCache(imoveisParaAtualizar.ToArray(), progresso);
+            IEnumerable<Produto> imoveis = ObterDadosProdutosCache(imoveisParaAtualizar.ToArray(), progresso).ToList();
 
             //TODO: tratar imóveis não encontrados
 
@@ -177,29 +177,29 @@ namespace Lopes.Anuncio.Domain.Handlers
             if (!imoveis.Any())
                 return atualizacoes;
 
-            foreach (DadosImovel imovel in imoveis)
+            foreach (Produto imovel in imoveis)
             {
-                imovel.CodigoClientePortal = anuncios.FirstOrDefault(_ => _.IdImovel == imovel.Dados.IdImovel).CodigoClientePortal;
-                atualizacoes.Add(new AnuncioAtualizacao(portal, imovel.Dados.IdImovel, idEmpresa, AtualizacaoAcao.Atualizacao));
+                imovel.CodigoClientePortal = anuncios.FirstOrDefault(_ => _.IdProduto == imovel.Dados.IdProduto).CodigoClientePortal;
+                atualizacoes.Add(new AnuncioAtualizacao(portal, imovel.Dados.IdProduto, idEmpresa, AtualizacaoAcao.Atualizacao));
             }
 
             progresso.Mensagem($"3. Atualizando imóveis...", percentualConcluido: 30);
-            atualizador.InserirAtualizarImoveis(imoveis, progresso: progresso);
+            atualizador.InserirAtualizarProdutos(imoveis, progresso: progresso);
 
             return atualizacoes;
         }
 
 
-        private IEnumerable<DadosImovel> ObterDadosImoveisCache(int[] idImoveis, IProgresso progresso)
+        private IEnumerable<Produto> ObterDadosProdutosCache(int[] idProdutos, IProgresso progresso)
         {
-            IEnumerable<DadosImovel>? todosImoveisCacheados = _cacheService.Obter<IEnumerable<DadosImovel>>(CHAVE_CACHE_DADOS_IMOVEIS);
+            IEnumerable<Produto>? todosProdutosCacheados = _cacheService.Obter<IEnumerable<Produto>>(CHAVE_CACHE_DADOS_IMOVEIS);
 
-            IEnumerable<DadosImovel> imoveisCacheados = todosImoveisCacheados?.Where(_ => idImoveis.Contains(_.Dados.IdImovel)).ToList() ?? new List<DadosImovel>();
+            IEnumerable<Produto> imoveisCacheados = todosProdutosCacheados?.Where(_ => idProdutos.Contains(_.Dados.IdProduto)).ToList() ?? new List<Produto>();
 
-            int[] idImoveisNaoCacheados = idImoveis.Where(_ => !imoveisCacheados.Select(_ => _.Dados.IdImovel).Contains(_)).ToArray() ?? idImoveis;
-            if (idImoveisNaoCacheados.Any())
+            int[] idProdutosNaoCacheados = idProdutos.Where(_ => !imoveisCacheados.Select(_ => _.Dados.IdProduto).Contains(_)).ToArray() ?? idProdutos;
+            if (idProdutosNaoCacheados.Any())
             {
-                IEnumerable<DadosImovel> imoveisNaoCacheados = ObterDadosImovel(idImoveisNaoCacheados, progresso);
+                IEnumerable<Produto> imoveisNaoCacheados = ObterDadosImovel(idProdutosNaoCacheados, progresso).ToList();
                 if (imoveisNaoCacheados.Any())
                 {
                     _cacheService.Gravar(CHAVE_CACHE_DADOS_IMOVEIS, imoveisNaoCacheados, TimeSpan.FromHours(1));
@@ -210,22 +210,22 @@ namespace Lopes.Anuncio.Domain.Handlers
             return imoveisCacheados;
         }
 
-        private IEnumerable<DadosImovel> ObterDadosImoveisCacheOLD(int[] idImoveis, IProgresso progresso)
+        private IEnumerable<Produto> ObterDadosProdutosCacheOLD(int[] idProdutos, IProgresso progresso)
         {
-            IEnumerable<DadosImovel> imoveisCacheados;
-            lock (_dadosImoveisCache)
+            IEnumerable<Produto> imoveisCacheados;
+            lock (_dadosProdutosCache)
             {
-                imoveisCacheados = _dadosImoveisCache.ToList().Where(_ => idImoveis.Contains(_.Dados.IdImovel)) ?? new List<DadosImovel>();
+                imoveisCacheados = _dadosProdutosCache.ToList().Where(_ => idProdutos.Contains(_.Dados.IdProduto)) ?? new List<Produto>();
             }
 
-            int[] idImoveisNaoCacheados = idImoveis.Where(_ => !imoveisCacheados.Select(_ => _.Dados.IdImovel).Contains(_)).ToArray() ?? idImoveis;
-            if (idImoveisNaoCacheados.Any())
+            int[] idProdutosNaoCacheados = idProdutos.Where(_ => !imoveisCacheados.Select(_ => _.Dados.IdProduto).Contains(_)).ToArray() ?? idProdutos;
+            if (idProdutosNaoCacheados.Any())
             {
-                IEnumerable<DadosImovel> imoveisNaoCacheados = ObterDadosImovel(idImoveisNaoCacheados, progresso);
+                IEnumerable<Produto> imoveisNaoCacheados = ObterDadosImovel(idProdutosNaoCacheados, progresso);
                 if (imoveisNaoCacheados.Any())
                 {
-                    lock (_dadosImoveisCache)
-                        _dadosImoveisCache.AddRange(imoveisNaoCacheados);
+                    lock (_dadosProdutosCache)
+                        _dadosProdutosCache.AddRange(imoveisNaoCacheados);
                     return imoveisCacheados.Concat(imoveisNaoCacheados);
                 }
             }
@@ -233,41 +233,41 @@ namespace Lopes.Anuncio.Domain.Handlers
             return imoveisCacheados;
         }
 
-        public IEnumerable<DadosImovel> ObterDadosImovel(int[] idImoveis, IProgresso progresso = null)
+        public IEnumerable<Produto> ObterDadosImovel(int[] idProdutos, IProgresso progresso = null)
         {
             if (progresso != null)
-                progresso.Atualizar($"Obtendo dados principais de {idImoveis.Length} imóveis.");
+                progresso.NovaMensagem($"Obtendo dados principais de {idProdutos.Length} imóveis.");
 
-            IImovelRepository imovelRepository = (IImovelRepository)_serviceProvider.GetService(typeof(IImovelRepository));
+            IProdutoDadosService imovelDadosService = _serviceProvider.ObterServico<IProdutoDadosService>();
 
-            List<DadosPrincipais> dadosPrincipais = imovelRepository.ObterDadosImoveis(idImoveis).ToList();
+            IEnumerable<DadosPrincipais> dadosPrincipais = imovelDadosService.ObterDados(idProdutos);
 
-            int[] idImoveisResgatados = dadosPrincipais.Select(_ => _.IdImovel).ToArray();
-
-            if (progresso != null)
-                progresso.Atualizar($"Obtendo caracteristicas de {idImoveisResgatados.Length} imóveis.");
-
-            List<Caracteristica> caracteristicas = imovelRepository.ObterCaracteristicas(idImoveisResgatados).ToList();
+            int[] idProdutosResgatados = dadosPrincipais.Select(_ => _.IdProduto).ToArray();
 
             if (progresso != null)
-                progresso.Atualizar($"Obtendo Tour virtual e Vídeos de {idImoveisResgatados.Count()} imóveis.");
+                progresso.NovaMensagem($"Obtendo caracteristicas de {idProdutosResgatados.Length} imóveis.");
 
-            IDictionary<int, string[]> urlTours = imovelRepository.ObterUrlTourVirtuais(idImoveisResgatados);
-            IDictionary<int, string[]> urlVideos = imovelRepository.ObterUrlVideos(idImoveisResgatados);
-            IEnumerable<Fotos> fotos = imovelRepository.ObterFotos(idImoveisResgatados);
+            List<Caracteristica> caracteristicas = imovelDadosService.ObterCaracteristicas(idProdutosResgatados).ToList();
 
             if (progresso != null)
-                progresso.Atualizar($"Preenchendo informações de {idImoveisResgatados.Length} imóveis.");
+                progresso.NovaMensagem($"Obtendo Tour virtual e Vídeos de {idProdutosResgatados.Count()} imóveis.");
 
-            List<DadosImovel> imoveis = new List<DadosImovel>();
+            IDictionary<int, string[]> urlTours = imovelDadosService.ObterUrlTourVirtuais(idProdutosResgatados);
+            IDictionary<int, string[]> urlVideos = imovelDadosService.ObterUrlVideos(idProdutosResgatados);
+            IEnumerable<Foto> fotos = imovelDadosService.ObterFotos(idProdutosResgatados);
+
+            if (progresso != null)
+                progresso.NovaMensagem($"Preenchendo informações de {idProdutosResgatados.Length} imóveis.");
+
+            List<Produto> imoveis = new List<Produto>();
             foreach (DadosPrincipais dados in dadosPrincipais)
             {
-                DadosImovel imovel = new(dados);
+                Produto imovel = new(dados);
 
-                imovel.Caracteristicas = caracteristicas.Where(_ => _.IdImovel == dados.IdImovel);
-                imovel.UrlTourVirtuais = urlTours.Where(_ => _.Key == dados.IdImovel).SelectMany(_ => _.Value);
-                imovel.UrlVideos = urlVideos.Where(_ => _.Key == dados.IdImovel).SelectMany(_ => _.Value);
-                imovel.Imagens = fotos.Where(_ => _.IdImovel == dados.IdImovel);
+                imovel.Caracteristicas = caracteristicas.Where(_ => _.IdImovel == dados.IdProduto);
+                imovel.UrlTourVirtuais = urlTours.Where(_ => _.Key == dados.IdProduto).SelectMany(_ => _.Value);
+                imovel.UrlVideos = urlVideos.Where(_ => _.Key == dados.IdProduto).SelectMany(_ => _.Value);
+                imovel.Imagens = fotos.Where(_ => _.IdProduto == dados.IdProduto);
 
                 yield return imovel;
             }

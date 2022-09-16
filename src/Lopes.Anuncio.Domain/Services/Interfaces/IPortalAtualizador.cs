@@ -1,6 +1,6 @@
 ﻿using Lopes.Domain.Commons;
 using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.Models.DadosProduto;
 
 namespace Lopes.Anuncio.Domain.Services
 {
@@ -19,9 +19,9 @@ namespace Lopes.Anuncio.Domain.Services
     }
     public interface IPortalAtualizador
     {
-        void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste = false, IProgresso progresso = null);
-        void RemoverImoveis(int[] idImovel, IProgresso progresso = null);
+        void InserirAtualizarProdutos(IEnumerable<Produto> dados, bool removerSeExiste = false, IProgresso progresso = null);
+        void RemoverProdutos(int[] idImovel, IProgresso progresso = null);
         bool ImovelNoPortal(int idImovel);
-        IEnumerable<int> ObterIdImoveisNoPortal();
+        IEnumerable<int> ObterIdProdutosNoPortal();
     }
 }

@@ -30,7 +30,7 @@ namespace Lopes.Infra.MemoryCache
             return _memoryCache.TryGetValue(chave, out T dado) ? dado : null;
         }
 
-        public T? ObterOuGravar<T>(string chave, Func<T> acao, TimeSpan expiracaoAPartirDeAgora) where T : class
+        public T? ObterOuGravar<T>(string chave, TimeSpan expiracaoAPartirDeAgora, Func<T> acao) where T : class
         {
             T dado = _memoryCache.GetOrCreate(chave, entry => {
                 entry.AbsoluteExpirationRelativeToNow = expiracaoAPartirDeAgora;
@@ -40,7 +40,7 @@ namespace Lopes.Infra.MemoryCache
             return dado;
         }
 
-        public T? ObterOuGravar<T>(string chave, Func<T> acao, DateTimeOffset expiracao) where T : class
+        public T? ObterOuGravar<T>(string chave, DateTimeOffset expiracao, Func<T> acao) where T : class
         {
             T dado = _memoryCache.GetOrCreate(chave, entry => {
                 entry.AbsoluteExpiration = expiracao;

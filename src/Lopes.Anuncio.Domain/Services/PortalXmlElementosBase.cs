@@ -1,5 +1,5 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.Models.DadosProduto;
 using Lopes.Anuncio.Domain.Models.XML;
 using Lopes.Anuncio.Domain.Models.XML.Portais;
 using Lopes.Anuncio.Domain.ObjetosValor;
@@ -10,51 +10,43 @@ namespace Lopes.Anuncio.Domain.Services
 {
     public abstract class PortalXmlElementosBase
     {
+        protected readonly string UrlFotosProdutos;
+        protected readonly IEnumerable<PortalCaracteristica> PortalCaracteristicas;
 
-        public PortalXmlElementosBase(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas, string urlFotosImoveis)
+        public PortalXmlElementosBase(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas, string urlFotosProdutos)
         {
             Portal = portal;
             PortalCaracteristicas = portalCaracteristicas ?? new List<PortalCaracteristica>();
-            UrlFotosImoveis = urlFotosImoveis;
+            UrlFotosProdutos = urlFotosProdutos;
         }
 
         public Portal Portal { get; }
 
-        protected readonly string UrlFotosImoveis;
-        protected readonly IEnumerable<PortalCaracteristica> PortalCaracteristicas;
         protected abstract Elemento CriarElementoCabecalho();
-        protected abstract ElementoImovel CriarElementoImovel(DadosImovel dados);
+        protected abstract ElementoProduto CriarElementoImovel(Produto dados);
 
-        public Xml ObterXml(DadosImovel dados) => ObterXml(new List<DadosImovel> { dados });
-        public Xml ObterXml(IEnumerable<DadosImovel> imoveis)
+        public Xml ObterXml(Produto dados) => ObterXml(new List<Produto> { dados });
+        public Xml ObterXml(IEnumerable<Produto> imoveis)
         {
             Elemento cabecalhos = CriarElementoCabecalho();
 
-            IEnumerable<ElementoImovel> eImoveis = CriarElementoImovel(imoveis);
+            IEnumerable<ElementoProduto> eProdutos = CriarElementoImovel(imoveis);
 
-            return new Xml(cabecalhos, eImoveis);
+            return new Xml(cabecalhos, eProdutos);
         }
-        public static IPortalXMLElementos ObterPortalXml(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas, string urlFotosImoveis)
+        public static IPortalXMLElementos ObterPortalXml(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas, string urlFotosProdutos)
         {
             switch (portal)
             {
                 case Portal.Zap:
                 default:
-                    return new Zap(portal, portalCaracteristicas, urlFotosImoveis);
+                    return new Zap(portal, portalCaracteristicas, urlFotosProdutos);
                 //default:
                     //throw new NotImplementedException();
             }
         }
 
-        private IEnumerable<ElementoImovel> CriarElementoImovel(IEnumerable<DadosImovel> imoveis)
-        {
-            foreach (DadosImovel imovel in imoveis)
-            {
-                yield return CriarElementoImovel(imovel);
-            }
-        }
-
-        public static bool UsaZonaDeValor(string? estado)
+        protected static bool UsaZonaDeValor(string? estado)
         {
             if (string.IsNullOrEmpty(estado))
                 return false;
@@ -63,13 +55,9 @@ namespace Lopes.Anuncio.Domain.Services
             return estados.Any(a => a.Equals(estado));
         }
 
-        public static string FormatarDecimal(decimal? valor)
-        {
-            if (!valor.HasValue)
-                return string.Empty;
-
-            return string.Format("{0,00}", valor.Value);
-        }
+        public static string FormatarDecimal(decimal? valor) => valor.HasValue
+                ? string.Format("{0:0.00}", valor.Value)
+                : string.Empty;
 
         public static string RemoverCaracteresInvalidosUnicode(string? input, string replacement)
         {
@@ -77,6 +65,16 @@ namespace Lopes.Anuncio.Domain.Services
                 return string.Empty;
 
             return Regex.Replace(input, "\\p{C}+", replacement);
+        }
+
+        
+
+        private IEnumerable<ElementoProduto> CriarElementoImovel(IEnumerable<Produto> imoveis)
+        {
+            foreach (Produto imovel in imoveis)
+            {
+                yield return CriarElementoImovel(imovel);
+            }
         }
     }
 }

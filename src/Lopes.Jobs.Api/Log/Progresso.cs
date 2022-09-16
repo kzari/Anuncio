@@ -16,7 +16,7 @@ namespace Lopes.Jobs.Api.Log
 
         public int ValorMaximo { get; }
 
-        public void Atualizar(string item)
+        public void NovaMensagem(string item)
         {
             //progressBar.Next(texto);
         }
@@ -50,7 +50,7 @@ namespace Lopes.Jobs.Api.Log
 
         public int ValorMaximo { get; }
 
-        public void Atualizar(string item)
+        public void NovaMensagem(string item)
         {
             string texto = ObterTexto(item);
             _performContext.WriteLine(texto);

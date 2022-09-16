@@ -1,44 +1,48 @@
 ﻿namespace Lopes.Anuncio.Domain.XML
 {
-    public class ElementoImovel : Elemento
-    {
-        public ElementoImovel(int idImovel, string nome, string? valor = null, IEnumerable<Atributo> atributos = null, IEnumerable<Elemento> elementosFilhos = null) : 
-            base(nome, valor, atributos, elementosFilhos)
-        {
-            IdImovel = idImovel;
-        }
-
-        public int IdImovel { get; set; }
-    }
     public class Elemento
     {
-        public Elemento(string nome, string? valor = null, IEnumerable<Atributo> atributos = null, IEnumerable<Elemento> elementosFilhos = null)
+        public Elemento(string nome, 
+                        string? valor = null, 
+                        IEnumerable<Atributo> atributos = null, 
+                        IEnumerable<Elemento> elementosFilhos = null)
         {
             Nome = nome;
-            if (valor != null)
-                Valor = valor;
-                
-            Atributos = atributos?.ToList() ?? new List<Atributo>();
-            Filhos = elementosFilhos?.ToList() ?? new List<Elemento>();
+            Valor = valor;
+            Atributos = atributos?.ToList();
+            Filhos = elementosFilhos?.ToList();
         }
 
-        public string Nome { get; set; }
-        public string? Valor { get; set; }
-        public List<Atributo> Atributos { get; set; }
-        public List<Elemento> Filhos { get; set; }
+        public string Nome { get; }
+        public string? Valor { get; }
+        public List<Atributo>? Atributos { get; }
+        public List<Elemento>? Filhos { get; private set; }
 
-        public Elemento? AdicionarElemento(string nome, 
-                                           string? valor = null, 
-                                           IEnumerable<Atributo> atributos = null, 
-                                           IEnumerable<Elemento> elementosFilhos = null,
-                                           bool naoAdicionarSeNuloOuVazio = false)
+        /// <summary>
+        /// Adiciona um elemento filho a este elemento
+        /// </summary>
+        /// <param name="nome"></param>
+        /// <param name="valor"></param>
+        /// <param name="naoAdicionarSeNuloOuVazio">Não adiciona o elemento filho caso o valor seja vazio ou nulo</param>
+        /// <returns></returns>
+        public Elemento? AdicionarFilho(string nome, string? valor = null, bool naoAdicionarSeNuloOuVazio = false)
         {
-            if (naoAdicionarSeNuloOuVazio && string.IsNullOrEmpty(valor))
+            return AdicionarFilho(new Elemento(nome, valor), naoAdicionarSeNuloOuVazio);
+        }
+
+        /// <summary>
+        /// Adiciona um elemento filho a este elemento
+        /// </summary>
+        /// <param name="filho"></param>
+        /// <param name="naoAdicionarSeNuloOuVazio">Não adiciona o elemento filho caso o valor seja vazio ou nulo</param>
+        /// <returns></returns>
+        public Elemento? AdicionarFilho(Elemento filho, bool naoAdicionarSeNuloOuVazio = false)
+        {
+            if (naoAdicionarSeNuloOuVazio && string.IsNullOrEmpty(filho.Valor))
                 return null;
 
-            var elemento = new Elemento(nome, valor, atributos, elementosFilhos);
-            Filhos.Add(elemento);
-            return elemento;
+            (Filhos ??= new List<Elemento>()).Add(filho);
+            return filho;
         }
     }
 }

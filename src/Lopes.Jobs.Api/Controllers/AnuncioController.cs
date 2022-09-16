@@ -25,11 +25,11 @@ namespace Lopes.Jobs.Api.Controllers
 
         [HttpGet]
         [Route("AtualizarPorImovel")]
-        public string AtualizarPorImovel([FromQuery] int[] idImoveis)
+        public string AtualizarPorImovel([FromQuery] int[] idProdutos)
         {
-            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorImoveis(idImoveis, null, null));
+            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null, null));
 
-            string mensagem = $"Atualização para os imóveis '{string.Join(", ", idImoveis)}' enfileirada. JobId: {jobId}";
+            string mensagem = $"Atualização para os imóveis '{string.Join(", ", idProdutos)}' enfileirada. JobId: {jobId}";
 
             _logger.Log(LogLevel.Information, mensagem);
 
@@ -38,11 +38,11 @@ namespace Lopes.Jobs.Api.Controllers
 
         [HttpGet]
         [Route("AtualizarPorImovelPortal")]
-        public string AtualizarPorImovelPortal([FromQuery] int[] idImoveis, [FromQuery] Portal portal)
+        public string AtualizarPorImovelPortal([FromQuery] int[] idProdutos, [FromQuery] Portal portal)
         {
-            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorImoveis(idImoveis, null, portal));
+            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null, portal));
 
-            string mensagem = $"Atualização para os imóveis '{string.Join(", ", idImoveis)}' enfileirada. JobId: {jobId}";
+            string mensagem = $"Atualização para os imóveis '{string.Join(", ", idProdutos)}' enfileirada. JobId: {jobId}";
 
             _logger.Log(LogLevel.Information, mensagem);
 
@@ -88,10 +88,10 @@ namespace Lopes.Jobs.Api.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void AtualizarPorImoveis([FromQuery] int[] idImoveis, PerformContext context, Portal? portal = null)
+        public void AtualizarPorProdutos([FromQuery] int[] idProdutos, PerformContext context, Portal? portal = null)
         {
             var log = new HangFireLog(context);
-            _service.AtualizarAnuncios(new AnuncioCotaRequest(idImoveis: idImoveis), log);
+            _service.AtualizarAnuncios(new AnuncioCotaRequest(idProdutos: idProdutos), log);
         }
 
 

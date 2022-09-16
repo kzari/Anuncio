@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lopes.Anuncio.Domain\Lopes.Anuncio.Domain.csproj" />
+    <ProjectReference Include="..\Lopes.Infra.Commons\Lopes.Infra.Commons.csproj" />
   </ItemGroup>
 
 </Project>

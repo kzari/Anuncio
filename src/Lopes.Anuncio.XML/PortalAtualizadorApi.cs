@@ -1,6 +1,6 @@
 ﻿using Lopes.Domain.Commons;
 using Lopes.Anuncio.Domain.Services;
-using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.Models.DadosProduto;
 
 namespace Lopes.Infra.XML
 {
@@ -14,17 +14,17 @@ namespace Lopes.Infra.XML
             throw new NotImplementedException();
         }
 
-        public void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExiste = false, IProgresso progresso = null)
+        public void InserirAtualizarProdutos(IEnumerable<Produto> dados, bool removerSeExiste = false, IProgresso progresso = null)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<int> ObterIdImoveisNoPortal()
+        public IEnumerable<int> ObterIdProdutosNoPortal()
         {
             throw new NotImplementedException();
         }
 
-        public void RemoverImoveis(int[] idImovel, IProgresso progresso = null)
+        public void RemoverProdutos(int[] idImovel, IProgresso progresso = null)
         {
             throw new NotImplementedException();
         }

@@ -2,16 +2,19 @@
 using Lopes.Anuncio.Domain.Commands.Responses;
 using MediatR;
 using Lopes.Anuncio.Domain.Entidades;
+using Lopes.Domain.Commons;
 
 namespace Lopes.Anuncio.Domain.Commands.Requests
 {
     public class RegistroAtualizacoesCommand : IRequest<bool>
     {
-        public RegistroAtualizacoesCommand(IEnumerable<AnuncioAtualizacao> entidades)
+        public RegistroAtualizacoesCommand(IEnumerable<AnuncioAtualizacao> entidades, IProgresso? progresso)
         {
             Entidades = entidades;
+            Progresso = progresso;
         }
 
+        public IProgresso? Progresso { get; set; }
         public IEnumerable<AnuncioAtualizacao> Entidades { get; set; }
     }
 

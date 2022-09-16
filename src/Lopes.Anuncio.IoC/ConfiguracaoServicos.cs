@@ -2,20 +2,22 @@
 using Lopes.Anuncio.Application.Services;
 using Lopes.Anuncio.Domain.Reposities;
 using Lopes.Anuncio.Domain.Services;
-using Lopes.Infra.Data.Context;
-using Lopes.Infra.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Lopes.Domain.Commons;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using System.Reflection;
-using Lopes.Infra.Data.RepositoriosGravacao;
 using Lopes.Anuncio.Domain.Handlers;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Domain.Commons.Cache;
 using Lopes.Infra.MemoryCache;
+using Lopes.Anuncio.Repositorio.Context;
+using Lopes.Anuncio.Dados.Leitura.Context;
+using Lopes.Anuncio.Dados.Leitura.DadosService;
+using Lopes.Anuncio.Application.DadosService;
+using Lopes.Anuncio.Repositorio.Repositorios;
 
 namespace Lopes.Infra.IoC
 {
@@ -34,6 +36,7 @@ namespace Lopes.Infra.IoC
 
             RegistrarCache(services);
             RegistrarLog<TLogger>(services);
+            RegistrarDadosServices(services);
             RegistrarRepositorios(services);
             RegistrarAppServices(services);
             RegistrarDbContexts(services, configuration);
@@ -76,6 +79,9 @@ namespace Lopes.Infra.IoC
         {
             services.AddDbContext<DbLopesnetContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")));
             services.AddDbContext<DbProdutoContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")));
+
+            services.AddDbContext<DbLopesnetLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")));
+            services.AddDbContext<DbProdutoLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")));
         }
 
         protected virtual void RegistrarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger
@@ -96,11 +102,14 @@ namespace Lopes.Infra.IoC
 
         protected virtual void RegistrarRepositorios(IServiceCollection services)
         {
-            services.AddTransient<IEmpresaApelidoPortalRepository, EmpresaApelidoPortalRepository>();
-            services.AddTransient<IImovelRepository, ImovelRepository>();
-            services.AddTransient<IAnuncioRepository, AnuncioRepository>();
-            services.AddTransient<IAnuncioStatusRepositorioGravacao, AnuncioStatusRepositorioGravacao>();
-            services.AddTransient<IPortalCaracteristicaRepository, PortalCaracteristicaRepository>();
+            services.AddTransient<IAnuncioStatusRepositorio, AnuncioStatusRepositorio>();
+        }
+        protected virtual void RegistrarDadosServices(IServiceCollection services)
+        {
+            services.AddTransient<IProdutoDadosService, ProdutoDadosService>();
+            services.AddTransient<IAnuncioDadosService, AnuncioDadosService>();
+            services.AddTransient<IPortalCaracteristicaDadosService, PortalCaracteristicasDadosService>();
+            services.AddTransient<IFranquiaApelidoPortalDadosService, FranquiaApelidoPortalDadosService>();
         }
     }
 }

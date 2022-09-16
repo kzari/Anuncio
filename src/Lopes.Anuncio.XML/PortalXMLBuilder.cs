@@ -1,10 +1,11 @@
 ﻿using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models.Imovel;
+using Lopes.Anuncio.Domain.Models.DadosProduto;
 using Lopes.Anuncio.Domain.Models.XML;
 using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Anuncio.Domain.XML;
 using Lopes.Domain.Commons;
+using Lopes.Infra.Commons.Extensions;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -28,12 +29,12 @@ namespace Lopes.Infra.XML
                                 string apelidoEmpresa,
                                 Portal portal,
                                 int idEmpresa,
-                                string urlFotosImoveis)
+                                string urlFotosProdutos)
         {
             _idEmpresa = idEmpresa;
             _portal = portal;
             _caminhoArquivoPasta = caminhoArquivoPasta;
-            _portalXmlElementos = PortalXmlElementosBase.ObterPortalXml(portal, portalCaracteristicas, urlFotosImoveis);
+            _portalXmlElementos = PortalXmlElementosBase.ObterPortalXml(portal, portalCaracteristicas, urlFotosProdutos);
             _apelidoEmpresa = apelidoEmpresa;
         }
 
@@ -41,7 +42,7 @@ namespace Lopes.Infra.XML
         public string CaminhoArquivo => caminhoArquivo ??= CaminhoArquivoXml();
 
 
-        public virtual void InserirAtualizarImoveis(IEnumerable<DadosImovel> dados, bool removerSeExistir = false, IProgresso progresso = null)
+        public virtual void InserirAtualizarProdutos(IEnumerable<Produto> dados, bool removerSeExistir = false, IProgresso progresso = null)
         {
             Xml xml = _portalXmlElementos.ObterXml(dados);
 
@@ -51,63 +52,63 @@ namespace Lopes.Infra.XML
             XmlDocument doc = new XmlDocument();
             doc.Load(CaminhoArquivo);
 
-            XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
-            if(eImoveis == null)
-                throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiImoveis}'.");
+            XmlNode? eProdutos = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiProdutos);
+            if(eProdutos == null)
+                throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiProdutos}'.");
 
             if (progresso != null)
-                progresso.Atualizar($"Montando elementos...");
+                progresso.NovaMensagem($"Montando elementos...");
 
-            List<ElementoImovel> elementos = xml.Imoveis.ToList();
+            List<ElementoProduto> elementos = xml.Produtos.ToList();
 
             int i = 0;
-            int qtdeImoveis = elementos.Count;
-            foreach (ElementoImovel eImovel in elementos)
+            int qtdeProdutos = elementos.Count;
+            foreach (ElementoProduto eImovel in elementos)
             {
                 i++;
                 if (removerSeExistir)
-                    RemoverImovel(doc, eImoveis, eImovel.IdImovel);
+                    RemoverImovel(doc, eProdutos, eImovel.IdProduto);
                 
-                AdicionarElemento(doc, eImoveis, eImovel);
+                AdicionarElemento(doc, eProdutos, eImovel);
 
                 if(progresso != null && i % 100 == 0)
-                    progresso.Mensagem($"Inserindo/atualizando no XML. {i} de {qtdeImoveis}", i);
+                    progresso.Mensagem($"Inserindo/atualizando no XML. {i} de {qtdeProdutos}", i);
             }
 
             doc.Save(CaminhoArquivo);
         }
 
-        public void RemoverImoveis(int[] idImoveis, IProgresso progresso = null)
+        public void RemoverProdutos(int[] idProdutos, IProgresso progresso = null)
         {
-            if (!File.Exists(CaminhoArquivo))
+            if (!idProdutos.Any() || !File.Exists(CaminhoArquivo))
                 return;
 
             XmlDocument doc = new XmlDocument();
             doc.Load(CaminhoArquivo);
 
-            XmlNode? eImoveis = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiImoveis);
-            if(eImoveis == null)
-                throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiImoveis}'.");
+            XmlNode? eProdutos = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiProdutos);
+            if(eProdutos == null)
+                throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiProdutos}'.");
 
             int i = 0;
-            foreach (int id in idImoveis)
+            foreach (int id in idProdutos)
             {
                 i++;
-                RemoverImovel(doc, eImoveis, id);
+                RemoverImovel(doc, eProdutos, id);
                 
                 if (progresso != null)
-                    progresso.Mensagem($"{i} imóveis removido(s) no XML de {idImoveis.Length}.", i);
+                    progresso.Mensagem($"{i} imóveis removido(s) no XML de {idProdutos.Length}.", i);
             }
 
             doc.Save(CaminhoArquivo);
         }
 
-        private static void RemoverImovel(XmlDocument doc, XmlNode eImoveis, int idImovel)
+        private static void RemoverImovel(XmlDocument doc, XmlNode eProdutos, int idImovel)
         {
             string query = QueryIdImovel("REO" + idImovel);
             XmlNode? eImovelExistente = doc.SelectSingleNode(query);
             if (eImovelExistente?.ParentNode != null)
-                eImoveis.RemoveChild(eImovelExistente.ParentNode);
+                eProdutos.RemoveChild(eImovelExistente.ParentNode);
         }
 
         public bool ImovelNoPortal(int idImovel)
@@ -137,13 +138,14 @@ namespace Lopes.Infra.XML
             if(eRoot != null)
             {
                 doc.AppendChild(eRoot);
-                AdicionarElementos(doc, eRoot, elemento.Filhos);
+                if(elemento.Filhos != null)
+                    AdicionarElementos(doc, eRoot, elemento.Filhos);
             }
 
             doc.Save(caminhoArquivo);
         }
 
-        private static void AdicionarElemento(XmlDocument doc, XmlNode node, ElementoImovel elemento)
+        private static void AdicionarElemento(XmlDocument doc, XmlNode node, ElementoProduto elemento)
         {
             XmlElement? eImovel = CriarElemento(doc, elemento);
             if(eImovel != null)
@@ -170,17 +172,27 @@ namespace Lopes.Infra.XML
             if (!string.IsNullOrEmpty(elemento.Valor))
                 xmlElement.InnerText = elemento.Valor;
 
-            if (elemento.Atributos.Any())
-                foreach (Atributo atributo in elemento.Atributos)
-                    (xmlElement).SetAttribute(atributo.Nome, atributo.Valor);
+            AdicionarAtributos(elemento, xmlElement);
 
-            //Adicionando filhos
-            foreach (Elemento elementoFilho in elemento.Filhos)
-                AdicionarElemento(doc, xmlElement, elementoFilho);
+            AdicionarFilhos(doc, elemento, xmlElement);
 
             return xmlElement;
         }
-        
+
+        private static void AdicionarAtributos(Elemento elemento, XmlElement xmlElement)
+        {
+            if (elemento.Atributos.Algum())
+                foreach (Atributo atributo in elemento.Atributos)
+                    (xmlElement).SetAttribute(atributo.Nome, atributo.Valor);
+        }
+
+        private static void AdicionarFilhos(XmlDocument doc, Elemento elemento, XmlElement xmlElement)
+        {
+            if (elemento.Filhos.Algum())
+                foreach (Elemento elementoFilho in elemento.Filhos)
+                    AdicionarElemento(doc, xmlElement, elementoFilho);
+        }
+
         private static string QueryIdImovel(int idImovel) => QueryIdImovel("REO" + idImovel);
         private static string QueryIdImovel(string idImovelPortal) => $"//*[text() = '{idImovelPortal}']";
 
@@ -203,7 +215,7 @@ namespace Lopes.Infra.XML
             return caminhoArquivo;
         }
 
-        public IEnumerable<int> ObterIdImoveisNoPortal()
+        public IEnumerable<int> ObterIdProdutosNoPortal()
         {
             if (File.Exists(CaminhoArquivo))
             {

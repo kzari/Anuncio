@@ -26,7 +26,7 @@ namespace Lopes.Infra.ConsoleCommons.Log
             if (valorAtual > 0)
                 progressBar.Refresh(valorAtual, texto);
         }
-        public void Atualizar(string item)
+        public void NovaMensagem(string item)
         {
             string texto = ObterTexto(item);
             progressBar.Next(texto);
