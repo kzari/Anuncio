@@ -14,6 +14,8 @@ using Lopes.Infra.Data.RepositoriosGravacao;
 using Lopes.Anuncio.Domain.Handlers;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
+using Lopes.Domain.Commons.Cache;
+using Lopes.Infra.MemoryCache;
 
 namespace Lopes.Infra.IoC
 {
@@ -30,8 +32,7 @@ namespace Lopes.Infra.IoC
 
             configuration = RegistrarIConfiguration(services, configuration);
 
-            services.AddMemoryCache();
-
+            RegistrarCache(services);
             RegistrarLog<TLogger>(services);
             RegistrarRepositorios(services);
             RegistrarAppServices(services);
@@ -45,48 +46,55 @@ namespace Lopes.Infra.IoC
             return services;
         }
 
-        public virtual IConfiguration RegistrarIConfiguration(IServiceCollection services, IConfiguration configuration = null)
+
+        protected virtual void RegistrarCache(IServiceCollection services)
+        {
+            services.AddMemoryCache();
+            services.AddSingleton<ICacheService, MemoryCacheService>();
+        }
+
+        protected virtual IConfiguration RegistrarIConfiguration(IServiceCollection services, IConfiguration configuration = null)
         {
             configuration ??= new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             services.AddSingleton<IConfiguration>(configuration);
             return configuration;
         }
 
-        public virtual void RegistrarFabricas(IServiceCollection services)
+        protected virtual void RegistrarFabricas(IServiceCollection services)
         {
             services.AddTransient<IPortalAtualizadorFactory, PortalAtualizadorFactory>();
         }
 
-        public virtual void RegistrarHandlers(IServiceCollection services)
+        protected virtual void RegistrarHandlers(IServiceCollection services)
         {
             services.AddScoped<IRequestHandler<AnunciosAtualizacaoCommand, bool>, AtualizacaoCommandHandler>();
             services.AddScoped<IRequestHandler<RegistroAtualizacaoCommand, AtualizarStatusAnuncioResponse>, RegistroAtualizacaoCommandHandler>();
             services.AddScoped<IRequestHandler<RegistroAtualizacoesCommand, bool>, RegistroAtualizacaoCommandHandler>();
         }
 
-        public virtual void RegistrarDbContexts(IServiceCollection services, IConfiguration configuration)
+        protected virtual void RegistrarDbContexts(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<DbLopesnetContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")));
             services.AddDbContext<DbProdutoContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")));
         }
 
-        public virtual void RegistrarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger
+        protected virtual void RegistrarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger
         {
             services.AddSingleton<ILogger, TLogger>();
         }
 
-        public virtual void RegistrarDomainServices(IServiceCollection services)
+        protected virtual void RegistrarDomainServices(IServiceCollection services)
         {
             services.AddTransient<IStatusAnuncioService, StatusAnuncioService>();
         }
 
-        public virtual void RegistrarAppServices(IServiceCollection services)
+        protected virtual void RegistrarAppServices(IServiceCollection services)
         {
             services.AddTransient<IAtualizacaoAppService, AtualizacaoAppService>();
             services.AddTransient<IRegistrarAtualizacaoAnunciosAppService, RegistrarAtualizacaoAppService>();
         }
 
-        public virtual void RegistrarRepositorios(IServiceCollection services)
+        protected virtual void RegistrarRepositorios(IServiceCollection services)
         {
             services.AddTransient<IEmpresaApelidoPortalRepository, EmpresaApelidoPortalRepository>();
             services.AddTransient<IImovelRepository, ImovelRepository>();

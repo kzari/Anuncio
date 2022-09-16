@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using Lopes.Anuncio.Domain.Entidades;
 using Lopes.Anuncio.Domain.Models.Imovel;
 using Lopes.Anuncio.Domain.ObjetosValor;
+using Lopes.Domain.Commons.Cache;
 
 namespace Lopes.Anuncio.Domain.Handlers
 {
@@ -17,24 +18,34 @@ namespace Lopes.Anuncio.Domain.Handlers
     /// </summary>
     public class AtualizacaoCommandHandler : IRequestHandler<AnunciosAtualizacaoCommand, bool>
     {
+        private const string CHAVE_CACHE_DADOS_IMOVEIS = "DadosImoveis";
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IPortalAtualizadorFactory _portalAtualizadorFactory;
         private readonly List<DadosImovel> _dadosImoveisCache;
+        private readonly ICacheService _cacheService;
 
         public AtualizacaoCommandHandler(ILogger logger,
                                          IServiceProvider serviceProvider,
-                                         IPortalAtualizadorFactory portalAtualizadorFactory)
+                                         IPortalAtualizadorFactory portalAtualizadorFactory,
+                                         ICacheService cacheService)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _portalAtualizadorFactory = portalAtualizadorFactory;
             _dadosImoveisCache = new List<DadosImovel>();
+            _cacheService = cacheService;
         }
 
 
         public Task<bool> Handle(AnunciosAtualizacaoCommand request, CancellationToken cancellationToken)
         {
+            _cacheService.Gravar("aa", "AAA", TimeSpan.FromSeconds(5));
+            _cacheService.Gravar("bb", "BBB", TimeSpan.FromSeconds(5));
+
+            var aa = _cacheService.Obter<string>("aa");
+            var bb = _cacheService.Obter<string>("bb");
+
             IEnumerable<AnuncioCota> anuncios = request.Anuncios;
             ILogger logger = request.Logger ?? _logger;
 
@@ -48,10 +59,10 @@ namespace Lopes.Anuncio.Domain.Handlers
             }).ToList();
             int qtdeCotas = anunciosAgrupados.Count;
 
-            logger.Info($"{totalAnuncios} anúncios encontrados para atualização");
+            logger.Info($"{totalAnuncios} anúncios encontrados para atualização. {qtdeCotas} cota(s).");
 
             IProgresso progressoGeral = logger.ObterProgresso(anunciosAgrupados.Count, 95, $">> Atualização de imóveis nos portais.");
-            progressoGeral.Atualizar($"Processando {qtdeCotas} cotas.");
+            progressoGeral.Atualizar($"Processando {qtdeCotas} cota(s).");
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
             var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
@@ -180,6 +191,26 @@ namespace Lopes.Anuncio.Domain.Handlers
 
 
         private IEnumerable<DadosImovel> ObterDadosImoveisCache(int[] idImoveis, IProgresso progresso)
+        {
+            IEnumerable<DadosImovel>? todosImoveisCacheados = _cacheService.Obter<IEnumerable<DadosImovel>>(CHAVE_CACHE_DADOS_IMOVEIS);
+
+            IEnumerable<DadosImovel> imoveisCacheados = todosImoveisCacheados?.Where(_ => idImoveis.Contains(_.Dados.IdImovel)).ToList() ?? new List<DadosImovel>();
+
+            int[] idImoveisNaoCacheados = idImoveis.Where(_ => !imoveisCacheados.Select(_ => _.Dados.IdImovel).Contains(_)).ToArray() ?? idImoveis;
+            if (idImoveisNaoCacheados.Any())
+            {
+                IEnumerable<DadosImovel> imoveisNaoCacheados = ObterDadosImovel(idImoveisNaoCacheados, progresso);
+                if (imoveisNaoCacheados.Any())
+                {
+                    _cacheService.Gravar(CHAVE_CACHE_DADOS_IMOVEIS, imoveisNaoCacheados, TimeSpan.FromHours(1));
+                    return imoveisCacheados.Concat(imoveisNaoCacheados);
+                }
+            }
+
+            return imoveisCacheados;
+        }
+
+        private IEnumerable<DadosImovel> ObterDadosImoveisCacheOLD(int[] idImoveis, IProgresso progresso)
         {
             IEnumerable<DadosImovel> imoveisCacheados;
             lock (_dadosImoveisCache)
