@@ -13,12 +13,12 @@ using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Domain.Commons.Cache;
 using Lopes.Infra.MemoryCache;
-using Lopes.Anuncio.Repositorio.Context;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Lopes.Anuncio.Dados.Leitura.DadosService;
 using Lopes.Anuncio.Application.DadosService;
-using Lopes.Anuncio.Repositorio.Repositorios;
 using Lopes.Anuncio.Application.Interfaces.DadosService;
+using Lopes.Anuncio.Repositorio.Context;
+using Lopes.Anuncio.Repositorio.Repositorios;
 
 namespace Lopes.Infra.IoC
 {

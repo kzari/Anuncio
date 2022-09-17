@@ -1,6 +1,5 @@
 ﻿using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Anuncio.Domain.Enums;
-using Lopes.Anuncio.Domain.Models;
 using Lopes.Anuncio.Domain.Reposities;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Domain.Commons;
