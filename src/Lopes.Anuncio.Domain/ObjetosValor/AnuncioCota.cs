@@ -2,7 +2,19 @@
 
 namespace Lopes.Anuncio.Domain.ObjetosValor
 {
-    public class AnuncioCota
+    public class AnuncioStatus
+    {
+        public AnuncioStatus(AnuncioCota anuncioCota, StatusAnuncioPortal? statusAnuncioPortal = null)
+        {
+            AnuncioCota = anuncioCota;
+            Status = statusAnuncioPortal;
+        }
+
+        public AnuncioCota AnuncioCota { get; }
+        public StatusAnuncioPortal? Status { get; set; }
+    }
+
+    public class AnuncioCota 
     {
         public int IdAnuncio { get; set; }
         public int IdProduto { get; set; }
@@ -35,8 +47,5 @@ namespace Lopes.Anuncio.Domain.ObjetosValor
         public bool Ativo => IdStatusAnuncio == 1;
         public bool CotaAtiva => IdStatusCota == 1;
         public bool ProdutoAtivo => IdStatusProduto == ProdutoStatus.Ativo;
-
-
-        public StatusAnuncioPortal StatusAnuncioPortal { get; set; }
     }
 }

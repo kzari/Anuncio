@@ -8,7 +8,7 @@ namespace Lopes.Anuncio.Domain.Entidades
         {
             IdPortal = idPortal;
             IdProduto = idProduto;
-            IdEmpresa = idEmpresa;
+            IdFranquia = idEmpresa;
             Acao = acao;
             Data = data ?? DateTime.Now;
             Id = id ?? Guid.NewGuid();
@@ -22,7 +22,7 @@ namespace Lopes.Anuncio.Domain.Entidades
         public Guid Id { get; set; }
         public Portal IdPortal { get; set; }
         public int IdProduto { get; set; }
-        public int IdEmpresa { get; set; }
+        public int IdFranquia { get; set; }
         public AtualizacaoAcao Acao { get; set; }
         public DateTime Data { get; set; }
     }

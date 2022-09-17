@@ -22,7 +22,6 @@ namespace Lopes.Anuncio.Domain.Handlers
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IPortalAtualizadorFactory _portalAtualizadorFactory;
-        private readonly List<Produto> _dadosProdutosCache;
         private readonly ICacheService _cacheService;
 
         public AtualizacaoCommandHandler(ILogger logger,
@@ -33,19 +32,12 @@ namespace Lopes.Anuncio.Domain.Handlers
             _logger = logger;
             _serviceProvider = serviceProvider;
             _portalAtualizadorFactory = portalAtualizadorFactory;
-            _dadosProdutosCache = new List<Produto>();
             _cacheService = cacheService;
         }
 
 
         public Task<bool> Handle(AnunciosAtualizacaoCommand request, CancellationToken cancellationToken)
         {
-            _cacheService.Gravar("aa", "AAA", TimeSpan.FromSeconds(5));
-            _cacheService.Gravar("bb", "BBB", TimeSpan.FromSeconds(5));
-
-            var aa = _cacheService.Obter<string>("aa");
-            var bb = _cacheService.Obter<string>("bb");
-
             IEnumerable<AnuncioCota> anuncios = request.Anuncios;
             ILogger logger = request.Logger ?? _logger;
 
@@ -65,8 +57,8 @@ namespace Lopes.Anuncio.Domain.Handlers
             progressoGeral.NovaMensagem($"Processando {qtdeCotas} cota(s).");
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
-            var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
-            //var partitions = partitioner.GetPartitions(1);
+            //var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
+            var partitions = partitioner.GetPartitions(1);
 
             int partitionIds = 0;
             int cotaAtual = 0;
@@ -87,7 +79,7 @@ namespace Lopes.Anuncio.Domain.Handlers
 
                         int idFranquia = portalEmpresa.IdFranquia;
                         Portal portal = portalEmpresa.Portal;
-                        List<AnuncioCota> anuncios = portalEmpresa.Anuncios;
+                        List<AnuncioStatus> anuncios = portalEmpresa.Anuncios.Select(_ => new AnuncioStatus(_)).ToList();
                         int qtdeAnuncios = anuncios.Count;
 
                         IProgresso progresso = logger.ObterProgresso(qtdeAnuncios, 95, textoInicial: $"P{partitionId.ToString().PadLeft(2)} E: {idFranquia.ToString().PadRight(5)} P: {portal.ToString().PadRight(10)} Anúncios: {qtdeAnuncios.ToString().PadLeft(5)} ");
@@ -100,12 +92,15 @@ namespace Lopes.Anuncio.Domain.Handlers
 
                         List<AnuncioAtualizacao> atualizacoes = new();
 
-                        atualizacoes.AddRange(RemoverAnuncios(anuncios, progresso, atualizador));
-                        atualizacoes.AddRange(AtualizarAdicionarAnuncios(anuncios, idFranquia, portal, atualizador, progresso));
+                        IEnumerable<AnuncioAtualizacao> anunciosRemover = RemoverAnuncios(anuncios, progresso, atualizador);
+                        atualizacoes.AddRange(anunciosRemover);
+
+                        IEnumerable<AnuncioAtualizacao> anunciosAtualizar = AtualizarAdicionarAnuncios(anuncios, idFranquia, portal, atualizador, progresso);
+                        atualizacoes.AddRange(anunciosAtualizar);
 
                         RegistrarAtualizacao(atualizacoes, progresso, cancellationToken);
 
-                        //progresso.Mensagem($"Concluído. Removidos: {produtosParaRemover.Count.ToString().PadLeft(5)} Atualizados/Inseridos: {produtosParaAtualizar.Count.ToString().PadLeft(5)}.", percentualConcluido: 100);
+                        progresso.Mensagem($"Concluído. Removidos: {anunciosRemover.Count().ToString().PadLeft(5)} Atualizados/Inseridos: {anunciosAtualizar.Count().ToString().PadLeft(5)}.", percentualConcluido: 100);
 
                         progressoGeral.NovaMensagem($"Processando cotas {cotaAtual} de {qtdeCotas}.");
                     }
@@ -120,21 +115,21 @@ namespace Lopes.Anuncio.Domain.Handlers
         }
 
 
-        private static void DefinirStatusAnuncio(IStatusAnuncioService statusAnuncioService, List<AnuncioCota> anuncios, IPortalAtualizador atualizador)
+        private static void DefinirStatusAnuncio(IStatusAnuncioService statusAnuncioService, List<AnuncioStatus> anuncios, IPortalAtualizador atualizador)
         {
             int[] idProdutosNoPortal = atualizador.ObterIdProdutosNoPortal().ToArray();
 
-            foreach (AnuncioCota anuncio in anuncios)
+            foreach (AnuncioStatus anuncio in anuncios)
             {
-                bool imovelNoPortal = idProdutosNoPortal.Contains(anuncio.IdProduto);
+                bool imovelNoPortal = idProdutosNoPortal.Contains(anuncio.AnuncioCota.IdProduto);
 
-                anuncio.StatusAnuncioPortal = statusAnuncioService.VerificarStatusProdutoPortal(anuncio, imovelNoPortal);
+                anuncio.Status = statusAnuncioService.VerificarStatusProdutoPortal(anuncio.AnuncioCota, imovelNoPortal);
             }
         }
 
-        private static IEnumerable<AnuncioAtualizacao> RemoverAnuncios(IEnumerable<AnuncioCota> anuncios, IProgresso progresso, IPortalAtualizador atualizador)
+        private static IEnumerable<AnuncioAtualizacao> RemoverAnuncios(IEnumerable<AnuncioStatus> anuncios, IProgresso progresso, IPortalAtualizador atualizador)
         {
-            int[] idProdutosRemover = anuncios.Where(_ => _.StatusAnuncioPortal == StatusAnuncioPortal.ARemover).Select(_ => _.IdProduto).ToArray();
+            int[] idProdutosRemover = anuncios.Where(_ => _.Status == StatusAnuncioPortal.ARemover).Select(_ => _.AnuncioCota.IdProduto).ToArray();
             if (idProdutosRemover.Length == 0)
                 return Enumerable.Empty<AnuncioAtualizacao>();
 
@@ -142,17 +137,17 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             atualizador.RemoverProdutos(idProdutosRemover, progresso);
 
-            int idFranquia = anuncios.FirstOrDefault().IdFranquia;
-            Portal portal = anuncios.FirstOrDefault().Portal;
+            int idFranquia = anuncios.FirstOrDefault().AnuncioCota.IdFranquia;
+            Portal portal = anuncios.FirstOrDefault().AnuncioCota.Portal;
             return idProdutosRemover.Select(_ => new AnuncioAtualizacao(portal, _, idFranquia, AtualizacaoAcao.Exclusao)).ToList();
         }
-        private List<AnuncioAtualizacao> AtualizarAdicionarAnuncios(IEnumerable<AnuncioCota> anuncios,
+        private List<AnuncioAtualizacao> AtualizarAdicionarAnuncios(IEnumerable<AnuncioStatus> anuncios,
                                                                     int idEmpresa,
                                                                     Portal portal,
                                                                     IPortalAtualizador atualizador,
                                                                     IProgresso progresso)
         {
-            int[] produtosParaAtualizar = anuncios.Where(_ => _.StatusAnuncioPortal == StatusAnuncioPortal.Desatualizado).Select(_ => _.IdProduto).ToArray();
+            int[] produtosParaAtualizar = anuncios.Where(_ => _.Status == StatusAnuncioPortal.Desatualizado).Select(_ => _.AnuncioCota.IdProduto).ToArray();
             progresso.Mensagem($"3. Atualizando/Adicionando {produtosParaAtualizar.Count()} anúncios...", percentualConcluido: 50);
 
             if (!produtosParaAtualizar.Any())
@@ -162,8 +157,6 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             IEnumerable<Produto> produtos = _serviceProvider.ObterServico<IProdutoService>().ObterDados(produtosParaAtualizar.ToArray(), progresso).ToList();
 
-            //TODO: tratar imóveis não encontrados
-
             List<AnuncioAtualizacao> atualizacoes = new();
 
             if (!produtos.Any())
@@ -171,7 +164,7 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             foreach (Produto imovel in produtos)
             {
-                imovel.CodigoClientePortal = anuncios.FirstOrDefault(_ => _.IdProduto == imovel.Dados.IdProduto).CodigoClientePortal;
+                imovel.CodigoClientePortal = anuncios.FirstOrDefault(_ => _.AnuncioCota.IdProduto == imovel.Dados.IdProduto).AnuncioCota.CodigoClientePortal;
                 atualizacoes.Add(new AnuncioAtualizacao(portal, imovel.Dados.IdProduto, idEmpresa, AtualizacaoAcao.Atualizacao));
             }
 

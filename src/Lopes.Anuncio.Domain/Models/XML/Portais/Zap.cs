@@ -12,7 +12,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
         {
         }
 
-        public string CaminhoTagPaiProdutos => "/Carga/Produtos";
+        public string CaminhoTagPaiProdutos => "/Carga/Imoveis";
         public string NomeTagProduto => "Produto";
         public string NomeTagCodigoProduto => "CodigoProduto";
 

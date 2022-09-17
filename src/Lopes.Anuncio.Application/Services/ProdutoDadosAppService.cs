@@ -11,16 +11,16 @@ namespace Lopes.Anuncio.Application.Services
     {
         private const string CHAVE_CACHE_DADOS_PRODUTOS = "DadosProdutos";
         private readonly IProdutoDadosService _produtoDadosService;
-        private readonly IServiceProvider _serviceProvider;
         private readonly ICacheService _cacheService;
+        private readonly ILogger _logger;
 
         public ProdutoDadosAppService(IProdutoDadosService produtoDadosService, 
                                       ICacheService cacheService, 
-                                      IServiceProvider serviceProvider)
+                                      ILogger logger)
         {
             _produtoDadosService = produtoDadosService;
             _cacheService = cacheService;
-            _serviceProvider = serviceProvider;
+            _logger = logger;
         }
 
 
@@ -36,7 +36,7 @@ namespace Lopes.Anuncio.Application.Services
                 if (progresso != null)
                     progresso.NovaMensagem($"Obtendo dados principais de {idProdutos.Length} produtos.");
 
-                IEnumerable<Produto> produtosNaoCacheados = ObterDadosDaBase(idProdutos, progresso);
+                IEnumerable<Produto> produtosNaoCacheados = ObterDadosDaBase(idProdutos, progresso).ToList();
                 if (produtosNaoCacheados.Any())
                 {
                     _cacheService.Gravar(CHAVE_CACHE_DADOS_PRODUTOS, produtosNaoCacheados, TimeSpan.FromHours(1));
@@ -47,28 +47,35 @@ namespace Lopes.Anuncio.Application.Services
             return produtosCacheados;
         }
 
+        public int[] ObterFranquias(int idProduto)
+        {
+            return _produtoDadosService.ObterFranquias(idProduto);
+        }
 
 
         private IEnumerable<Produto> ObterDadosDaBase(int[] idProdutos, IProgresso? progresso = null)
         {
             IEnumerable<DadosPrincipais> dadosPrincipais = _produtoDadosService.ObterDados(idProdutos);
 
-            int[] idProdutosResgatados = dadosPrincipais.Select(_ => _.IdProduto).ToArray();
+            int[] idProdutosEncontrados = dadosPrincipais.Select(_ => _.IdProduto).ToArray();
+            int[] idProdutosNaoEncontrados = idProdutos.Where(_ => !idProdutosEncontrados.Contains(_)).ToArray();
+
+            _logger.Warn($"Imóveis não encontrados: {string.Join(", ", idProdutosNaoEncontrados)}");
 
             if (progresso != null)
-                progresso.NovaMensagem($"Obtendo caracteristicas de {idProdutosResgatados.Length} imóveis.");
+                progresso.NovaMensagem($"Obtendo caracteristicas de {idProdutosEncontrados.Length} imóveis.");
 
-            List<Caracteristica> caracteristicas = _produtoDadosService.ObterCaracteristicas(idProdutosResgatados).ToList();
-
-            if (progresso != null)
-                progresso.NovaMensagem($"Obtendo Tour virtual e Vídeos de {idProdutosResgatados.Length} imóveis.");
-
-            IDictionary<int, string[]> urlTours = _produtoDadosService.ObterUrlTourVirtuais(idProdutosResgatados);
-            IDictionary<int, string[]> urlVideos = _produtoDadosService.ObterUrlVideos(idProdutosResgatados);
-            IEnumerable<Foto> fotos = _produtoDadosService.ObterFotos(idProdutosResgatados);
+            List<Caracteristica> caracteristicas = _produtoDadosService.ObterCaracteristicas(idProdutosEncontrados).ToList();
 
             if (progresso != null)
-                progresso.NovaMensagem($"Preenchendo informações de {idProdutosResgatados.Length} imóveis.");
+                progresso.NovaMensagem($"Obtendo Tour virtual e Vídeos de {idProdutosEncontrados.Length} imóveis.");
+
+            IDictionary<int, string[]> urlTours = _produtoDadosService.ObterUrlTourVirtuais(idProdutosEncontrados);
+            IDictionary<int, string[]> urlVideos = _produtoDadosService.ObterUrlVideos(idProdutosEncontrados);
+            IEnumerable<Foto> fotos = _produtoDadosService.ObterFotos(idProdutosEncontrados);
+
+            if (progresso != null)
+                progresso.NovaMensagem($"Preenchendo informações de {idProdutosEncontrados.Length} imóveis.");
 
             List<Produto> produtos = new List<Produto>();
             foreach (DadosPrincipais dados in dadosPrincipais)
@@ -82,11 +89,6 @@ namespace Lopes.Anuncio.Application.Services
 
                 yield return imovel;
             }
-        }
-
-        public int[] ObterFranquias(int idProduto)
-        {
-            throw new NotImplementedException();
         }
     }
 }
