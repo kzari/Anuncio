@@ -1,5 +1,7 @@
-﻿using Lopes.Anuncio.Domain.Commands.Requests;
+﻿using Lopes.Anuncio.Application.Interfaces.DadosService;
+using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Anuncio.Domain.Commands.Responses;
+using Lopes.Anuncio.Domain.Models.DadosProduto;
 using MediatR;
 
 namespace Lopes.Anuncio.Application.Services

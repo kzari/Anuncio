@@ -13,8 +13,8 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
         }
 
         public string CaminhoTagPaiProdutos => "/Carga/Produtos";
-        public string NomeTagImovel => "Imovel";
-        public string NomeTagCodigoImovel => "CodigoImovel";
+        public string NomeTagProduto => "Produto";
+        public string NomeTagCodigoProduto => "CodigoProduto";
 
         protected override Elemento CriarElementoCabecalho()
         {
@@ -29,71 +29,71 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             return eCarga;
         }
 
-        protected override ElementoProduto CriarElementoImovel(Produto dados)
+        protected override ElementoProduto CriarElementoProduto(Produto dados)
         {
-            ElementoProduto eImovel = new ElementoProduto(dados.Dados.IdProduto, "Imovel");
+            ElementoProduto eProduto = new ElementoProduto(dados.Dados.IdProduto, "Produto");
 
-            DeterminaTipoSubtipoCategoriaDoImovel(dados.Dados, out string tipoImovel, out string subTipoImovel, out string categoria);
+            DeterminaTipoSubtipoCategoriaDoProduto(dados.Dados, out string tipoProduto, out string subTipoProduto, out string categoria);
 
-            eImovel.AdicionarFilho("CodigoImovel", dados.Dados.IdImovelPortais);
+            eProduto.AdicionarFilho("CodigoProduto", dados.Dados.IdProdutoPortais);
 
-            eImovel.AdicionarFilho("TipoImovel", dados.Dados.Tipo, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("SubTipoImovel", dados.Dados.Subtipo, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("TituloImovel", dados.Dados.Titulo, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Observacao", RemoverCaracteresInvalidosUnicode(dados.Dados.TextoSite, " "), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("TipoProduto", dados.Dados.Tipo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("SubTipoProduto", dados.Dados.Subtipo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("TituloProduto", dados.Dados.Titulo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Observacao", RemoverCaracteresInvalidosUnicode(dados.Dados.TextoSite, " "), naoAdicionarSeNuloOuVazio: true);
 
-            eImovel.AdicionarFilho("InscricaoMunicipal", dados.Dados.InscricaoMunicipal, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("InscricaoMunicipal", dados.Dados.InscricaoMunicipal, naoAdicionarSeNuloOuVazio: true);
 
-            eImovel.AdicionarFilho("QtdDormitorios", DefinirQtdeComodos(dados.Dados.QtdeQuartos, tipoImovel).ToString(), naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("QtdSuites", DefinirQtdeComodos(dados.Dados.QtdeSuites, tipoImovel).ToString(), naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("QtdBanheiros", DefinirQtdeComodos(dados.Dados.QtdeBanheirosSociais, tipoImovel).ToString(), naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("QtdVagas", DefinirQtdeComodos(dados.Dados.QtdeVagas, tipoImovel).ToString(), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("QtdDormitorios", DefinirQtdeComodos(dados.Dados.QtdeQuartos, tipoProduto).ToString(), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("QtdSuites", DefinirQtdeComodos(dados.Dados.QtdeSuites, tipoProduto).ToString(), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("QtdBanheiros", DefinirQtdeComodos(dados.Dados.QtdeBanheirosSociais, tipoProduto).ToString(), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("QtdVagas", DefinirQtdeComodos(dados.Dados.QtdeVagas, tipoProduto).ToString(), naoAdicionarSeNuloOuVazio: true);
 
-            eImovel.AdicionarFilho("AnoConstrucao", dados.Dados.AnoConstrucao?.ToString(), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("AnoConstrucao", dados.Dados.AnoConstrucao?.ToString(), naoAdicionarSeNuloOuVazio: true);
 
-            eImovel.AdicionarFilho("AreaUtil", FormatarDecimal(dados.Dados.AreaPrivativa), naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("AreaTotal", FormatarDecimal(dados.Dados.AreaTotal), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("AreaUtil", FormatarDecimal(dados.Dados.AreaPrivativa), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("AreaTotal", FormatarDecimal(dados.Dados.AreaTotal), naoAdicionarSeNuloOuVazio: true);
 
-            AdicionarEndereco(dados.Dados, eImovel);
+            AdicionarEndereco(dados.Dados, eProduto);
 
-            AdicionarValores(dados.Dados, eImovel);
+            AdicionarValores(dados.Dados, eProduto);
 
-            AdicionarVideos(dados, eImovel);
+            AdicionarVideos(dados, eProduto);
 
-            AdicionarTourVirtuais(dados, eImovel);
+            AdicionarTourVirtuais(dados, eProduto);
 
-            AdicionarCaracteristicas(dados, eImovel);
+            AdicionarCaracteristicas(dados, eProduto);
 
-            AdicionarFotos(dados, eImovel);
+            AdicionarFotos(dados, eProduto);
 
-            return eImovel;
+            return eProduto;
         }
 
-        private void AdicionarFotos(Produto dados, ElementoProduto eImovel)
+        private void AdicionarFotos(Produto dados, ElementoProduto eProduto)
         {
             if (!dados.Imagens.Any())
                 return;
 
-            Elemento eFotos = eImovel.AdicionarFilho("Fotos");
+            Elemento eFotos = eProduto.AdicionarFilho("Fotos");
             foreach (Foto foto in dados.Imagens)
             {
                 Elemento eFoto = eFotos.AdicionarFilho("Foto");
                 eFoto.AdicionarFilho("NomeArquivo", foto.Descricao);
                 eFoto.AdicionarFilho("Principal", foto.Ordem == 1 ? "1" : "0");
-                eFoto.AdicionarFilho("URLArquivo", foto.ObterCaminhoFotoImovel(UrlFotosProdutos));
+                eFoto.AdicionarFilho("URLArquivo", foto.ObterCaminhoFotoProduto(UrlFotosProdutos));
                 eFoto.AdicionarFilho("Alterada", "1");
             }
         }
 
-        private static void AdicionarValores(DadosPrincipais dados, ElementoProduto eImovel)
+        private static void AdicionarValores(DadosPrincipais dados, ElementoProduto eProduto)
         {
-            eImovel.AdicionarFilho("PrecoVenda", FormatarDecimal(dados.ValorVenda));
-            eImovel.AdicionarFilho("PrecoLocacao", FormatarDecimal(dados.ValorLocacao));
-            eImovel.AdicionarFilho("PrecoCondominio", FormatarDecimal(dados.ValorCondominio));
-            eImovel.AdicionarFilho("ValorIPTU", FormatarDecimal(dados.ValorIPTU));
+            eProduto.AdicionarFilho("PrecoVenda", FormatarDecimal(dados.ValorVenda));
+            eProduto.AdicionarFilho("PrecoLocacao", FormatarDecimal(dados.ValorLocacao));
+            eProduto.AdicionarFilho("PrecoCondominio", FormatarDecimal(dados.ValorCondominio));
+            eProduto.AdicionarFilho("ValorIPTU", FormatarDecimal(dados.ValorIPTU));
         }
 
-        private static void AdicionarEndereco(DadosPrincipais dados, ElementoProduto eImovel)
+        private static void AdicionarEndereco(DadosPrincipais dados, ElementoProduto eProduto)
         {
             string bairro = UsaZonaDeValor(dados.Estado)
                 ? dados.Bairro
@@ -101,18 +101,18 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                     ? dados.Bairro
                     : dados.ZonaValor;
 
-            eImovel.AdicionarFilho("UF", dados.Estado, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Cidade", dados.Cidade, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Bairro", bairro, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Endereco", dados.Logradouro, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Endereco", dados.CEP, naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Numero", DefinirNumeroEndereco(dados), naoAdicionarSeNuloOuVazio: true);
-            eImovel.AdicionarFilho("Complemento", DefinirComplementoEndereco(dados), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("UF", dados.Estado, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Cidade", dados.Cidade, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Bairro", bairro, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Endereco", dados.Logradouro, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Endereco", dados.CEP, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Numero", DefinirNumeroEndereco(dados), naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("Complemento", DefinirComplementoEndereco(dados), naoAdicionarSeNuloOuVazio: true);
 
             if (dados.Latitude.HasValue)
-                eImovel.AdicionarFilho("Latitude", dados.Latitude.Value.ToString());
+                eProduto.AdicionarFilho("Latitude", dados.Latitude.Value.ToString());
             if (dados.Longitude.HasValue)
-                eImovel.AdicionarFilho("Longitude", dados.Longitude.Value.ToString());
+                eProduto.AdicionarFilho("Longitude", dados.Longitude.Value.ToString());
         }
 
         private static string DefinirComplementoEndereco(DadosPrincipais dados)
@@ -124,9 +124,9 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             return !string.IsNullOrEmpty(dados.Numero) ? dados.Numero : "0";
         }
 
-        private int DefinirQtdeComodos(int? qtdeComodo, string tipoImovel)
+        private int DefinirQtdeComodos(int? qtdeComodo, string tipoProduto)
         {
-            if (Terreno(tipoImovel))
+            if (Terreno(tipoProduto))
                 return 0;
 
             if (!qtdeComodo.HasValue || qtdeComodo.Value == 0)
@@ -135,38 +135,38 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             return qtdeComodo.Value;
         }
 
-        private static void AdicionarVideos(Produto dados, Elemento eImovel)
+        private static void AdicionarVideos(Produto dados, Elemento eProduto)
         {
             if (dados.UrlVideos.Any())
             {
-                Elemento eVideos = eImovel.AdicionarFilho("Videos");
+                Elemento eVideos = eProduto.AdicionarFilho("Videos");
                 foreach (string url in dados.UrlVideos)
                     eVideos.AdicionarFilho("Video", url);
             }
         }
 
-        private static void AdicionarTourVirtuais(Produto dados, Elemento eImovel)
+        private static void AdicionarTourVirtuais(Produto dados, Elemento eProduto)
         {
             if (dados.UrlTourVirtuais.Any())
             {
                 foreach (string url in dados.UrlTourVirtuais)
-                    eImovel.AdicionarFilho("LinkTourVirtual", url);
+                    eProduto.AdicionarFilho("LinkTourVirtual", url);
             }
         }
 
-        private void AdicionarCaracteristicas(Produto dados, Elemento eImovel)
+        private void AdicionarCaracteristicas(Produto dados, Elemento eProduto)
         {
-            int[] idCaracteristicasImovel = dados.Caracteristicas.Select(_ => _.Id).ToArray();
+            int[] idCaracteristicasProduto = dados.Caracteristicas.Select(_ => _.Id).ToArray();
 
-            IEnumerable<PortalCaracteristica> caracteristicas = PortalCaracteristicas.Where(_ => idCaracteristicasImovel.Contains(_.IdCaracteristica));
+            IEnumerable<PortalCaracteristica> caracteristicas = PortalCaracteristicas.Where(_ => idCaracteristicasProduto.Contains(_.IdCaracteristica));
             foreach (string tag in caracteristicas.Select(_ => _.Tag))
-                eImovel.AdicionarFilho(tag, "1");
+                eProduto.AdicionarFilho(tag, "1");
         }
 
         private static bool Terreno(string descrition) => descrition.Contains("Terreno");
 
 
-        private static string DeterminaSubTipoDoImovelParaTipoApartamento(string subtipo)
+        private static string DeterminaSubTipoDoProdutoParaTipoApartamento(string subtipo)
         {
             return (subtipo?.Trim()) switch
             {
@@ -188,7 +188,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             };
         }
 
-        private static string DeterminaSubTipoDoImovelParaTipoCasa(string? subtipo)
+        private static string DeterminaSubTipoDoProdutoParaTipoCasa(string? subtipo)
         {
             return subtipo.Trim() switch
             {
@@ -208,7 +208,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             };
         }
 
-        private static string DeterminaSubTipoDoImovelParaTipoComercial(string? subtipo)
+        private static string DeterminaSubTipoDoProdutoParaTipoComercial(string? subtipo)
         {
             return subtipo.Trim() switch
             {
@@ -231,7 +231,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             };
         }
 
-        private static string DeterminaSubTipoDoImovelParaTipoPropriedadeRural(string? subtipo)
+        private static string DeterminaSubTipoDoProdutoParaTipoPropriedadeRural(string? subtipo)
         {
             return subtipo switch
             {
@@ -240,7 +240,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                 _ => "Fazenda",
             };
         }
-        private static string DeterminaSubTipoDoImovelParaTipoTerreno(string subtipo)
+        private static string DeterminaSubTipoDoProdutoParaTipoTerreno(string subtipo)
         {
             return subtipo switch
             {
@@ -248,7 +248,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                 _ => "Terreno Padrão",
             };
         }
-        private static string DeterminaSubTipoDoImovelParaTipoHotel(string subtipo)
+        private static string DeterminaSubTipoDoProdutoParaTipoHotel(string subtipo)
         {
             return subtipo.Trim() switch
             {
@@ -257,7 +257,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             };
         }
 
-        private void DeterminaTipoSubtipoCategoriaDoImovel(DadosPrincipais imovel, out string tipo, out string subtipo, out string categoria)
+        private void DeterminaTipoSubtipoCategoriaDoProduto(DadosPrincipais imovel, out string tipo, out string subtipo, out string categoria)
         {
             if (imovel.Subtipo == "Estúdio" || imovel.Subtipo == "Studio")//Alterado porque Zap não tem studio abaixo de apartamento
             {
@@ -268,7 +268,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             {
                 case "Casa":
                     tipo = imovel.Tipo.Trim();
-                    subtipo = DeterminaSubTipoDoImovelParaTipoCasa(imovel.Subtipo);
+                    subtipo = DeterminaSubTipoDoProdutoParaTipoCasa(imovel.Subtipo);
                     categoria = DeterminaCategoriaParaTipoCasa(imovel.Subtipo);
                     break;
                 case "Galpão":
@@ -278,7 +278,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                     break;
                 case "Hotel":
                     tipo = "Comercial/Industrial";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoHotel(imovel.Subtipo ?? string.Empty);
+                    subtipo = DeterminaSubTipoDoProdutoParaTipoHotel(imovel.Subtipo ?? string.Empty);
                     categoria = "Padrão";
                     break;
                 case "Prédio":
@@ -293,18 +293,18 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                 case "Mall":
                 case "Salas":
                     tipo = "Comercial/Industrial";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoComercial(imovel.Subtipo);
+                    subtipo = DeterminaSubTipoDoProdutoParaTipoComercial(imovel.Subtipo);
                     categoria = DeterminaCategoriaParaTipoComercial(imovel.Subtipo);
                     break;
                 case "Propriedade Rural":
                     tipo = "Rural";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoPropriedadeRural(imovel.Subtipo);
+                    subtipo = DeterminaSubTipoDoProdutoParaTipoPropriedadeRural(imovel.Subtipo);
                     categoria = "Padrão";
                     break;
                 case "Loteamento":
                 case "Terreno":
                     tipo = "Terreno";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoTerreno(imovel.Subtipo ?? string.Empty);
+                    subtipo = DeterminaSubTipoDoProdutoParaTipoTerreno(imovel.Subtipo ?? string.Empty);
                     categoria = "Padrão";
                     break;
                 case "Flat":
@@ -315,7 +315,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                 case "Apartamento":
                 default:
                     tipo = "Apartamento";
-                    subtipo = DeterminaSubTipoDoImovelParaTipoApartamento(imovel.Subtipo ?? string.Empty);
+                    subtipo = DeterminaSubTipoDoProdutoParaTipoApartamento(imovel.Subtipo ?? string.Empty);
                     categoria = DeterminaCategoriaParaTipoApartamento(imovel.Subtipo);
                     break;
             }

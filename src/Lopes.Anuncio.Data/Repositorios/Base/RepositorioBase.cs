@@ -1,5 +1,4 @@
-﻿using Lopes.Anuncio.Domain.Reposities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.Infra.Data.Repositories
 {

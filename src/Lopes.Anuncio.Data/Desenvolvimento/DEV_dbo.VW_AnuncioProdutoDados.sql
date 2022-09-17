@@ -12,5 +12,5 @@ AS
 GO
 select * 
 from VW_AnuncioProdutoDados 
-where idImovel IN (99669)
-ORDER BY IdImovel DESC
+where idProduto IN (99669)
+ORDER BY IdProduto DESC

@@ -4,7 +4,7 @@ using Lopes.Anuncio.Application.DadosService;
 
 namespace Lopes.Anuncio.Dados.Leitura.DadosService
 {
-    public class FranquiaApelidoPortalDadosService : DadosServiceBase<FranquiaApelido>, IFranquiaApelidoPortalDadosService
+    public class FranquiaApelidoPortalDadosService : DadosServiceBase<FranquiaApelido>, IFranquiaApelidoPortalDadosAppService
     {
         public FranquiaApelidoPortalDadosService(DbLopesnetLeituraContext context) : base(context)
         {

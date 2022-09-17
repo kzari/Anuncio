@@ -46,7 +46,7 @@ namespace Lopes.Anuncio.Repositorio.Repositorios
         //public void AtualizarOuAdicionar(AnuncioAtualizacao entidade, bool salvarAlteracoes = true)
         //{
         //    AnuncioAtualizacao? registro = ObterTodos().FirstOrDefault(_ => _.IdPortal == entidade.IdPortal &&
-        //                                                                    _.IdImovel == entidade.IdImovel &&
+        //                                                                    _.IdProduto == entidade.IdProduto &&
         //                                                                    _.IdEmpresa == entidade.IdEmpresa);
         //    if (registro == null)
         //        Criar(entidade);

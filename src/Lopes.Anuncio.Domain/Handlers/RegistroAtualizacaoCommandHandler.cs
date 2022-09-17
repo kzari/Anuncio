@@ -28,7 +28,7 @@ namespace Lopes.Anuncio.Domain.Handlers
 
         public Task<AtualizarStatusAnuncioResponse> Handle(RegistroAtualizacaoCommand request, CancellationToken cancellationToken)
         {
-            var entidade = new AnuncioAtualizacao(request.IdPortal, request.IdImovel, request.IdEmpresa, request.Acao, request.Id, request.Data);
+            var entidade = new AnuncioAtualizacao(request.IdPortal, request.IdProduto, request.IdEmpresa, request.Acao, request.Id, request.Data);
             //TODO: validar
 
             _DadosService.Criar(entidade);

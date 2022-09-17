@@ -63,13 +63,13 @@ namespace Lopes.Infra.XML
 
             int i = 0;
             int qtdeProdutos = elementos.Count;
-            foreach (ElementoProduto eImovel in elementos)
+            foreach (ElementoProduto eProduto in elementos)
             {
                 i++;
                 if (removerSeExistir)
-                    RemoverImovel(doc, eProdutos, eImovel.IdProduto);
+                    RemoverProduto(doc, eProdutos, eProduto.IdProduto);
                 
-                AdicionarElemento(doc, eProdutos, eImovel);
+                AdicionarElemento(doc, eProdutos, eProduto);
 
                 if(progresso != null && i % 100 == 0)
                     progresso.Mensagem($"Inserindo/atualizando no XML. {i} de {qtdeProdutos}", i);
@@ -94,7 +94,7 @@ namespace Lopes.Infra.XML
             foreach (int id in idProdutos)
             {
                 i++;
-                RemoverImovel(doc, eProdutos, id);
+                RemoverProduto(doc, eProdutos, id);
                 
                 if (progresso != null)
                     progresso.Mensagem($"{i} imóveis removido(s) no XML de {idProdutos.Length}.", i);
@@ -103,15 +103,15 @@ namespace Lopes.Infra.XML
             doc.Save(CaminhoArquivo);
         }
 
-        private static void RemoverImovel(XmlDocument doc, XmlNode eProdutos, int idImovel)
+        private static void RemoverProduto(XmlDocument doc, XmlNode eProdutos, int idProduto)
         {
-            string query = QueryIdImovel("REO" + idImovel);
-            XmlNode? eImovelExistente = doc.SelectSingleNode(query);
-            if (eImovelExistente?.ParentNode != null)
-                eProdutos.RemoveChild(eImovelExistente.ParentNode);
+            string query = QueryIdProduto("REO" + idProduto);
+            XmlNode? eProdutoExistente = doc.SelectSingleNode(query);
+            if (eProdutoExistente?.ParentNode != null)
+                eProdutos.RemoveChild(eProdutoExistente.ParentNode);
         }
 
-        public bool ImovelNoPortal(int idImovel)
+        public bool ProdutoNoPortal(int idProduto)
         {
             if (!File.Exists(CaminhoArquivo))
                 return false;
@@ -120,7 +120,7 @@ namespace Lopes.Infra.XML
             XPathDocument xPath = new XPathDocument(fileStream);
 
             XPathNavigator navigator = xPath.CreateNavigator();
-            XPathExpression xPathExpression = navigator.Compile(QueryIdImovel(idImovel));
+            XPathExpression xPathExpression = navigator.Compile(QueryIdProduto(idProduto));
             XPathNavigator node = navigator.SelectSingleNode(xPathExpression);
             if (node == null)
                 return false;
@@ -147,9 +147,9 @@ namespace Lopes.Infra.XML
 
         private static void AdicionarElemento(XmlDocument doc, XmlNode node, ElementoProduto elemento)
         {
-            XmlElement? eImovel = CriarElemento(doc, elemento);
-            if(eImovel != null)
-                node.AppendChild(eImovel);
+            XmlElement? eProduto = CriarElemento(doc, elemento);
+            if(eProduto != null)
+                node.AppendChild(eProduto);
         }
         private static void AdicionarElementos(XmlDocument doc, XmlElement elementoPai, IEnumerable<Elemento> elementos)
         {
@@ -193,8 +193,8 @@ namespace Lopes.Infra.XML
                     AdicionarElemento(doc, xmlElement, elementoFilho);
         }
 
-        private static string QueryIdImovel(int idImovel) => QueryIdImovel("REO" + idImovel);
-        private static string QueryIdImovel(string idImovelPortal) => $"//*[text() = '{idImovelPortal}']";
+        private static string QueryIdProduto(int idProduto) => QueryIdProduto("REO" + idProduto);
+        private static string QueryIdProduto(string idProdutoPortal) => $"//*[text() = '{idProdutoPortal}']";
 
         protected static string SubstituirCaracteresInvalidosUnicode(string input, string substituto = "")
         {
@@ -220,12 +220,12 @@ namespace Lopes.Infra.XML
             if (File.Exists(CaminhoArquivo))
             {
                 XDocument xDocument = XDocument.Load(CaminhoArquivo);
-                IEnumerable<string> idsImovelString = xDocument.Descendants(_portalXmlElementos.NomeTagCodigoImovel)
+                IEnumerable<string> idsProdutoString = xDocument.Descendants(_portalXmlElementos.NomeTagCodigoProduto)
                                                                .Select(_ => _.Value.Replace("REO", ""));
-                foreach (string idString in idsImovelString)
+                foreach (string idString in idsProdutoString)
                 {
-                    if (int.TryParse(idString, out int idImovel))
-                        yield return idImovel;
+                    if (int.TryParse(idString, out int idProduto))
+                        yield return idProduto;
                 }
             }
         }

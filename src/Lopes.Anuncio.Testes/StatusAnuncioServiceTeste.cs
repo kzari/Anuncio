@@ -22,12 +22,12 @@ namespace Lopes.SC.Anuncio.Domain.Testes
             {
                 IdFranquia = 1,
                 DataAtualizacaoAnuncioPortal = DateTime.Now.AddDays(-1),
-                ImovelUltimaAlteracao = DateTime.Now,
+                ProdutoUltimaAlteracao = DateTime.Now,
                 IdStatusAnuncio = 1,
                 IdStatusCota = 1,
                 IdStatusProduto = ProdutoStatus.Ativo
             };
-            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncioDesatualizado, true);
+            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusProdutoPortal(anuncioDesatualizado, true);
             Assert.True(status == StatusAnuncioPortal.Desatualizado);
         }
 
@@ -35,7 +35,7 @@ namespace Lopes.SC.Anuncio.Domain.Testes
         public void VerificarAnuncioAtualizado()
         {
             AnuncioCota anuncioAtualizado = AnuncioAtualizado();
-            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncioAtualizado, true);
+            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusProdutoPortal(anuncioAtualizado, true);
             Assert.True(status == StatusAnuncioPortal.Atualizado);
         }
 
@@ -44,10 +44,10 @@ namespace Lopes.SC.Anuncio.Domain.Testes
         {
             var anuncio = AnuncioAtualizado();
             anuncio.IdStatusCota = 2;
-            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, true);
+            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, true);
             Assert.True(status == StatusAnuncioPortal.ARemover);
 
-            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, false);
+            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, false);
             Assert.True(status2 == StatusAnuncioPortal.Removido);
         }
 
@@ -56,22 +56,22 @@ namespace Lopes.SC.Anuncio.Domain.Testes
         {
             var anuncio = AnuncioAtualizado();
             anuncio.IdStatusAnuncio = 2;
-            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, true);
+            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, true);
             Assert.True(status == StatusAnuncioPortal.ARemover);
 
-            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, false);
+            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, false);
             Assert.True(status2 == StatusAnuncioPortal.Removido);
         }
 
         [Fact]
-        public void VerificarAnuncioParaRemover_ImovelInativo()
+        public void VerificarAnuncioParaRemover_ProdutoInativo()
         {
             var anuncio = AnuncioAtualizado();
             anuncio.IdStatusProduto = ProdutoStatus.Baixado;
-            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, true);
+            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, true);
             Assert.True(status == StatusAnuncioPortal.ARemover);
 
-            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, false);
+            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, false);
             Assert.True(status2 == StatusAnuncioPortal.Removido);
         }
 
@@ -81,19 +81,19 @@ namespace Lopes.SC.Anuncio.Domain.Testes
             var anuncio = AnuncioAtualizado();
             anuncio.DataAtualizacaoAnuncioPortal = null;
             anuncio.PodeAnunciarOutraFranquia = true;
-            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, true);
+            StatusAnuncioPortal status = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, true);
             Assert.True(status == StatusAnuncioPortal.Desatualizado);
 
             anuncio.PodeAnunciarOutraFranquia = false;
             anuncio.IdFranquia = 1;
-            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, true);
+            StatusAnuncioPortal status2 = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, true);
             Assert.True(status2 == StatusAnuncioPortal.Desatualizado);
 
             anuncio.IdFranquia = 2;
-            StatusAnuncioPortal status3 = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, true);
+            StatusAnuncioPortal status3 = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, true);
             Assert.True(status3 == StatusAnuncioPortal.ARemover);
 
-            StatusAnuncioPortal status4 = _statusAnuncioService.VerificarStatusImovelPortal(anuncio, false);
+            StatusAnuncioPortal status4 = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, false);
             Assert.True(status4 == StatusAnuncioPortal.Removido);
         }
 
@@ -107,7 +107,7 @@ namespace Lopes.SC.Anuncio.Domain.Testes
             {
                 IdFranquia = 1,
                 DataAtualizacaoAnuncioPortal = now,
-                ImovelUltimaAlteracao = now,
+                ProdutoUltimaAlteracao = now,
                 IdStatusAnuncio = 1,
                 IdStatusCota = 1,
                 IdStatusProduto = ProdutoStatus.Ativo

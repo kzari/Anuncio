@@ -4,7 +4,7 @@ IF OBJECT_ID('dbo.ProdutoCaracteristicas', 'P') IS NOT NULL
 	DROP PROCEDURE dbo.ProdutoCaracteristicas
 GO
 CREATE PROCEDURE [dbo].ProdutoCaracteristicas(
-	@idImovel INT,
+	@idProduto INT,
 	@idPortal INT = NULL
 )
 AS 
@@ -24,7 +24,7 @@ AS
 			tb_UNPR_X_ATRI AXU
 			INNER JOIN tb_ATRI_atributo AU WITH (NOLOCK) ON  AU.ATRI_cd_atributo = AXU.ATRI_cd_atributo
 		WHERE 
-			UNPR_cd_unidade_pronta = @idImovel
+			UNPR_cd_unidade_pronta = @idProduto
 		UNION
 		SELECT	
 			AE.ATRI_cd_atributo AS Id
@@ -38,7 +38,7 @@ AS
 			INNER JOIN tb_ATEM_atributo_empreendimento AXE	 WITH (NOLOCK) ON  AXE.EMPR_cd_empreendimento = D.EMPR_cd_empreendimento
 			INNER JOIN tb_ATRI_atributo AE					 WITH (NOLOCK) ON  AE.ATRI_cd_atributo = AXE.ATRI_cd_atributo
 		WHERE 
-			U.UNPR_cd_unidade_pronta = @idImovel
+			U.UNPR_cd_unidade_pronta = @idProduto
 	) A
 	LEFT JOIN tb_VEIC_x_ATRI_veiculo_atributo VA ON VA.ATRI_cd_atributo = A.Id AND VA.VEIC_cd_veiculo = @idPortal
 	WHERE 

@@ -6,10 +6,10 @@ namespace Lopes.Anuncio.Domain.Services
     public interface IPortalXMLElementos
     {
         string CaminhoTagPaiProdutos { get; }
-        string NomeTagImovel { get; }
-        string NomeTagCodigoImovel { get; }
+        string NomeTagProduto { get; }
+        string NomeTagCodigoProduto { get; }
 
-        Xml ObterXml(IEnumerable<Produto> imoveis);
+        Xml ObterXml(IEnumerable<Produto> produtos);
         Xml ObterXml(Produto dados);
     }
 }

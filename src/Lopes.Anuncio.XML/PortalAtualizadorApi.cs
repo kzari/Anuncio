@@ -7,9 +7,9 @@ namespace Lopes.Infra.XML
     /// <summary>
     /// TODO: para um novo projeto
     /// </summary>
-    public class ImovelWebApi : IPortalAtualizadorApi
+    public class ProdutoWebApi : IPortalAtualizadorApi
     {
-        public bool ImovelNoPortal(int idImovel)
+        public bool ProdutoNoPortal(int idProduto)
         {
             throw new NotImplementedException();
         }
@@ -24,7 +24,7 @@ namespace Lopes.Infra.XML
             throw new NotImplementedException();
         }
 
-        public void RemoverProdutos(int[] idImovel, IProgresso progresso = null)
+        public void RemoverProdutos(int[] idProduto, IProgresso progresso = null)
         {
             throw new NotImplementedException();
         }

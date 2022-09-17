@@ -6,7 +6,7 @@ CREATE VIEW dbo.VW_ProdutoImagensAnuncio
 AS
 	 SELECT 
 		A.ANEP_cd_anexo_produto AS Id
-		,UNPR_cd_unidade_pronta AS IdImovel
+		,UNPR_cd_unidade_pronta AS IdProduto
 		,S.STAN_ds_subtipo_anexo_produto AS Descricao
 		,A.ANEP_ds_caminho AS NomeArquivo
 		,O.ANOR_nr_ordem AS Ordem

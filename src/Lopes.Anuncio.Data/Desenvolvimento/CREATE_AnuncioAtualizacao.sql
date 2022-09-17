@@ -10,7 +10,7 @@ GO
 
 CREATE TABLE [dbo].[AnuncioAtualizacao](
 	[Id] [varchar](40) NOT NULL,
-	[IdImovel] [int] NOT NULL,
+	[IdProduto] [int] NOT NULL,
 	[IdEmpresa] [int] NOT NULL,
 	[IdPortal] [int] NOT NULL,
 	[Acao] [int] NOT NULL,

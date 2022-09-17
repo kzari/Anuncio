@@ -13,7 +13,7 @@ namespace Lopes.Anuncio.Domain.ObjetosValor
         public int IdCota { get; set; }
         public Portal Portal { get; set; }
 
-        public DateTime? ImovelUltimaAlteracao { get; set; }
+        public DateTime? ProdutoUltimaAlteracao { get; set; }
         public ProdutoStatus IdStatusProduto { get; set; }
 
         public int IdStatusAnuncio { get; set; }
@@ -30,10 +30,13 @@ namespace Lopes.Anuncio.Domain.ObjetosValor
         /// <summary>
         /// True se anuncio precisa ser atualizado
         /// </summary>
-        public bool AnuncioDesatualizado => !DataAtualizacaoAnuncioPortal.HasValue || DataAtualizacaoAnuncioPortal.Value < ImovelUltimaAlteracao;
+        public bool AnuncioDesatualizado => !DataAtualizacaoAnuncioPortal.HasValue || DataAtualizacaoAnuncioPortal.Value < ProdutoUltimaAlteracao;
 
         public bool Ativo => IdStatusAnuncio == 1;
         public bool CotaAtiva => IdStatusCota == 1;
         public bool ProdutoAtivo => IdStatusProduto == ProdutoStatus.Ativo;
+
+
+        public StatusAnuncioPortal StatusAnuncioPortal { get; set; }
     }
 }

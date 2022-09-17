@@ -20,10 +20,10 @@ namespace Lopes.Anuncio.Domain.Commands.Requests
 
     public class RegistroAtualizacaoCommand : IRequest<AtualizarStatusAnuncioResponse>
     {
-        public RegistroAtualizacaoCommand(Portal idPortal, int idImovel, int idEmpresa, AtualizacaoAcao acao, DateTime? data = null, Guid? id = null)
+        public RegistroAtualizacaoCommand(Portal idPortal, int idProduto, int idEmpresa, AtualizacaoAcao acao, DateTime? data = null, Guid? id = null)
         {
             IdPortal = idPortal;
-            IdImovel = idImovel;
+            IdProduto = idProduto;
             IdEmpresa = idEmpresa;
             Acao = acao;
             Data = data ?? DateTime.Now;
@@ -32,7 +32,7 @@ namespace Lopes.Anuncio.Domain.Commands.Requests
 
         public Guid Id { get; set; }
         public Portal IdPortal { get; set; }
-        public int IdImovel { get; set; }
+        public int IdProduto { get; set; }
         public int IdEmpresa { get; set; }
         public AtualizacaoAcao Acao { get; set; }
         public DateTime Data { get; set; }

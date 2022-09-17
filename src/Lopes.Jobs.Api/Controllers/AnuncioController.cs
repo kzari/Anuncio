@@ -24,8 +24,8 @@ namespace Lopes.Jobs.Api.Controllers
         }
 
         [HttpGet]
-        [Route("AtualizarPorImovel")]
-        public string AtualizarPorImovel([FromQuery] int[] idProdutos)
+        [Route("AtualizarPorProduto")]
+        public string AtualizarPorProduto([FromQuery] int[] idProdutos)
         {
             string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null, null));
 
@@ -37,8 +37,8 @@ namespace Lopes.Jobs.Api.Controllers
         }
 
         [HttpGet]
-        [Route("AtualizarPorImovelPortal")]
-        public string AtualizarPorImovelPortal([FromQuery] int[] idProdutos, [FromQuery] Portal portal)
+        [Route("AtualizarPorProdutoPortal")]
+        public string AtualizarPorProdutoPortal([FromQuery] int[] idProdutos, [FromQuery] Portal portal)
         {
             string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null, portal));
 

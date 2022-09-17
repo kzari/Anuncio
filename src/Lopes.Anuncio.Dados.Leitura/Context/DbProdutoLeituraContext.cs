@@ -17,7 +17,7 @@ namespace Lopes.Anuncio.Dados.Leitura.Context
         public DbSet<AnuncioCota> Anuncios { get; set; }
         public DbSet<ProdutoFranquia> ProdutoFranquias { get; set; }
         public DbSet<DadosPrincipais> Produtos { get; set; }
-        public DbSet<AnuncioAtualizacao> ImovelAtualizacaoPortais { get; set; }
+        public DbSet<AnuncioAtualizacao> ProdutoAtualizacaoPortais { get; set; }
         public DbSet<Caracteristica> ProdutoCaracteristicas{ get; set; }
         public DbSet<TourVirtual> TourVirtuais { get; set; }
         public DbSet<Video> ProdutoVideos { get; set; }

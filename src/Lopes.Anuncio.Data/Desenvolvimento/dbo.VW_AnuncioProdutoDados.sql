@@ -6,7 +6,7 @@ GO
 CREATE VIEW dbo.VW_AnuncioProdutoDados
 AS
 	SELECT DISTINCT
-		UNPR.UNPR_cd_unidade_pronta AS IdImovel
+		UNPR.UNPR_cd_unidade_pronta AS IdProduto
 		,UNDT.UNDT_ds_titulo AS Titulo
 		,UNDT.UNDT_ds_texto_site as TextoSite
 		,MOUN.MOUN_qt_area_total_m2 AS AreaTotal
@@ -111,5 +111,5 @@ AS
 GO
 select * 
 from VW_AnuncioProdutoDados 
-where idImovel IN (99669)
-ORDER BY IdImovel DESC
+where idProduto IN (99669)
+ORDER BY IdProduto DESC

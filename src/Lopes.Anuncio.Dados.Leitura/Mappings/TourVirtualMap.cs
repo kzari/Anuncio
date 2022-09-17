@@ -13,7 +13,7 @@ namespace Lopes.Anuncio.Dados.Leitura.Mappings
 
             builder.Property(_ => _.Id).HasColumnName("UNTV_cd_unidade_tour_virtual");
             builder.Property(_ => _.Url).HasColumnName("UNTV_nm_url_tour_virtual");
-            builder.Property(_ => _.IdImovel).HasColumnName("UNPR_cd_unidade_pronta");
+            builder.Property(_ => _.IdProduto).HasColumnName("UNPR_cd_unidade_pronta");
         }
     }
 }

@@ -18,6 +18,7 @@ using Lopes.Anuncio.Dados.Leitura.Context;
 using Lopes.Anuncio.Dados.Leitura.DadosService;
 using Lopes.Anuncio.Application.DadosService;
 using Lopes.Anuncio.Repositorio.Repositorios;
+using Lopes.Anuncio.Application.Interfaces.DadosService;
 
 namespace Lopes.Infra.IoC
 {
@@ -106,10 +107,11 @@ namespace Lopes.Infra.IoC
         }
         protected virtual void RegistrarDadosServices(IServiceCollection services)
         {
+            services.AddTransient<IProdutoService, ProdutoDadosAppService>();
             services.AddTransient<IProdutoDadosService, ProdutoDadosService>();
-            services.AddTransient<IAnuncioDadosService, AnuncioDadosService>();
-            services.AddTransient<IPortalCaracteristicaDadosService, PortalCaracteristicasDadosService>();
-            services.AddTransient<IFranquiaApelidoPortalDadosService, FranquiaApelidoPortalDadosService>();
+            services.AddTransient<IAnuncioDadosAppService, AnuncioDadosService>();
+            services.AddTransient<IPortalCaracteristicaDadosAppService, PortalCaracteristicasDadosService>();
+            services.AddTransient<IFranquiaApelidoPortalDadosAppService, FranquiaApelidoPortalDadosService>();
         }
     }
 }

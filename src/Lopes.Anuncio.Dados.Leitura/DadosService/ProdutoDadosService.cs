@@ -2,7 +2,7 @@
 using Lopes.Anuncio.Domain.Models.DadosProduto;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Microsoft.EntityFrameworkCore;
-using Lopes.Anuncio.Domain.Services;
+using Lopes.Anuncio.Application.Interfaces.DadosService;
 
 namespace Lopes.Anuncio.Dados.Leitura.DadosService
 {
@@ -14,6 +14,8 @@ namespace Lopes.Anuncio.Dados.Leitura.DadosService
         {
             Db = context;
         }
+
+
 
         public IEnumerable<DadosPrincipais> ObterDados(int[] idProdutos)
         {
@@ -40,9 +42,9 @@ namespace Lopes.Anuncio.Dados.Leitura.DadosService
         public IDictionary<int, string[]> ObterUrlTourVirtuais(int[] idProdutos)
         {
             return Db.TourVirtuais.AsNoTracking()
-                                  .Where(_ => idProdutos.Contains(_.IdImovel))
+                                  .Where(_ => idProdutos.Contains(_.IdProduto))
                                   .ToList()
-                                  .GroupBy(_ => _.IdImovel)
+                                  .GroupBy(_ => _.IdProduto)
                                   .ToDictionary(_ => _.Key, _ => _.Select(_ => _.Url).ToArray());
         }
 

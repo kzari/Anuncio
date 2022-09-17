@@ -32,8 +32,8 @@ namespace Lopes.Infra.IoC
         {
             switch (portal)
             {
-                case Portal.ImovelWeb:
-                    return new ImovelWebApi();
+                case Portal.ProdutoWeb:
+                    return new ProdutoWebApi();
 
                 default:
                     {
@@ -53,7 +53,7 @@ namespace Lopes.Infra.IoC
         {
             IEnumerable<FranquiaApelido>? apelidos = _cacheService.ObterOuGravar(CHAVE_CACHE_APELIDO_EMPRESAS, TimeSpan.FromDays(1), () =>
             {
-                return _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosService>().Obter();
+                return _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosAppService>().Obter();
             });
             return apelidos?.FirstOrDefault(_ => _.IdEmpresa == idEmpresa)?.Apelido ?? string.Empty;
         }
@@ -64,7 +64,7 @@ namespace Lopes.Infra.IoC
 
             return _cacheService.ObterOuGravar(chave, TimeSpan.FromDays(1), () =>
             {
-                return _serviceProvider.ObterServico<IPortalCaracteristicaDadosService>().Obter(portal);
+                return _serviceProvider.ObterServico<IPortalCaracteristicaDadosAppService>().Obter(portal);
             })?.ToList();
         }
     }

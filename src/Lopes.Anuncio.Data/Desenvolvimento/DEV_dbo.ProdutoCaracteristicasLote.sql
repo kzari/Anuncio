@@ -10,7 +10,7 @@ CREATE PROCEDURE [dbo].ProdutoCaracteristicasLote(
 AS 
 	SELECT 
 		value AS Id
-		,value AS IdImovel
+		,value AS IdProduto
 		,'Caract' AS Nome
 		, 1 AS Unidade
 		, 1 AS Empreendimento

@@ -1,0 +1,26 @@
+
+==== *  TODOs  * ====================================================================================================================================================== *
+
+>> Arquitetura ------------------------------------------------------------
+
+	- FranquiaApelidoPortalMap - Consumir de view ao invez de tabela
+	- Validações das entidades
+	- Arrumar testes
+	- Implementar cache com Redis
+	OK- Implementar cache em memória
+	OK- CQRS
+
+	- API Jobs - Implementar autenticação
+
+	- Implementar consumo de mensageria (Kafka)
+
+>> Features --------------------------------------------------------------
+
+	- Implementar consumo da API do ImóvelWeb
+	
+
+>> BUGS -------------------------------------------------------------------
+	
+	- Verificar dados dos Imóveis não encontrados
+
+

@@ -1,7 +1,7 @@
 DROP TABLE dbo.Produtos
 GO
 CREATE TABLE [dbo].[Produtos](
-	[IdImovel] [int] NOT NULL,
+	[IdProduto] [int] NOT NULL,
 	[Titulo] [varchar](MAX) NULL,
 	[TextoSite] [varchar](MAX) NULL,
 	[AreaTotal] [decimal](18, 0) NULL,
@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[Produtos](
 	[InscricaoMunicipal] [varchar](50) NULL,
  CONSTRAINT [PK_Produtos] PRIMARY KEY CLUSTERED 
 (
-	[IdImovel] ASC
+	[IdProduto] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO

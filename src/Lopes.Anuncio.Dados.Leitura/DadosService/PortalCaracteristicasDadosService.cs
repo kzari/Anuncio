@@ -5,7 +5,7 @@ using Lopes.Anuncio.Application.DadosService;
 
 namespace Lopes.Anuncio.Dados.Leitura.DadosService
 {
-    public class PortalCaracteristicasDadosService : DadosServiceBase<PortalCaracteristica>, IPortalCaracteristicaDadosService
+    public class PortalCaracteristicasDadosService : DadosServiceBase<PortalCaracteristica>, IPortalCaracteristicaDadosAppService
     {
         public PortalCaracteristicasDadosService(DbProdutoLeituraContext context) : base(context)
         {

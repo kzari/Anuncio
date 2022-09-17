@@ -23,14 +23,14 @@ namespace Lopes.Anuncio.Domain.Services
         public Portal Portal { get; }
 
         protected abstract Elemento CriarElementoCabecalho();
-        protected abstract ElementoProduto CriarElementoImovel(Produto dados);
+        protected abstract ElementoProduto CriarElementoProduto(Produto dados);
 
         public Xml ObterXml(Produto dados) => ObterXml(new List<Produto> { dados });
-        public Xml ObterXml(IEnumerable<Produto> imoveis)
+        public Xml ObterXml(IEnumerable<Produto> produtos)
         {
             Elemento cabecalhos = CriarElementoCabecalho();
 
-            IEnumerable<ElementoProduto> eProdutos = CriarElementoImovel(imoveis);
+            IEnumerable<ElementoProduto> eProdutos = CriarElementoProduto(produtos);
 
             return new Xml(cabecalhos, eProdutos);
         }
@@ -69,11 +69,11 @@ namespace Lopes.Anuncio.Domain.Services
 
         
 
-        private IEnumerable<ElementoProduto> CriarElementoImovel(IEnumerable<Produto> imoveis)
+        private IEnumerable<ElementoProduto> CriarElementoProduto(IEnumerable<Produto> produtos)
         {
-            foreach (Produto imovel in imoveis)
+            foreach (Produto imovel in produtos)
             {
-                yield return CriarElementoImovel(imovel);
+                yield return CriarElementoProduto(imovel);
             }
         }
     }

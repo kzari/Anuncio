@@ -20,8 +20,8 @@ namespace Lopes.Anuncio.Domain.Services
     public interface IPortalAtualizador
     {
         void InserirAtualizarProdutos(IEnumerable<Produto> dados, bool removerSeExiste = false, IProgresso progresso = null);
-        void RemoverProdutos(int[] idImovel, IProgresso progresso = null);
-        bool ImovelNoPortal(int idImovel);
+        void RemoverProdutos(int[] idProduto, IProgresso progresso = null);
+        bool ProdutoNoPortal(int idProduto);
         IEnumerable<int> ObterIdProdutosNoPortal();
     }
 }

@@ -3,7 +3,7 @@
     public class DadosPrincipais
     {
         public int IdProduto { get; set; }
-        public string IdImovelPortais => $"REO{IdProduto}";
+        public string IdProdutoPortais => $"REO{IdProduto}";
 
         public string? Titulo { get; set; }
         public string? TextoSite { get; set; }

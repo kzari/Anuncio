@@ -10,9 +10,9 @@ namespace Lopes.Anuncio.Application.Services
     public class AtualizacaoAppService : IAtualizacaoAppService
     {
         private readonly IMediator _mediator;
-        private readonly IAnuncioDadosService _repositorio;
+        private readonly IAnuncioDadosAppService _repositorio;
 
-        public AtualizacaoAppService(IMediator mediator, IAnuncioDadosService repositorio)
+        public AtualizacaoAppService(IMediator mediator, IAnuncioDadosAppService repositorio)
         {
             _mediator = mediator;
             _repositorio = repositorio;

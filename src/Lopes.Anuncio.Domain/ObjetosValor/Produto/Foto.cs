@@ -20,6 +20,6 @@
             }
         }
 
-        public string ObterCaminhoFotoImovel(string urlFotos) => $"{urlFotos}REO{IdProduto}/{NomeArquivo}";
+        public string ObterCaminhoFotoProduto(string urlFotos) => $"{urlFotos}REO{IdProduto}/{NomeArquivo}";
     }
 }

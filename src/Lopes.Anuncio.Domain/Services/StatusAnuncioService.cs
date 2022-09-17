@@ -7,17 +7,17 @@ namespace Lopes.Anuncio.Domain.Services
     public class StatusAnuncioService : IStatusAnuncioService
     {
         private const string CHAVE_CACHE_FILIAIS_PRODUTO = "FranquiasProduto_[idProduto]";
-        private readonly IProdutoDadosService _produtoDadosService;
+        private readonly IProdutoService _produtoDadosService;
         private readonly ICacheService _cacheService;
 
-        public StatusAnuncioService(IProdutoDadosService produtoDadosService, ICacheService cacheService)
+        public StatusAnuncioService(IProdutoService produtoDadosService, ICacheService cacheService)
         {
             _produtoDadosService = produtoDadosService;
             _cacheService = cacheService;
         }
 
 
-        public StatusAnuncioPortal VerificarStatusImovelPortal(AnuncioCota anuncio, bool imovelNoXml)
+        public StatusAnuncioPortal VerificarStatusProdutoPortal(AnuncioCota anuncio, bool imovelNoXml)
         {
             if (!anuncio.Ativo ||
                 !anuncio.CotaAtiva ||

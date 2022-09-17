@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C30C12C1-7234-4CC4-A99C-D3D077FFE28F}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.ConsoleTestes", "src\Lopes.Anuncio.ConsoleTestes\Lopes.ConsoleTestes.csproj", "{4EFCFDBD-A4B2-428E-89BD-4743B8F062FF}"
