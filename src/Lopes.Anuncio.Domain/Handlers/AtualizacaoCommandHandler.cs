@@ -57,7 +57,7 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
             //var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
-            var partitions = partitioner.GetPartitions(1);
+            var partitions = partitioner.GetPartitions(2);
 
             int partitionIds = 0;
             int cotaAtual = 0;

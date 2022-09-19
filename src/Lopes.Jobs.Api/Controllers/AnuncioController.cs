@@ -27,7 +27,7 @@ namespace Lopes.Jobs.Api.Controllers
         [Route("AtualizarPorProduto")]
         public string AtualizarPorProduto([FromQuery] int[] idProdutos)
         {
-            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null, null));
+            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null));
 
             string mensagem = $"Atualização para os imóveis '{string.Join(", ", idProdutos)}' enfileirada. JobId: {jobId}";
 
@@ -38,15 +38,20 @@ namespace Lopes.Jobs.Api.Controllers
 
         [HttpGet]
         [Route("AtualizarPorProdutoPortal")]
-        public string AtualizarPorProdutoPortal([FromQuery] int[] idProdutos, [FromQuery] Portal portal)
+        public ActionResult AtualizarPorProdutoPortal([FromQuery] int[] idProdutos, [FromQuery] Portal portal)
         {
+            if (idProdutos == null || idProdutos.Length == 0)
+            {
+                return BadRequest("Necessário informar o(s) produtos e ou Portal.");
+            }
+
             string? jobId = BackgroundJob.Enqueue(() => AtualizarPorProdutos(idProdutos, null, portal));
 
             string mensagem = $"Atualização para os imóveis '{string.Join(", ", idProdutos)}' enfileirada. JobId: {jobId}";
 
             _logger.Log(LogLevel.Information, mensagem);
 
-            return mensagem;
+            return Ok(mensagem);
         }
 
         [HttpGet]
@@ -73,6 +78,7 @@ namespace Lopes.Jobs.Api.Controllers
 
 
 
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public void AtualizarPorPortal([FromQuery] Portal[] portal, PerformContext context)
         {
@@ -88,7 +94,14 @@ namespace Lopes.Jobs.Api.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void AtualizarPorProdutos([FromQuery] int[] idProdutos, PerformContext context, Portal? portal = null)
+        public void AtualizarPorProdutos([FromQuery] int[] idProdutos, PerformContext context, Portal portal)
+        {
+            var log = new HangFireLog(context);
+            _service.AtualizarAnuncios(new AnuncioCotaRequest(idProdutos: idProdutos, portal: new[] { portal }), log);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public void AtualizarPorProdutos([FromQuery] int[] idProdutos, PerformContext context)
         {
             var log = new HangFireLog(context);
             _service.AtualizarAnuncios(new AnuncioCotaRequest(idProdutos: idProdutos), log);

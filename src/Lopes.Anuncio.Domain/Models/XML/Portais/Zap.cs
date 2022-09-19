@@ -13,8 +13,8 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
         }
 
         public string CaminhoTagPaiProdutos => "/Carga/Imoveis";
-        public string NomeTagProduto => "Produto";
-        public string NomeTagCodigoProduto => "CodigoProduto";
+        public string NomeTagProduto => "Imovel";
+        public string NomeTagCodigoProduto => "CodigoImovel";
 
         protected override Elemento CriarElementoCabecalho()
         {
@@ -24,22 +24,22 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
                 new Atributo("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
             });
 
-            eCarga.AdicionarFilho(nome: "Produtos");
+            eCarga.AdicionarFilho(nome: "Imoveis");
 
             return eCarga;
         }
 
         protected override ElementoProduto CriarElementoProduto(Produto dados)
         {
-            ElementoProduto eProduto = new ElementoProduto(dados.Dados.IdProduto, "Produto");
+            ElementoProduto eProduto = new ElementoProduto(dados.Dados.IdProduto, NomeTagProduto);
 
             DeterminaTipoSubtipoCategoriaDoProduto(dados.Dados, out string tipoProduto, out string subTipoProduto, out string categoria);
 
-            eProduto.AdicionarFilho("CodigoProduto", dados.Dados.IdProdutoPortais);
+            eProduto.AdicionarFilho(NomeTagCodigoProduto, dados.Dados.IdProdutoPortais);
 
-            eProduto.AdicionarFilho("TipoProduto", dados.Dados.Tipo, naoAdicionarSeNuloOuVazio: true);
-            eProduto.AdicionarFilho("SubTipoProduto", dados.Dados.Subtipo, naoAdicionarSeNuloOuVazio: true);
-            eProduto.AdicionarFilho("TituloProduto", dados.Dados.Titulo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("TipoImovel", dados.Dados.Tipo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("SubTipoImovel", dados.Dados.Subtipo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("TituloImovel", dados.Dados.Titulo, naoAdicionarSeNuloOuVazio: true);
             eProduto.AdicionarFilho("Observacao", RemoverCaracteresInvalidosUnicode(dados.Dados.TextoSite, " "), naoAdicionarSeNuloOuVazio: true);
 
             eProduto.AdicionarFilho("InscricaoMunicipal", dados.Dados.InscricaoMunicipal, naoAdicionarSeNuloOuVazio: true);
