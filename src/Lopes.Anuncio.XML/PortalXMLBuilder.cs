@@ -23,7 +23,6 @@ namespace Lopes.Infra.XML
 
         private string caminhoArquivo;
 
-
         public PortalXMLBuilder(string caminhoArquivoPasta,
                                 IEnumerable<PortalCaracteristica> portalCaracteristicas,
                                 string apelidoEmpresa,
@@ -49,7 +48,7 @@ namespace Lopes.Infra.XML
             if (!File.Exists(CaminhoArquivo))
                 CriarXml("1.0", "UTF-8", xml.Cabecalhos, CaminhoArquivo);
 
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new ();
             doc.Load(CaminhoArquivo);
 
             XmlNode? eProdutos = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiProdutos);
@@ -63,7 +62,7 @@ namespace Lopes.Infra.XML
             doc.Save(CaminhoArquivo);
         }
 
-        private static void AdicionarProdutos(Xml xml, XmlDocument doc, XmlNode? eProdutos, bool removerSeExistir, IProgresso? progresso = null)
+        private static void AdicionarProdutos(Xml xml, XmlDocument doc, XmlNode eProdutos, bool removerSeExistir, IProgresso? progresso = null)
         {
             List<ElementoProduto> elementos = xml.Produtos.ToList();
 
@@ -84,10 +83,10 @@ namespace Lopes.Infra.XML
 
         public void RemoverProdutos(int[] idProdutos, IProgresso progresso = null)
         {
-            if (!idProdutos.Any() || !File.Exists(CaminhoArquivo))
+            if (idProdutos.Length == 0 || !File.Exists(CaminhoArquivo))
                 return;
 
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(CaminhoArquivo);
 
             XmlNode? eProdutos = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiProdutos);
@@ -99,9 +98,8 @@ namespace Lopes.Infra.XML
             {
                 i++;
                 RemoverProduto(doc, eProdutos, id);
-                
-                if (progresso != null)
-                    progresso.Mensagem($"{i} imóveis removido(s) no XML de {idProdutos.Length}.", i);
+
+                progresso?.Mensagem($"{i} imóveis removido(s) no XML de {idProdutos.Length}.", i);
             }
 
             doc.Save(CaminhoArquivo);
@@ -126,15 +124,12 @@ namespace Lopes.Infra.XML
             XPathNavigator navigator = xPath.CreateNavigator();
             XPathExpression xPathExpression = navigator.Compile(QueryIdProduto(idProduto));
             XPathNavigator node = navigator.SelectSingleNode(xPathExpression);
-            if (node == null)
-                return false;
-
-            return true;
+            return node != null;
         }
 
-        private void CriarXml(string versao, string codificacao, Elemento elemento, string caminhoArquivo)
+        private static void CriarXml(string versao, string codificacao, Elemento elemento, string caminhoArquivo)
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new ();
             XmlNode docNode = doc.CreateXmlDeclaration(versao, codificacao, null);
             doc.AppendChild(docNode);
 
@@ -166,7 +161,7 @@ namespace Lopes.Infra.XML
             if(eCabecalho != null)
                 elementoPai.AppendChild(eCabecalho);
         }
-        
+
         private static XmlElement? CriarElemento(XmlDocument doc, Elemento elemento)
         {
             if (elemento == null)
@@ -186,15 +181,19 @@ namespace Lopes.Infra.XML
         private static void AdicionarAtributos(Elemento elemento, XmlElement xmlElement)
         {
             if (elemento.Atributos.Algum())
+            {
                 foreach (Atributo atributo in elemento.Atributos)
-                    (xmlElement).SetAttribute(atributo.Nome, atributo.Valor);
+                    xmlElement.SetAttribute(atributo.Nome, atributo.Valor);
+            }
         }
 
         private static void AdicionarFilhos(XmlDocument doc, Elemento elemento, XmlElement xmlElement)
         {
             if (elemento.Filhos.Algum())
+            {
                 foreach (Elemento elementoFilho in elemento.Filhos)
                     AdicionarElemento(doc, xmlElement, elementoFilho);
+            }
         }
 
         private static string QueryIdProduto(int idProduto) => QueryIdProduto("REO" + idProduto);
@@ -214,9 +213,7 @@ namespace Lopes.Infra.XML
             if (string.IsNullOrEmpty(nomePortal))
                 throw new Exception($"Portal não encontrado. Id portal: {_portal}");
 
-            string caminhoArquivo = _caminhoArquivoPasta + "/" + nomePortal.ToLower() + "-" + _apelidoEmpresa + ".xml";
-
-            return caminhoArquivo;
+            return _caminhoArquivoPasta + "/" + nomePortal.ToLower() + "-" + _apelidoEmpresa + ".xml";
         }
 
         public IEnumerable<int> ObterIdProdutosNoPortal()

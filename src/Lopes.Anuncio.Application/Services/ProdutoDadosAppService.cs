@@ -62,20 +62,17 @@ namespace Lopes.Anuncio.Application.Services
 
             _logger.Warn($"Imóveis não encontrados: {string.Join(", ", idProdutosNaoEncontrados)}");
 
-            if (progresso != null)
-                progresso.NovaMensagem($"Obtendo caracteristicas de {idProdutosEncontrados.Length} imóveis.");
+            progresso?.NovaMensagem($"Obtendo caracteristicas de {idProdutosEncontrados.Length} imóveis.");
 
             List<Caracteristica> caracteristicas = _produtoDadosService.ObterCaracteristicas(idProdutosEncontrados).ToList();
 
-            if (progresso != null)
-                progresso.NovaMensagem($"Obtendo Tour virtual e Vídeos de {idProdutosEncontrados.Length} imóveis.");
+            progresso?.NovaMensagem($"Obtendo Tour virtual e Vídeos de {idProdutosEncontrados.Length} imóveis.");
 
             IDictionary<int, string[]> urlTours = _produtoDadosService.ObterUrlTourVirtuais(idProdutosEncontrados);
             IDictionary<int, string[]> urlVideos = _produtoDadosService.ObterUrlVideos(idProdutosEncontrados);
             IEnumerable<Foto> fotos = _produtoDadosService.ObterFotos(idProdutosEncontrados);
 
-            if (progresso != null)
-                progresso.NovaMensagem($"Preenchendo informações de {idProdutosEncontrados.Length} imóveis.");
+            progresso?.NovaMensagem($"Preenchendo informações de {idProdutosEncontrados.Length} imóveis.");
 
             List<Produto> produtos = new List<Produto>();
             foreach (DadosPrincipais dados in dadosPrincipais)
