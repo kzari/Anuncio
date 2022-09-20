@@ -71,11 +71,11 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
 
         private void AdicionarFotos(Produto dados, ElementoProduto eProduto)
         {
-            if (!dados.Imagens.Any())
+            if (!dados.Fotos.Any())
                 return;
 
             Elemento eFotos = eProduto.AdicionarFilho("Fotos");
-            foreach (Foto foto in dados.Imagens)
+            foreach (Foto foto in dados.Fotos)
             {
                 Elemento eFoto = eFotos.AdicionarFilho("Foto");
                 eFoto.AdicionarFilho("NomeArquivo", foto.Descricao);

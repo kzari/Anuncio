@@ -14,6 +14,6 @@ namespace Lopes.Anuncio.Domain.Models.DadosProduto
         public IEnumerable<Caracteristica> Caracteristicas { get; set; }
         public IEnumerable<string> UrlTourVirtuais { get; set; }
         public IEnumerable<string> UrlVideos { get; set; }
-        public IEnumerable<Foto> Imagens { get; set; }
+        public IEnumerable<Foto> Fotos { get; set; }
     }
 }

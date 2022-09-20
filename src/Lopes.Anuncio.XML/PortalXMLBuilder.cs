@@ -53,12 +53,18 @@ namespace Lopes.Infra.XML
             doc.Load(CaminhoArquivo);
 
             XmlNode? eProdutos = doc.SelectSingleNode(_portalXmlElementos.CaminhoTagPaiProdutos);
-            if(eProdutos == null)
+            if (eProdutos == null)
                 throw new Exception($"Elemento não encontrado no XML. Caminho: '{_portalXmlElementos.CaminhoTagPaiProdutos}'.");
 
-            if (progresso != null)
-                progresso.NovaMensagem($"Montando elementos...");
+            progresso?.NovaMensagem("Montando elementos...");
 
+            AdicionarProdutos(xml, doc, eProdutos, removerSeExistir, progresso);
+
+            doc.Save(CaminhoArquivo);
+        }
+
+        private static void AdicionarProdutos(Xml xml, XmlDocument doc, XmlNode? eProdutos, bool removerSeExistir, IProgresso? progresso = null)
+        {
             List<ElementoProduto> elementos = xml.Produtos.ToList();
 
             int i = 0;
@@ -68,14 +74,12 @@ namespace Lopes.Infra.XML
                 i++;
                 if (removerSeExistir)
                     RemoverProduto(doc, eProdutos, eProduto.IdProduto);
-                
+
                 AdicionarElemento(doc, eProdutos, eProduto);
 
-                if(progresso != null && i % 100 == 0)
+                if (progresso != null && i % 100 == 0)
                     progresso.Mensagem($"Inserindo/atualizando no XML. {i} de {qtdeProdutos}", i);
             }
-
-            doc.Save(CaminhoArquivo);
         }
 
         public void RemoverProdutos(int[] idProdutos, IProgresso progresso = null)

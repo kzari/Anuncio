@@ -42,10 +42,11 @@ namespace Lopes.Anuncio.Domain.Handlers
 
             int totalAnuncios = anuncios.Count();
 
-            var anunciosAgrupados = anuncios.GroupBy(_ => new { _.Portal, _.IdFranquia }, (key, group) => new
+            var anunciosAgrupados = anuncios.GroupBy(_ => new { _.Portal, _.IdFranquia, _.IdCota }, (key, group) => new
             {
                 Portal = key.Portal,
                 IdFranquia = key.IdFranquia,
+                IdCota = key.IdCota,
                 Anuncios = group.ToList()
             }).ToList();
             int qtdeCotas = anunciosAgrupados.Count;

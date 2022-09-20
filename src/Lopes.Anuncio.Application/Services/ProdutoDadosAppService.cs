@@ -31,16 +31,16 @@ namespace Lopes.Anuncio.Application.Services
             IEnumerable<Produto> produtosCacheados = todosProdutosCacheados?.Where(_ => idProdutos.Contains(_.Dados.IdProduto)).ToList() ?? new List<Produto>();
 
             int[] idProdutosNaoCacheados = idProdutos.Where(_ => !produtosCacheados.Select(_ => _.Dados.IdProduto).Contains(_)).ToArray() ?? idProdutos;
-            if (idProdutosNaoCacheados.Any())
+            if (idProdutosNaoCacheados.Length > 0)
             {
-                if (progresso != null)
-                    progresso.NovaMensagem($"Obtendo dados principais de {idProdutos.Length} produtos.");
+                progresso?.NovaMensagem($"Obtendo dados principais de {idProdutos.Length} produtos.");
 
                 IEnumerable<Produto> produtosNaoCacheados = ObterDadosDaBase(idProdutos, progresso).ToList();
                 if (produtosNaoCacheados.Any())
                 {
-                    _cacheService.Gravar(CHAVE_CACHE_DADOS_PRODUTOS, produtosNaoCacheados, TimeSpan.FromHours(1));
-                    return produtosCacheados.Concat(produtosNaoCacheados);
+                    IEnumerable<Produto> produtos = produtosCacheados.Concat(produtosNaoCacheados);
+                    _cacheService.Gravar(CHAVE_CACHE_DADOS_PRODUTOS, produtos, TimeSpan.FromHours(1));
+                    return produtos;
                 }
             }
 
@@ -85,7 +85,7 @@ namespace Lopes.Anuncio.Application.Services
                 imovel.Caracteristicas = caracteristicas.Where(_ => _.IdProduto == dados.IdProduto);
                 imovel.UrlTourVirtuais = urlTours.Where(_ => _.Key == dados.IdProduto).SelectMany(_ => _.Value);
                 imovel.UrlVideos = urlVideos.Where(_ => _.Key == dados.IdProduto).SelectMany(_ => _.Value);
-                imovel.Imagens = fotos.Where(_ => _.IdProduto == dados.IdProduto);
+                imovel.Fotos = fotos.Where(_ => _.IdProduto == dados.IdProduto);
 
                 yield return imovel;
             }
