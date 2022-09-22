@@ -32,7 +32,7 @@ namespace Lopes.Infra.Cache
             if (dadoSerializado == null)
                 return null;
 
-            return JsonSerializer.Deserialize<T?>(dadoSerializado);
+            return JsonSerializer.Deserialize<T>(dadoSerializado);
         }
 
         public T? ObterOuGravar<T>(string chave, TimeSpan tempoExpiracao, Func<T> acao, TimeSpan? tempoExpiracaoInatividade = null) where T : class
