@@ -12,7 +12,7 @@ using Lopes.Anuncio.Domain.Handlers;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Domain.Commons.Cache;
-using Lopes.Infra.MemoryCache;
+using Lopes.Infra.Cache;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Lopes.Anuncio.Dados.Leitura.DadosService;
 using Lopes.Anuncio.Application.DadosService;
@@ -53,8 +53,14 @@ namespace Lopes.Infra.IoC
 
         protected virtual void RegistrarCache(IServiceCollection services)
         {
-            services.AddMemoryCache();
-            services.AddSingleton<ICacheService, MemoryCacheService>();
+            //services.AddMemoryCache();
+            //services.AddSingleton<ICacheService, MemoryCacheService>();
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
+            });
+            services.AddSingleton<ICacheService, CacheDistribuidoService>();
         }
 
         protected virtual IConfiguration RegistrarIConfiguration(IServiceCollection services, IConfiguration configuration = null)

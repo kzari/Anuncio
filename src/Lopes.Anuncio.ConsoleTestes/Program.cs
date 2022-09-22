@@ -4,3 +4,4 @@ using Lopes.ConsoleTestes.Testes.Anuncio;
 TesteAtualizacaoAnuncios.Atualizar();
 //TesteBarraProgresso.Barrinha();
 //TesteAtualizarStatusAnuncio.AtualizarStatus();
+//TesteCache.CacheRedis();

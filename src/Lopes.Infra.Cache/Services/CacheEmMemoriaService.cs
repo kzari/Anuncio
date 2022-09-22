@@ -3,25 +3,24 @@ using Lopes.Domain.Commons.Cache;
 
 namespace Lopes.Infra.MemoryCache
 {
-    public class MemoryCacheService : ICacheService
+    public class CacheEmMemoriaService : ICacheService
     {
         private readonly IMemoryCache _memoryCache;
 
-        public MemoryCacheService(IMemoryCache memoryCache)
+        public CacheEmMemoriaService(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
         }
 
 
-        public bool Gravar<T>(string chave, T dado, TimeSpan expiracaoAPartirDeAgora)
+        public bool Gravar<T>(string chave, T dado, TimeSpan expiracaoAPartirDeAgora, TimeSpan? tempoExpiracaoInatividade = null)
         {
-            _memoryCache.Set(chave, dado, expiracaoAPartirDeAgora);
-            return true;
-        }
+            var options = new MemoryCacheEntryOptions().SetAbsoluteExpiration(expiracaoAPartirDeAgora);
+            if (tempoExpiracaoInatividade.HasValue)
+                options.SetSlidingExpiration(tempoExpiracaoInatividade.Value);
 
-        public bool Gravar<T>(string chave, T dado, DateTimeOffset expiracao)
-        {
-            _memoryCache.Set<T>(chave, dado, expiracao);
+            _memoryCache.Set(chave, dado, options);
+
             return true;
         }
 
@@ -30,10 +29,11 @@ namespace Lopes.Infra.MemoryCache
             return _memoryCache.TryGetValue(chave, out T dado) ? dado : null;
         }
 
-        public T? ObterOuGravar<T>(string chave, TimeSpan expiracaoAPartirDeAgora, Func<T> acao) where T : class
+        public T? ObterOuGravar<T>(string chave, TimeSpan expiracaoAPartirDeAgora, Func<T> acao, TimeSpan? tempoExpiracaoInatividade = null) where T : class
         {
             T dado = _memoryCache.GetOrCreate(chave, entry => {
                 entry.AbsoluteExpirationRelativeToNow = expiracaoAPartirDeAgora;
+                entry.SlidingExpiration = tempoExpiracaoInatividade;
                 return acao();
             });
 
