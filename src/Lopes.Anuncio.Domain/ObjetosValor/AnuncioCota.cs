@@ -14,7 +14,7 @@ namespace Lopes.Anuncio.Domain.ObjetosValor
         public StatusAnuncioPortal? Status { get; set; }
     }
 
-    public class AnuncioCota 
+    public class AnuncioCota
     {
         public int IdAnuncio { get; set; }
         public int IdProduto { get; set; }
