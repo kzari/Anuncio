@@ -7,7 +7,7 @@ using Lopes.Domain.Commons.Cache;
 using Lopes.Infra.XML;
 using Microsoft.Extensions.Configuration;
 
-namespace Lopes.Infra.IoC
+namespace Lopes.Anuncio.IoC
 {
     public class PortalAtualizadorFactory : IPortalAtualizadorFactory
     {

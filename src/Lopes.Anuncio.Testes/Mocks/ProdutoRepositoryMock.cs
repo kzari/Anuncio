@@ -1,6 +1,4 @@
-﻿using Lopes.Anuncio.Domain.Models;
-using Lopes.Anuncio.Domain.Models.DadosProduto;
-using Lopes.Anuncio.Domain.Reposities;
+﻿using Lopes.Anuncio.Domain.Models.DadosProduto;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Domain.Commons;
 
@@ -17,7 +15,5 @@ namespace Lopes.Anuncio.Domain.Testes.Mocks
         {
             return new[] { 1 };
         }
-    }
-
-    public class 
+    } 
 }

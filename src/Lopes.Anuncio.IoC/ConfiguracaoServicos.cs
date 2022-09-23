@@ -12,15 +12,15 @@ using Lopes.Anuncio.Domain.Handlers;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Domain.Commons.Cache;
-using Lopes.Infra.Cache;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Lopes.Anuncio.Dados.Leitura.DadosService;
 using Lopes.Anuncio.Application.DadosService;
 using Lopes.Anuncio.Application.Interfaces.DadosService;
 using Lopes.Anuncio.Repositorio.Context;
 using Lopes.Anuncio.Repositorio.Repositorios;
+using Lopes.Infra.MemoryCache;
 
-namespace Lopes.Infra.IoC
+namespace Lopes.Anuncio.IoC
 {
     public class ConfiguracaoServicos
     {
@@ -53,11 +53,8 @@ namespace Lopes.Infra.IoC
 
         protected virtual void RegistrarCache(IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddMemoryCache();
-            //services.AddSingleton<ICacheService, MemoryCacheService>();
-
-            services.AddStackExchangeRedisCache(options => options.Configuration = configuration["Redis.Conexao"]);
-            services.AddSingleton<ICacheService, CacheDistribuidoService>();
+            services.AddMemoryCache();
+            services.AddSingleton<ICacheService, CacheEmMemoriaService>();
         }
 
         protected virtual IConfiguration RegistrarIConfiguration(IServiceCollection services, IConfiguration configuration = null)

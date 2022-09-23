@@ -1,4 +1,4 @@
-﻿namespace Lopes.Jobs.Api
+﻿namespace Lopes.Jobs.Api.Configuracoes
 {
     public class Startup
     {
