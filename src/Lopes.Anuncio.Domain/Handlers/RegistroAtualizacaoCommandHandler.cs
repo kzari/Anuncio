@@ -9,19 +9,19 @@ namespace Lopes.Anuncio.Domain.Handlers
     public class RegistroAtualizacaoCommandHandler : IRequestHandler<RegistroAtualizacoesCommand, bool>,
                                                      IRequestHandler<RegistroAtualizacaoCommand, AtualizarStatusAnuncioResponse>
     {
-        private readonly IAnuncioStatusRepositorio _DadosService;
+        private readonly IAnuncioStatusRepositorio _repositorio;
 
         public RegistroAtualizacaoCommandHandler(IAnuncioStatusRepositorio DadosService)
         {
-            _DadosService = DadosService;
+            _repositorio = DadosService;
         }
 
-          
+
         public Task<bool> Handle(RegistroAtualizacoesCommand command, CancellationToken cancellationToken)
         {
             //TODO: validar
 
-            _DadosService.Criar(command.Entidades, command.Progresso);
+            _repositorio.Criar(command.Entidades, command.Progresso);
 
             return Task.FromResult(true);
         }
@@ -31,7 +31,7 @@ namespace Lopes.Anuncio.Domain.Handlers
             var entidade = new AnuncioAtualizacao(request.IdPortal, request.IdProduto, request.IdEmpresa, request.Acao, request.Id, request.Data);
             //TODO: validar
 
-            _DadosService.Criar(entidade);
+            _repositorio.Criar(entidade);
 
             return Task.FromResult(new AtualizarStatusAnuncioResponse(request));
         }

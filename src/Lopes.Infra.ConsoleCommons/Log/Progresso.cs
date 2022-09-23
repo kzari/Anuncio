@@ -19,23 +19,33 @@ namespace Lopes.Infra.ConsoleCommons.Log
 
         public int ValorMaximo { get; }
 
-        public void Atualizar(string item, int valorAtual)
+        public void NovaMensagem(string item, int valorAtual)
         {
             string texto = ObterTexto(item, valorAtual);
 
             if (valorAtual > 0)
-                progressBar.Refresh(valorAtual, texto);
+            {
+                try
+                {
+                    progressBar.Refresh(valorAtual, texto);
+                }
+                catch (Exception ex){ Console.WriteLine(ex.Message); }
+            }
         }
         public void NovaMensagem(string item)
         {
             string texto = ObterTexto(item);
-            progressBar.Next(texto);
+            try
+            {
+                progressBar.Next(texto);
+            }
+            catch (Exception ex){ Console.WriteLine(ex.Message); }
         }
 
         public void Mensagem(string item, decimal percentualConcluido)
         {
             int qtde = ObterQuantidadePorPercentual(percentualConcluido);
-            Atualizar(item, qtde);
+            NovaMensagem(item, qtde);
         }
 
         private int ObterQuantidadePorPercentual(decimal percentual)

@@ -6,7 +6,7 @@
         {
             T? servico = (T)provider.GetService(typeof(T));
             if (servico == null)
-                throw new Exception($"Serviço tipo {typeof(T).Name} não encontrado");
+                throw new Exception($"Serviço tipo '{typeof(T).Name}' não encontrado.");
 
             return servico;
         }

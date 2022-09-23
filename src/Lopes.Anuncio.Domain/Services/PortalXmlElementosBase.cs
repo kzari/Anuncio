@@ -36,14 +36,10 @@ namespace Lopes.Anuncio.Domain.Services
         }
         public static IPortalXMLElementos ObterPortalXml(Portal portal, IEnumerable<PortalCaracteristica> portalCaracteristicas, string urlFotosProdutos)
         {
-            switch (portal)
+            return portal switch
             {
-                case Portal.Zap:
-                default:
-                    return new Zap(portal, portalCaracteristicas, urlFotosProdutos);
-                //default:
-                    //throw new NotImplementedException();
-            }
+                _ => new Zap(portal, portalCaracteristicas, urlFotosProdutos),
+            };
         }
 
         protected static bool UsaZonaDeValor(string? estado)

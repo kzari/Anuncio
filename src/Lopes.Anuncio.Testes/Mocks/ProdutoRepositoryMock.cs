@@ -18,4 +18,6 @@ namespace Lopes.Anuncio.Domain.Testes.Mocks
             return new[] { 1 };
         }
     }
+
+    public class 
 }

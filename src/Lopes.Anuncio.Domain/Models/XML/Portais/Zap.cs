@@ -31,14 +31,14 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
 
         protected override ElementoProduto CriarElementoProduto(Produto dados)
         {
-            ElementoProduto eProduto = new ElementoProduto(dados.Dados.IdProduto, NomeTagProduto);
+            ElementoProduto eProduto = new(dados.Dados.IdProduto, NomeTagProduto);
 
             DeterminaTipoSubtipoCategoriaDoProduto(dados.Dados, out string tipoProduto, out string subTipoProduto, out string categoria);
 
             eProduto.AdicionarFilho(NomeTagCodigoProduto, dados.Dados.IdProdutoPortais);
 
-            eProduto.AdicionarFilho("TipoImovel", dados.Dados.Tipo, naoAdicionarSeNuloOuVazio: true);
-            eProduto.AdicionarFilho("SubTipoImovel", dados.Dados.Subtipo, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("TipoImovel", tipoProduto, naoAdicionarSeNuloOuVazio: true);
+            eProduto.AdicionarFilho("SubTipoImovel", subTipoProduto, naoAdicionarSeNuloOuVazio: true);
             eProduto.AdicionarFilho("TituloImovel", dados.Dados.Titulo, naoAdicionarSeNuloOuVazio: true);
             eProduto.AdicionarFilho("Observacao", RemoverCaracteresInvalidosUnicode(dados.Dados.TextoSite, " "), naoAdicionarSeNuloOuVazio: true);
 
@@ -124,7 +124,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             return !string.IsNullOrEmpty(dados.Numero) ? dados.Numero : "0";
         }
 
-        private int DefinirQtdeComodos(int? qtdeComodo, string tipoProduto)
+        private static int DefinirQtdeComodos(int? qtdeComodo, string tipoProduto)
         {
             if (Terreno(tipoProduto))
                 return 0;
@@ -164,7 +164,6 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
         }
 
         private static bool Terreno(string descrition) => descrition.Contains("Terreno");
-
 
         private static string DeterminaSubTipoDoProdutoParaTipoApartamento(string subtipo)
         {
@@ -257,7 +256,7 @@ namespace Lopes.Anuncio.Domain.Models.XML.Portais
             };
         }
 
-        private void DeterminaTipoSubtipoCategoriaDoProduto(DadosPrincipais imovel, out string tipo, out string subtipo, out string categoria)
+        private static void DeterminaTipoSubtipoCategoriaDoProduto(DadosPrincipais imovel, out string tipo, out string subtipo, out string categoria)
         {
             if (imovel.Subtipo == "Estúdio" || imovel.Subtipo == "Studio")//Alterado porque Zap não tem studio abaixo de apartamento
             {

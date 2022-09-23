@@ -45,7 +45,7 @@ namespace Lopes.Jobs.Api.Log
             //Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]")
+        public IProgresso NovoProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]")
         {
             //IProgressBar? progressBar = _performContext.WriteProgressBar();
             //return new Progresso(progressBar);

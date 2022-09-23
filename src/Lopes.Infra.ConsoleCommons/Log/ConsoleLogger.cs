@@ -27,14 +27,14 @@ namespace Lopes.Infra.ConsoleCommons.Log
         }
 
 
-        private void WriteLine(string mensagem, ConsoleColor corLetra)
+        private static void WriteLine(string mensagem, ConsoleColor corLetra)
         {
             Console.ForegroundColor = corLetra;
             Console.WriteLine(mensagem, ConsoleColor.Green);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]")
+        public IProgresso NovoProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]")
         {
             return new Progresso(valorMaximo, tamanhoTexto, textoInicial, caractereSubstituicao);
         }

@@ -3,6 +3,7 @@ using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Microsoft.EntityFrameworkCore;
 using Lopes.Anuncio.Application.DadosService;
+using Lopes.Infra.Commons.Extensions;
 
 namespace Lopes.Anuncio.Dados.Leitura.DadosService
 {
@@ -16,13 +17,13 @@ namespace Lopes.Anuncio.Dados.Leitura.DadosService
         {
             IQueryable<AnuncioCota> query = base.ObterTodos();
 
-            if (request.IdProdutos != null && request.IdProdutos.Any())
+            if (request.IdProdutos?.Any() == true)
                 query = query.Where(_ => request.IdProdutos.Contains(_.IdProduto));
 
-            if (request.IdCotas != null && request.IdCotas.Any())
+            if (request.IdCotas?.Any() == true)
                 query = query.Where(_ => request.IdCotas.Contains(_.IdCota));
 
-            if (request.Portais != null && request.Portais.Any())
+            if (request.Portais?.Any() == true)
                 query = query.Where(_ => request.Portais.Contains(_.Portal));
 
             return query.ToList();

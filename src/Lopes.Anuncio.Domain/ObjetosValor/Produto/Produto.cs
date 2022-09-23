@@ -1,9 +1,15 @@
 ﻿using Lopes.Anuncio.Domain.Models;
+using System.Text.Json.Serialization;
 
 namespace Lopes.Anuncio.Domain.Models.DadosProduto
 {
     public class Produto
     {
+        [JsonConstructor]
+        public Produto()
+        {
+        }
+
         public Produto(DadosPrincipais principais)
         {
             Dados = principais;
