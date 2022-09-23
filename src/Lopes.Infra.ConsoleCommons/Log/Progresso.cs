@@ -29,7 +29,7 @@ namespace Lopes.Infra.ConsoleCommons.Log
                 {
                     progressBar.Refresh(valorAtual, texto);
                 }
-                catch (Exception ex){}
+                catch (Exception ex){ Console.WriteLine(ex.Message); }
             }
         }
         public void NovaMensagem(string item)
@@ -39,7 +39,7 @@ namespace Lopes.Infra.ConsoleCommons.Log
             {
                 progressBar.Next(texto);
             }
-            catch (Exception ex){}
+            catch (Exception ex){ Console.WriteLine(ex.Message); }
         }
 
         public void Mensagem(string item, decimal percentualConcluido)

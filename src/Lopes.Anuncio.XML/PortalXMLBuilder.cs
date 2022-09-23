@@ -119,7 +119,7 @@ namespace Lopes.Infra.XML
                 return false;
 
             using Stream fileStream = File.Open(CaminhoArquivo, FileMode.Open);
-            XPathDocument xPath = new XPathDocument(fileStream);
+            XPathDocument xPath = new(fileStream);
 
             XPathNavigator navigator = xPath.CreateNavigator();
             XPathExpression xPathExpression = navigator.Compile(QueryIdProduto(idProduto));

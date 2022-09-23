@@ -7,15 +7,12 @@
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
-        public static bool Algum<T>(this T[]? array) where T : struct
-        {
-            return array?.Length > 0;
-        }
+        public static bool Algum<T>(this T[]? array) => array?.Length > 0;
         /// <summary>
         /// Verifica se array está vazio ou nulo
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
-        public static bool Nenhum<T>(this T[]? array) where T : struct => !Algum(array);
+        public static bool Nenhum<T>(this T[]? array) => !Algum(array);
     }
 }

@@ -6,7 +6,6 @@ namespace Lopes.Anuncio.Domain.Services
 {
     public interface IPortalAtualizadorApi : IPortalAtualizador
     {
-
     }
 
     public interface IPortalAtualizadorXml : IPortalAtualizador

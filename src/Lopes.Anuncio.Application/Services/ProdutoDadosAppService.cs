@@ -14,8 +14,8 @@ namespace Lopes.Anuncio.Application.Services
         private readonly ICacheService _cacheService;
         private readonly ILogger _logger;
 
-        public ProdutoDadosAppService(IProdutoDadosService produtoDadosService, 
-                                      ICacheService cacheService, 
+        public ProdutoDadosAppService(IProdutoDadosService produtoDadosService,
+                                      ICacheService cacheService,
                                       ILogger logger)
         {
             _produtoDadosService = produtoDadosService;
@@ -52,7 +52,6 @@ namespace Lopes.Anuncio.Application.Services
             return _produtoDadosService.ObterFranquias(idProduto);
         }
 
-
         private IEnumerable<Produto> ObterDadosDaBase(int[] idProdutos, IProgresso? progresso = null)
         {
             IEnumerable<DadosPrincipais> dadosPrincipais = _produtoDadosService.ObterDados(idProdutos);
@@ -74,7 +73,7 @@ namespace Lopes.Anuncio.Application.Services
 
             progresso?.NovaMensagem($"Preenchendo informações de {idProdutosEncontrados.Length} imóveis.");
 
-            List<Produto> produtos = new List<Produto>();
+            List<Produto> produtos = new ();
             foreach (DadosPrincipais dados in dadosPrincipais)
             {
                 Produto imovel = new(dados);
