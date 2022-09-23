@@ -2,6 +2,7 @@
 using Lopes.Infra.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Lopes.ConsoleTestes.Testes.Anuncio
 {
@@ -9,8 +10,9 @@ namespace Lopes.ConsoleTestes.Testes.Anuncio
     {
         public static IConfigurationRoot ObterConfiguration()
         {
+            string diretorio = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(diretorio)
                 .AddJsonFile($"appsettings.json")
                 .Build();
         }
