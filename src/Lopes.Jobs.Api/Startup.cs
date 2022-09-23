@@ -1,9 +1,4 @@
-﻿using Hangfire;
-using Lopes.Anuncio.Application.Interfaces;
-using Lopes.Anuncio.Domain.Commands.Requests;
-using Lopes.Anuncio.Domain.Enums;
-
-namespace Lopes.Jobs.Api
+﻿namespace Lopes.Jobs.Api
 {
     public class Startup
     {

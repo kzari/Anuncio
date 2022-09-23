@@ -35,7 +35,7 @@ namespace Lopes.Infra.IoC
 
             configuration = RegistrarIConfiguration(services, configuration);
 
-            RegistrarCache(services);
+            RegistrarCache(services, configuration);
             RegistrarLog<TLogger>(services);
             RegistrarDadosServices(services);
             RegistrarRepositorios(services);
@@ -51,15 +51,12 @@ namespace Lopes.Infra.IoC
         }
 
 
-        protected virtual void RegistrarCache(IServiceCollection services)
+        protected virtual void RegistrarCache(IServiceCollection services, IConfiguration configuration)
         {
             //services.AddMemoryCache();
             //services.AddSingleton<ICacheService, MemoryCacheService>();
 
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = "localhost:6379";
-            });
+            services.AddStackExchangeRedisCache(options => options.Configuration = configuration["Redis.Conexao"]);
             services.AddSingleton<ICacheService, CacheDistribuidoService>();
         }
 

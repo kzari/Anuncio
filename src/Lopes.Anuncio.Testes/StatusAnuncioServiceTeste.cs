@@ -2,6 +2,7 @@ using Lopes.Anuncio.Domain.Enums;
 using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Anuncio.Domain.Testes.Mocks;
+using Lopes.Domain.Commons.Cache;
 
 namespace Lopes.SC.Anuncio.Domain.Testes
 {
@@ -9,9 +10,9 @@ namespace Lopes.SC.Anuncio.Domain.Testes
     {
         private readonly StatusAnuncioService _statusAnuncioService;
 
-        public StatusAnuncioServiceTeste()
+        public StatusAnuncioServiceTeste(ICacheService cacheService)
         {
-            //_statusAnuncioService = new StatusAnuncioService(new ProdutoRepositoryMock());
+            _statusAnuncioService = new StatusAnuncioService(new ProdutoRepositoryMock(), cacheService);
         }
 
 

@@ -37,8 +37,8 @@ namespace Lopes.Infra.IoC
 
                 default:
                     {
-                        string caminhoPastaXmls = _configuration["CaminhoPastaXmls"].ToString();
-                        string urlImagens = _configuration["UrlFotosProdutos"].ToString();
+                        string caminhoPastaXmls = _configuration["CaminhoPastaXmls"];
+                        string urlImagens = _configuration["UrlFotosProdutos"];
 
                         IEnumerable<PortalCaracteristica> portalCaracteristicas = ObterCaracteristicasPortal(portal) ?? Enumerable.Empty<PortalCaracteristica>();
                         string apelidoEmpresa = ObterApelidoEmpresa(idEmpresa);
@@ -49,23 +49,21 @@ namespace Lopes.Infra.IoC
         }
 
 
-        public string ObterApelidoEmpresa(int idEmpresa)
+        private string ObterApelidoEmpresa(int idEmpresa)
         {
-            IEnumerable<FranquiaApelido>? apelidos = _cacheService.ObterOuGravar(CHAVE_CACHE_APELIDO_EMPRESAS, TimeSpan.FromDays(1), () =>
-            {
-                return _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosAppService>().Obter();
-            });
+            IEnumerable<FranquiaApelido>? apelidos = _cacheService.ObterOuGravar(CHAVE_CACHE_APELIDO_EMPRESAS,
+                                                                                 TimeSpan.FromDays(1),
+                                                                                 () => _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosAppService>().Obter())?.ToList();
             return apelidos?.FirstOrDefault(_ => _.IdEmpresa == idEmpresa)?.Apelido ?? string.Empty;
         }
 
-        public IEnumerable<PortalCaracteristica>? ObterCaracteristicasPortal(Portal portal)
+        private IEnumerable<PortalCaracteristica>? ObterCaracteristicasPortal(Portal portal)
         {
             string chave = CHAVE_CACHE_CARACTERISTICAS_PORTAL.Replace("[portal]", portal.ToString());
 
-            return _cacheService.ObterOuGravar(chave, TimeSpan.FromDays(1), () =>
-            {
-                return _serviceProvider.ObterServico<IPortalCaracteristicaDadosAppService>().Obter(portal);
-            })?.ToList();
+            return _cacheService.ObterOuGravar(chave,
+                                               TimeSpan.FromDays(1),
+                                               () => _serviceProvider.ObterServico<IPortalCaracteristicaDadosAppService>().Obter(portal))?.ToList();
         }
     }
 }
