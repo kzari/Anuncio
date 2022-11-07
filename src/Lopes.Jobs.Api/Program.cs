@@ -3,12 +3,15 @@ using Hangfire.Console;
 using Lopes.Jobs.Api;
 using Lopes.Jobs.Api.Log;
 using Lopes.Infra.IoC;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Lopes.Infra.Auth.Jwt;
+using Lopes.Acesso.Domain.Services;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
 
 IConfigurationRoot configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -25,12 +28,16 @@ builder.Services.AddHangfireServer();
 
 ConfiguracaoServicos.ConfigurarServicos<HangFireLog>(configuration, builder.Services);
 
+builder.Services.AddTransient<ITokenService, JwtTokenService>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddMvc();
+
+ConfigurarAutenticacao(builder);
 
 WebApplication? app = builder.Build();
 
@@ -62,3 +69,27 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+static void ConfigurarAutenticacao(WebApplicationBuilder builder)
+{
+    byte[]? key = Encoding.ASCII.GetBytes(JwtTokenService.SECRET);
+
+    builder.Services.AddAuthentication(_ =>
+    {
+        _.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        _.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(_ =>
+    {
+        _.RequireHttpsMetadata = false;
+        _.SaveToken = true;
+        _.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+}

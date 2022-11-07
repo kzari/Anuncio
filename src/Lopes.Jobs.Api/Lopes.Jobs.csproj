@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lopes.Acesso.Application\Lopes.Acesso.Application.csproj" />
     <ProjectReference Include="..\Lopes.Anuncio.IoC\Lopes.Anuncio.IoC.csproj" />
+    <ProjectReference Include="..\Lopes.Infra.Auth\Lopes.Infra.Auth.Jwt.csproj" />
   </ItemGroup>
 
 </Project>
