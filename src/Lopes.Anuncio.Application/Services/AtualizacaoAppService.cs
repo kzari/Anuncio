@@ -4,7 +4,7 @@ using Lopes.Anuncio.Application.DadosService;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using MediatR;
 using Lopes.Anuncio.Domain.ObjetosValor;
-using Lopes.Infra.Commons.Extensions;
+using Lopes.Acesso.Commons.Extensions;
 
 namespace Lopes.Anuncio.Application.Services
 {

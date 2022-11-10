@@ -1,12 +1,12 @@
 ﻿using Lopes.Acesso.Dados.Mapeamentos;
-using Lopes.Acesso.Domain.Models;
+using Lopes.Acesso.App.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.Acesso.Dados
 {
-    public class DbLopesnetContext : DbContext
+    public class AcessoDadosContext : DbContext
     {
-        public DbLopesnetContext(DbContextOptions<DbLopesnetContext> options) : base(options)
+        public AcessoDadosContext(DbContextOptions<AcessoDadosContext> options) : base(options)
         {
         }
 

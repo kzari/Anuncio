@@ -12,15 +12,19 @@ using Lopes.Anuncio.Domain.Handlers;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Domain.Commons.Cache;
-using Lopes.Infra.MemoryCache;
+using Lopes.Acesso.MemoryCache;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Lopes.Anuncio.Dados.Leitura.DadosService;
 using Lopes.Anuncio.Application.DadosService;
 using Lopes.Anuncio.Application.Interfaces.DadosService;
 using Lopes.Anuncio.Repositorio.Context;
 using Lopes.Anuncio.Repositorio.Repositorios;
+using Lopes.Acesso.App.Services;
+using Lopes.Acesso.Dados.DadosServices;
+using Lopes.Acesso.Application;
+using Lopes.Acesso.Dados;
 
-namespace Lopes.Infra.IoC
+namespace Lopes.Acesso.IoC
 {
     public class ConfiguracaoServicos
     {
@@ -83,6 +87,8 @@ namespace Lopes.Infra.IoC
 
             services.AddDbContext<DbLopesnetLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
             services.AddDbContext<DbProdutoLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")), ServiceLifetime.Transient);
+
+            services.AddDbContext<AcessoDadosContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
         }
 
         protected virtual void RegistrarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger
@@ -93,12 +99,16 @@ namespace Lopes.Infra.IoC
         protected virtual void RegistrarDomainServices(IServiceCollection services)
         {
             services.AddTransient<IStatusAnuncioService, StatusAnuncioService>();
+
+            services.AddTransient<ITokenService, JwtTokenService>();
         }
 
         protected virtual void RegistrarAppServices(IServiceCollection services)
         {
             services.AddTransient<IAtualizacaoAppService, AtualizacaoAppService>();
             services.AddTransient<IRegistrarAtualizacaoAnunciosAppService, RegistrarAtualizacaoAppService>();
+
+            services.AddTransient<IUsuarioAcessoAppService, UsuarioAcessoAppService>();
         }
 
         protected virtual void RegistrarRepositorios(IServiceCollection services)
@@ -112,6 +122,8 @@ namespace Lopes.Infra.IoC
             services.AddTransient<IAnuncioDadosAppService, AnuncioDadosService>();
             services.AddTransient<IPortalCaracteristicaDadosAppService, PortalCaracteristicasDadosService>();
             services.AddTransient<IFranquiaApelidoPortalDadosAppService, FranquiaApelidoPortalDadosService>();
+
+            services.AddTransient<IUsuarioDadosService, UsuarioDadosService>();
         }
     }
 }

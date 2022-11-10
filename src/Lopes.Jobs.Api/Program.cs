@@ -2,12 +2,14 @@ using Hangfire;
 using Hangfire.Console;
 using Lopes.Jobs.Api;
 using Lopes.Jobs.Api.Log;
-using Lopes.Infra.IoC;
+using Lopes.Acesso.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Lopes.Infra.Auth.Jwt;
-using Lopes.Acesso.Domain.Services;
+using Lopes.Acesso.Application.Jwt;
+using Lopes.Acesso.App.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +30,16 @@ builder.Services.AddHangfireServer();
 
 ConfiguracaoServicos.ConfigurarServicos<HangFireLog>(configuration, builder.Services);
 
-builder.Services.AddTransient<ITokenService, JwtTokenService>();
+//builder.Services.AddTransient<ITokenService, JwtTokenService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(config =>
+{
+    //AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
+    //    //.RequireAuthenticatedUser()
+    //    .Build();
+    //config.Filters.Add(new AuthorizeFilter(policy));
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -92,4 +101,11 @@ static void ConfigurarAutenticacao(WebApplicationBuilder builder)
             ValidateAudience = false
         };
     });
+
+    //builder.Services.AddAuthorization(_ =>
+    //{
+    //    //_.FallbackPolicy = new AuthorizationPolicyBuilder()
+    //    //    //.RequireAuthenticatedUser()
+    //    //    .Build();
+    //});
 }

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lopes.Acesso.Domain\Lopes.Acesso.Domain.csproj" />
+    <ProjectReference Include="..\Lopes.Acesso.Application\Lopes.Acesso.Application.csproj" />
     <ProjectReference Include="..\Lopes.Domain.Commons\Lopes.Domain.Commons.csproj" />
   </ItemGroup>
 

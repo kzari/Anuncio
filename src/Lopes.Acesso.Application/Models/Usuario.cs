@@ -1,4 +1,4 @@
-﻿namespace Lopes.Acesso.Domain.Models
+﻿namespace Lopes.Acesso.App.Models
 {
     public class Usuario
     {

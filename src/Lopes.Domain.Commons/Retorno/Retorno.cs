@@ -1,6 +1,6 @@
 ﻿using Lopes.Domain.Commons;
 
-namespace Lopes.Infra.Commons
+namespace Lopes.Acesso.Commons
 {
     public class Retorno : IRetorno
     {

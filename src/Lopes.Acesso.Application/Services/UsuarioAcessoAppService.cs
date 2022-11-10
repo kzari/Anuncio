@@ -1,25 +1,40 @@
-﻿using Lopes.Acesso.Domain.Commands.Requests;
-using Lopes.Acesso.Domain.Commands.Responses;
-using MediatR;
+﻿using Lopes.Acesso.App.Models;
+using System.Text;
 
-namespace Lopes.Acesso.Application.Services
+namespace Lopes.Acesso.App.Services
 {
     public class UsuarioAcessoAppService : IUsuarioAcessoAppService
     {
-        private readonly IMediator _mediator;
+        private readonly IUsuarioDadosService _usuarioDadosService;
+        private readonly ITokenService _tokenService;
 
-        public UsuarioAcessoAppService(IMediator mediator)
+        public UsuarioAcessoAppService(IUsuarioDadosService usuarioDadosService, ITokenService tokenService)
         {
-            _mediator = mediator;
+            _usuarioDadosService = usuarioDadosService;
+            _tokenService = tokenService;
+        }
+
+        public LoginModel ObterTokenAutenticado(string login, string senha)
+        {
+            Usuario usuario = _usuarioDadosService.ObterUsuario(login);
+            if (usuario == null || !VerificarSenha(senha, usuario))
+            {
+                return new LoginModel("Usuário ou senha incorreto.");
+            }
+
+            string token = _tokenService.Gerar(usuario);
+
+            return new LoginModel(usuario, token);
         }
 
 
-        public string ObterTokenAutenticado(string login, string senha)
+
+        private static bool VerificarSenha(string senha, Usuario usuario)
         {
-            LoginCommand command = new(login, senha);
-            LoginResponse response = _mediator.Send(command).Result;
-            
-            return response.Token;
+            byte[]? plain = Convert.FromBase64String(usuario.Senha);
+            Encoding? iso = Encoding.GetEncoding("ISO-8859-6");
+            string senhaBase = iso.GetString(plain);
+            return senhaBase.Equals(senha);
         }
     }
 }

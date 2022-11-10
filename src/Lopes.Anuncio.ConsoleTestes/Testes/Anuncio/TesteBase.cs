@@ -1,5 +1,5 @@
-﻿using Lopes.Infra.ConsoleCommons.Log;
-using Lopes.Infra.IoC;
+﻿using Lopes.Acesso.ConsoleCommons.Log;
+using Lopes.Acesso.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

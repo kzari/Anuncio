@@ -1,4 +1,4 @@
-﻿namespace Lopes.Infra.Commons.Extensions
+﻿namespace Lopes.Acesso.Commons.Extensions
 {
     public static class ArrayExtensions
     {

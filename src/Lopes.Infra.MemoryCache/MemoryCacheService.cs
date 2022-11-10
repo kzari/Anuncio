@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Lopes.Domain.Commons.Cache;
 
-namespace Lopes.Infra.MemoryCache
+namespace Lopes.Acesso.MemoryCache
 {
     public class MemoryCacheService : ICacheService
     {

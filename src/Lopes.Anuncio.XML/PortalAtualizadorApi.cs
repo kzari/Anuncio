@@ -2,7 +2,7 @@
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Anuncio.Domain.Models.DadosProduto;
 
-namespace Lopes.Infra.XML
+namespace Lopes.Acesso.XML
 {
     /// <summary>
     /// TODO: para um novo projeto

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Lopes.Infra.Data.Repositories
+namespace Lopes.Acesso.Data.Repositories
 {
     public class RepositorioBase<TEntidade> where TEntidade : class
     {

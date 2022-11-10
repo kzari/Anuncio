@@ -1,6 +1,6 @@
 ﻿using Lopes.Domain.Commons;
 using Lopes.Anuncio.Domain.Reposities;
-using Lopes.Infra.Data.Repositories;
+using Lopes.Acesso.Data.Repositories;
 using Lopes.Anuncio.Domain.Entidades;
 using Lopes.Anuncio.Repositorio.Context;
 

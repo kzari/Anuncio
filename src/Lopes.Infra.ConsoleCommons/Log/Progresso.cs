@@ -1,7 +1,7 @@
 ﻿using Konsole;
 using Lopes.Domain.Commons;
 
-namespace Lopes.Infra.ConsoleCommons.Log
+namespace Lopes.Acesso.ConsoleCommons.Log
 {
     public class Progresso : ProgressBar, IProgresso
     {

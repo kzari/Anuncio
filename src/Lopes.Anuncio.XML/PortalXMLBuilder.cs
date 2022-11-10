@@ -5,13 +5,13 @@ using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Anuncio.Domain.XML;
 using Lopes.Domain.Commons;
-using Lopes.Infra.Commons.Extensions;
+using Lopes.Acesso.Commons.Extensions;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Lopes.Infra.XML
+namespace Lopes.Acesso.XML
 {
     public class PortalXMLBuilder : IPortalAtualizadorXml
     {

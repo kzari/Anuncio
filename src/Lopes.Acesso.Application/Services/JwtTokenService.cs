@@ -1,12 +1,12 @@
-﻿using Lopes.Acesso.Domain.Models;
-using Lopes.Acesso.Domain.Services;
+﻿using Lopes.Acesso.App.Models;
+using Lopes.Acesso.App.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Lopes.Infra.Auth.Jwt
+namespace Lopes.Acesso.Application
 {
     public class JwtTokenService : ITokenService
     {

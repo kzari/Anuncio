@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Lopes.Infra.Data.Mappings
+namespace Lopes.Acesso.Data.Mappings
 {
     public class FranquiaApelidoPortalMap : IEntityTypeConfiguration<FranquiaApelido>
     {

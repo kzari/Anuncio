@@ -1,4 +1,4 @@
-﻿@model Lopes.Jobs.Models.LoginModel;
+﻿@model Lopes.Jobs.Web.Models.LoginViewModel;
 @{
     Layout = null;
  }
@@ -28,11 +28,18 @@
     </header>
 
     <div class="container">
+        <div class="alert-danger">
+            @Html.ValidationSummary()
+            @ViewBag.Erro
+        </div>
         <main role="main" class="pb-3">
+            
+
             @using(Html.BeginForm())
             {
                 <p>Login: @Html.TextBoxFor(_ => _.Usuario)</p>
                 <p>Senha: @Html.PasswordFor(_ => _.Senha)</p>
+                <p><button>Entrar</button></p>
             }
         </main>
     </div>

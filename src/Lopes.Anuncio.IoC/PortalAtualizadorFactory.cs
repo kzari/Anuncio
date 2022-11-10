@@ -4,10 +4,10 @@ using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Anuncio.Domain.Services;
 using Lopes.Domain.Commons;
 using Lopes.Domain.Commons.Cache;
-using Lopes.Infra.XML;
+using Lopes.Acesso.XML;
 using Microsoft.Extensions.Configuration;
 
-namespace Lopes.Infra.IoC
+namespace Lopes.Acesso.IoC
 {
     public class PortalAtualizadorFactory : IPortalAtualizadorFactory
     {

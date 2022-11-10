@@ -1,4 +1,4 @@
-﻿using Lopes.Acesso.Domain.Models;
+﻿using Lopes.Acesso.App.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,7 +8,7 @@ namespace Lopes.Acesso.Dados.Mapeamentos
     {
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
-            builder.ToView("VW_Usuario");
+            builder.ToView("VW_UsuariosAcesso");
             builder.HasKey(_ => _.Id);
         }
     }

@@ -1,7 +1,9 @@
-﻿namespace Lopes.Acesso.Application.Services
+﻿using Lopes.Acesso.App.Models;
+
+namespace Lopes.Acesso.App.Services
 {
     public interface IUsuarioAcessoAppService
     {
-        string ObterTokenAutenticado(string login, string senha);
+        LoginModel ObterTokenAutenticado(string login, string senha);
     }
 }

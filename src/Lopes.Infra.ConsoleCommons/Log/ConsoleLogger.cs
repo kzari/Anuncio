@@ -1,6 +1,6 @@
 ﻿using Lopes.Domain.Commons;
 
-namespace Lopes.Infra.ConsoleCommons.Log
+namespace Lopes.Acesso.ConsoleCommons.Log
 {
     public class ConsoleLogger : ILogger
     {
