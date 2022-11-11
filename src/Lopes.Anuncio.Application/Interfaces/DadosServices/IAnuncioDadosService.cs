@@ -3,7 +3,7 @@ using Lopes.Anuncio.Domain.ObjetosValor;
 
 namespace Lopes.Anuncio.Application.DadosService
 {
-    public interface IAnuncioDadosAppService
+    public interface IAnuncioDadosService
     {
         IEnumerable<AnuncioCota> Obter(AnuncioCotaRequest request);
     }

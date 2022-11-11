@@ -2,7 +2,7 @@
 
 namespace Lopes.Anuncio.Application.DadosService
 {
-    public interface IFranquiaApelidoPortalDadosAppService
+    public interface IFranquiaApelidoPortalDadosService
     {
         IEnumerable<FranquiaApelido> Obter();
     }

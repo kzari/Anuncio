@@ -6,7 +6,7 @@ using Lopes.Anuncio.Application.DadosService;
 
 namespace Lopes.Anuncio.Dados.Leitura.DadosService
 {
-    public class AnuncioDadosService : DadosServiceBase<AnuncioCota>, IAnuncioDadosAppService
+    public class AnuncioDadosService : DadosServiceBase<AnuncioCota>, IAnuncioDadosService
     {
         public AnuncioDadosService(DbProdutoLeituraContext context) : base(context)
         {

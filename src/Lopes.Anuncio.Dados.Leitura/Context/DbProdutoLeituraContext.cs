@@ -23,11 +23,13 @@ namespace Lopes.Anuncio.Dados.Leitura.Context
         public DbSet<Video> ProdutoVideos { get; set; }
         public DbSet<PortalCaracteristica> PortalCaracteristicas { get; set; }
         public DbSet<Foto> Fotos { get; set; }
+        public DbSet<CotaResumo> CotasResumo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            builder.ApplyConfiguration(new CotaResumoMap());
             builder.ApplyConfiguration(new AnuncioMap());
             builder.ApplyConfiguration(new TourVirtualMap());
             builder.ApplyConfiguration(new VideoMap());

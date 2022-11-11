@@ -107,6 +107,7 @@ namespace Lopes.Acesso.IoC
         {
             services.AddTransient<IAtualizacaoAppService, AtualizacaoAppService>();
             services.AddTransient<IRegistrarAtualizacaoAnunciosAppService, RegistrarAtualizacaoAppService>();
+            services.AddTransient<ICotaAppService, CotaAppService>();
 
             services.AddTransient<IUsuarioAcessoAppService, UsuarioAcessoAppService>();
         }
@@ -119,9 +120,10 @@ namespace Lopes.Acesso.IoC
         {
             services.AddTransient<IProdutoService, ProdutoDadosAppService>();
             services.AddTransient<IProdutoDadosService, ProdutoDadosService>();
-            services.AddTransient<IAnuncioDadosAppService, AnuncioDadosService>();
-            services.AddTransient<IPortalCaracteristicaDadosAppService, PortalCaracteristicasDadosService>();
-            services.AddTransient<IFranquiaApelidoPortalDadosAppService, FranquiaApelidoPortalDadosService>();
+            services.AddTransient<IAnuncioDadosService, AnuncioDadosService>();
+            services.AddTransient<IPortalCaracteristicaDadosService, PortalCaracteristicasDadosService>();
+            services.AddTransient<IFranquiaApelidoPortalDadosService, FranquiaApelidoPortalDadosService>();
+            services.AddTransient<ICotaDadosService, CotaDadosService>();
 
             services.AddTransient<IUsuarioDadosService, UsuarioDadosService>();
         }

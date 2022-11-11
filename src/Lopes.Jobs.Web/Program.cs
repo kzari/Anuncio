@@ -84,11 +84,11 @@ static void ConfigurarAutenticacao(WebApplicationBuilder builder)
         };
     });
 
-    builder.Services.AddAuthorization(_ =>
-    {
-        _.FallbackPolicy = new AuthorizationPolicyBuilder()
-            .RequireAuthenticatedUser()
-            .Build();
-    });
+    //builder.Services.AddAuthorization(_ =>
+    //{
+    //    _.FallbackPolicy = new AuthorizationPolicyBuilder()
+    //        .RequireAuthenticatedUser()
+    //        .Build();
+    //});
 
 }

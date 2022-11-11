@@ -53,7 +53,7 @@ namespace Lopes.Acesso.IoC
         {
             IEnumerable<FranquiaApelido>? apelidos = _cacheService.ObterOuGravar(CHAVE_CACHE_APELIDO_EMPRESAS, TimeSpan.FromDays(1), () =>
             {
-                return _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosAppService>().Obter();
+                return _serviceProvider.ObterServico<IFranquiaApelidoPortalDadosService>().Obter();
             });
             return apelidos?.FirstOrDefault(_ => _.IdEmpresa == idEmpresa)?.Apelido ?? string.Empty;
         }
@@ -64,7 +64,7 @@ namespace Lopes.Acesso.IoC
 
             return _cacheService.ObterOuGravar(chave, TimeSpan.FromDays(1), () =>
             {
-                return _serviceProvider.ObterServico<IPortalCaracteristicaDadosAppService>().Obter(portal);
+                return _serviceProvider.ObterServico<IPortalCaracteristicaDadosService>().Obter(portal);
             })?.ToList();
         }
     }

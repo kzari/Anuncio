@@ -1,8 +1,34 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Cotas Dash";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Resumo</h1>
 </div>
+
+<div class="component">
+    <p>Total de Anúncios: <b><span id="total-anuncios">...</span></b></p>
+    <p>Total de Cotas: <b><span id="total-cotas">...</span></b></p>
+    <p>Total de Franquias: <b><span id="total-franquias">...</span></b></p>
+    <p>Total de Portais: <b><span id="total-portais">...</span></b></p>
+    <p>Total de Imóveis anunciados: <b><span id="total-imoveis">...</span></b></p>
+</div>
+
+@section Scripts
+{
+    <script>
+
+        $(document).ready(function() {
+
+            $.get("/Home/ObterResumoCotas", function(dados) {
+                $("#total-anuncios").html(dados.totalAnuncios);
+                $("#total-cotas").html(dados.totalCotas);
+                $("#total-franquias").html(dados.totalFranquias);
+                $("#total-portais").html(dados.totalPortais);
+                $("#total-imoveis").html(dados.totalImoveis);
+
+                var cotas = dados.cotas;
+            });
+        });
+    </script>
+}
