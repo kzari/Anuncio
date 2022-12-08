@@ -6,18 +6,47 @@
     <h1 class="display-4">Resumo</h1>
 </div>
 
-<div class="component">
-    <p>Total de Anúncios: <b><span id="total-anuncios">...</span></b></p>
-    <p>Total de Cotas: <b><span id="total-cotas">...</span></b></p>
-    <p>Total de Franquias: <b><span id="total-franquias">...</span></b></p>
-    <p>Total de Portais: <b><span id="total-portais">...</span></b></p>
-    <p>Total de Imóveis anunciados: <b><span id="total-imoveis">...</span></b></p>
+<div class="row" id="principal">
+    <div class="col-1 padd" id="div-1">
+        <p>Anúncios <br/><b><span id="total-anuncios"><img src="loadingdots.gif" width="50" /></span></b></p>
+        <p>Cotas <br/><b><span id="total-cotas"><img src="loadingdots.gif" width="50" /></span></b></p>
+        <p>Franquias <br/>
+            <a href="#" id="link-franquias">
+                <b><span id="total-franquias"><img src="loadingdots.gif" width="50" /></span></b>
+            </a>
+        </p>
+        <p>
+            Portais <br/>
+            <a href="#" id="link-portais">
+                <b><span id="total-portais"><img src="loadingdots.gif" width="50" /></span></b>
+            </a>
+        </p>
+        @*<p>Total de Imóveis anunciados: <b><span id="total-imoveis"><img src="loadingdots.gif" width="50" /></span></b></p>*@
+    </div>
+    <div class="col-3" id="div-2">
+        <div id="div-portais" class="padd"></div>
+        <div id="div-franquias" class="padd"></div>
+    </div>
+    <div class="col-8" id="div-3">
+    </div>
 </div>
+
+<style>
+    #principal div{
+        //border: 1px dotted lightblue;
+    }
+    #principal div.padd{
+        padding: 25px;
+    }
+    .titulo-detalhe-cotas{
+        padding: 25px 0px 25px 0px;
+    }
+</style>
 
 @section Scripts
 {
     <script>
-
+        
         $(document).ready(function() {
 
             $.get("/Home/ObterResumoCotas", function(dados) {
@@ -25,10 +54,133 @@
                 $("#total-cotas").html(dados.totalCotas);
                 $("#total-franquias").html(dados.totalFranquias);
                 $("#total-portais").html(dados.totalPortais);
-                $("#total-imoveis").html(dados.totalImoveis);
+                //$("#total-imoveis").html(dados.totalImoveis);
 
                 var cotas = dados.cotas;
+
+                preencherDivFranquias(dados.franquias);
+
+                preencherDivPortais(dados, function() {
+                    $('.link-cotas-portais').click(function(e) {
+                        e.preventDefault();
+
+                        $('.detalhes-cota').hide();
+
+                        var idPortal = $(this).data('portal');
+                        var nome = $(this).data('nome');
+                        var qtdeCotas = $(this).data('cotas');
+
+                        var div = $('#div-detalhes-cota-' + idPortal);
+                        if (div.length > 0) {
+                            $(div).slideToggle();
+                            //pesquisarDetalheCotas('');
+                            return;
+                        }
+
+                        var conteudo =
+                            "<div class='row titulo-detalhe-cotas'>" +
+                                "<h3 class='padd col-6'>" + nome + " - <small>" + qtdeCotas + " cotas</small> </h3>" +
+                                "<div class='col-6'> " +
+                                    "<div class='input-group mb-3'>" +
+                                        "<div class='input-group-prepend'>" +
+                                            "<span class='input-group-text bi-search' id='basic-addon1'> </span>" +
+                                        "</div>"+
+                                        "<input type='text' class='pesquisa form-control' placeholder='Pesquisar por franquia' aria-describedby='basic-addon1'>" +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>";
+
+                        var cotas = dados.cotas.filter(_ => _.portal == idPortal);
+                        cotas.forEach(function(c) {
+
+                            conteudo +=
+                                "<div class='row detalhe-cotas'>" +
+                                    "<div class=col-6>" +
+                                        "<b class='nome-franquia'>" + c.nomeFranquia + "</b>" +
+                                        "<br/>" + c.totalProdutos + " produtos / " +
+                                        "<span style='color:red; weight:bold' id='desatualizados_" + idPortal + "_" + c.idFranquia + "'>" +
+                                            "<img src='loadingdots.gif' width='50' />" +
+                                        "</span> desatualizados" +
+                                    "</div>" +
+                                    "<div class=col-2>" +
+                                        "<button class='btn btn-primary'>Atualizar</button>" +
+                                    "</div>" +
+                                    "<hr/>" +
+                                "</div>";
+                        });
+                        //$(this).parent().append('<div id="div-detalhes-cota-'+idPortal+'">' + conteudo + '</div>');
+                        $('#div-3').append('<div id="div-detalhes-cota-'+idPortal+'" class="detalhes-cota">' + conteudo + '</div>');
+
+                        onClickPesquisa(idPortal);
+                        preencherQtdeAnunciosDesatualizados(idPortal, false);
+                    });
+                });
+            });
+
+            $('#link-portais').click(function(e) {
+                e.preventDefault();
+                $('#div-franquias').hide();
+                $('#div-portais').slideDown();
+            });
+
+            $('#link-franquias').click(function(e) {
+                e.preventDefault();
+                $('#div-portais').hide();
+                $('#div-franquias').slideDown();
             });
         });
+
+
+        function onClickPesquisa(idPortal) {
+            $('.pesquisa').keyup(function(e) {
+                var texto = $(this).val();
+                pesquisarDetalheCotas(texto, idPortal);
+            });
+        }
+
+        function pesquisarDetalheCotas(texto, idPortal) {
+            if (texto != undefined && texto != '') {
+                    $('#div-detalhes-cota-'+idPortal+' .detalhe-cotas').hide();
+                    //$('#div-3 .nome-franquia:contains("' + text + '")').parent().parent().show();
+
+                    var search = $('#div-detalhes-cota-'+idPortal+' .nome-franquia').filter(function() {
+                        return $(this).text().toLowerCase().indexOf(texto.toLowerCase()) >= 0;
+                    });
+                    $(search).parent().parent().show();
+
+            } else {
+                $('#div-detalhes-cota-'+idPortal+' .detalhe-cotas').show();
+            }
+        }
+
+        function preencherDivFranquias(franquias) { 
+            $('#div-franquias').hide();
+            var conteudo = "";
+            franquias.forEach(function(p) {
+                conteudo += "<li>" + p.nome + " (" + p.qtdeCotas + " cotas)</li>";
+            });
+            $('#div-franquias').html("<ul>" + conteudo + "</ul>");
+        }  
+        function preencherDivPortais(dados, callback) {
+            $('#div-portais').hide();
+            var conteudo = "";
+            dados.portais.forEach(function(p) {
+                conteudo +=
+                    "<li>" + p.nome +
+                    " (<a href='#' class='link-cotas-portais' data-portal=" + p.id + " data-nome='" + p.nome + "' data-cotas='" + p.qtdeCotas + "'>" +
+                    p.qtdeCotas + " cotas</a>)" +
+                    "</li>";
+            });
+            $('#div-portais').html("<ul>" + conteudo + "</ul>");
+            callback();
+        }
+
+        function preencherQtdeAnunciosDesatualizados(idPortal, ignorarCache){
+            $.get("/Home/ObterAnunciosDesatualizados?idPortal=" + idPortal + "&ignorarCache="+ignorarCache, function(dados) {
+                dados.anunciosDesatualizados.forEach(function(dado) {
+                    $('#desatualizados_'+idPortal+'_'+ dado.idFranquia).html(dado.qtdeAnunciosDesatualizados);
+                })
+            });
+        }
     </script>
 }

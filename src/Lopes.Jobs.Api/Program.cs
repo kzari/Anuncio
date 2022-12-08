@@ -6,10 +6,7 @@ using Lopes.Acesso.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Lopes.Acesso.Application.Jwt;
-using Lopes.Acesso.App.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Lopes.Acesso.Application;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 

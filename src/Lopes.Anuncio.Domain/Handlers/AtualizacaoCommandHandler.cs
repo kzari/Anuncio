@@ -57,8 +57,8 @@ namespace Lopes.Anuncio.Domain.Handlers
             progressoGeral.NovaMensagem($"Processando {qtdeCotas} cota(s).");
 
             var partitioner = Partitioner.Create(anunciosAgrupados);
-            //var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
-            var partitions = partitioner.GetPartitions(2);
+            var partitions = partitioner.GetPartitions(Environment.ProcessorCount);
+            //var partitions = partitioner.GetPartitions(2);
 
             int partitionIds = 0;
             int cotaAtual = 0;

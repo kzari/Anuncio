@@ -11,12 +11,12 @@ namespace Lopes.Anuncio.Application.Services
     public class AtualizacaoAppService : IAtualizacaoAppService
     {
         private readonly IMediator _mediator;
-        private readonly IAnuncioDadosService _repositorio;
+        private readonly IAnuncioDadosService _dadosService;
 
         public AtualizacaoAppService(IMediator mediator, IAnuncioDadosService repositorio)
         {
             _mediator = mediator;
-            _repositorio = repositorio;
+            _dadosService = repositorio;
         }
 
         public void AtualizarAnuncios(AnuncioCotaRequest request, ILogger? logger)
@@ -24,7 +24,7 @@ namespace Lopes.Anuncio.Application.Services
             if (request == null || (request.Portais.Nenhum() && request.IdCotas.Nenhum() && request.IdProdutos.Nenhum()))
                 throw new Exception("Nenhum filtro foi passado para selecionar para os anúncios. Filtre por Portais, Cotas e ou Produtos.");
                 
-            IEnumerable<AnuncioCota> anuncios = _repositorio.Obter(request).OrderBy(_ => _.IdProduto).ToList();
+            IEnumerable<AnuncioCota> anuncios = _dadosService.Obter(request).OrderBy(_ => _.IdProduto).ToList();
 
             AnunciosAtualizacaoCommand anunciosCommand = new(anuncios, logger);
 

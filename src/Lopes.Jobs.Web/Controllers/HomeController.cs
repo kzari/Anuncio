@@ -47,5 +47,25 @@ namespace Lopes.Jobs.Web.Controllers
 
             return new JsonResult(resumo);
         }
+
+        public JsonResult ObterAnunciosDesatualizados(int idPortal, bool ignorarCache = false)
+        {
+            string chaveCache = $"AnunciosDesatualizados_{idPortal}";
+            AnunciosDesatualizadosViewModel anuncios;
+
+            if (!ignorarCache)
+            {
+                anuncios = _cacheService.Obter<AnunciosDesatualizadosViewModel>(chaveCache);
+                if (anuncios != null)
+                {
+                    return new JsonResult(anuncios);
+                }
+            }
+
+            anuncios = _cotaService.ObterAnunciosDesatualizados(idPortal);
+            _cacheService.Gravar(chaveCache, anuncios, TimeSpan.FromMinutes(30));
+            
+            return new JsonResult(anuncios);
+        }
     }
 }

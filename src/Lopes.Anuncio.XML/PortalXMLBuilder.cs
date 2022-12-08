@@ -167,7 +167,12 @@ namespace Lopes.Acesso.XML
             if (elemento == null)
                 return null;
 
-            XmlElement xmlElement = doc.CreateElement(elemento.Nome);
+            string nomeElemento = elemento.Nome.Replace(" ", "")
+                                               .Replace("/", "")
+                                               .Replace("\\", "")
+                                               .Replace("'", "");
+
+            XmlElement xmlElement = doc.CreateElement(nomeElemento);
             if (!string.IsNullOrEmpty(elemento.Valor))
                 xmlElement.InnerText = elemento.Valor;
 
@@ -222,7 +227,7 @@ namespace Lopes.Acesso.XML
             {
                 XDocument xDocument = XDocument.Load(CaminhoArquivo);
                 IEnumerable<string> idsProdutoString = xDocument.Descendants(_portalXmlElementos.NomeTagCodigoProduto)
-                                                               .Select(_ => _.Value.Replace("REO", ""));
+                                                                .Select(_ => _.Value.Replace("REO", ""));
                 foreach (string idString in idsProdutoString)
                 {
                     if (int.TryParse(idString, out int idProduto))
