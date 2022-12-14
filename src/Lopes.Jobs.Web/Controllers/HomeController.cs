@@ -3,7 +3,9 @@ using Lopes.Anuncio.Application.Services;
 using Lopes.Domain.Commons.Cache;
 using Lopes.Jobs.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace Lopes.Jobs.Web.Controllers
 {
@@ -12,14 +14,17 @@ namespace Lopes.Jobs.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ICotaAppService _cotaService;
         private readonly ICacheService _cacheService;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger, 
-                              ICotaAppService cotaService, 
-                              ICacheService cacheService)
+        public HomeController(ILogger<HomeController> logger,
+                              ICotaAppService cotaService,
+                              ICacheService cacheService,
+                              IConfiguration configuration)
         {
             _logger = logger;
             _cotaService = cotaService;
             _cacheService = cacheService;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -62,10 +67,37 @@ namespace Lopes.Jobs.Web.Controllers
                 }
             }
 
-            anuncios = _cotaService.ObterAnunciosDesatualizados(idPortal);
+            anuncios = _cotaService.ObterAnunciosDesatualizadosPorPortal(idPortal);
             _cacheService.Gravar(chaveCache, anuncios, TimeSpan.FromMinutes(30));
-            
+
             return new JsonResult(anuncios);
+        }
+
+        public JsonResult ObterAnunciosDesatualizadosPorCota(int idCota)
+        {
+            AnunciosDesatualizadosViewModel anuncios = _cotaService.ObterAnunciosDesatualizadosPorCota(idCota);
+
+            return new JsonResult(anuncios);
+        }
+
+        public JsonResult AtualizarCota(int idCota)
+        {
+            string url = _configuration["UrlApi"] + $"Anuncio/AtualizarPorCota?idCotas={idCota}";
+
+            var client = new RestClient(url);
+            RestResponse response = client.Execute(new RestRequest());
+
+            return new JsonResult(response.Content);
+        }
+
+        public string ObterStatusJob(int idJob)
+        {
+            string url = _configuration["UrlApi"] + $"Anuncio/ObterStatusJob?idJob={idJob}";
+
+            var client = new RestClient(url);
+            RestResponse response = client.Execute(new RestRequest());
+
+            return response?.Content.Replace("\"", "") ?? string.Empty;
         }
     }
 }

@@ -6,6 +6,7 @@ using Lopes.Anuncio.Application.Interfaces;
 using Lopes.Anuncio.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Lopes.Anuncio.Domain.Commands.Requests;
+using Hangfire.Storage;
 
 namespace Lopes.Jobs.Api.Controllers
 {
@@ -21,6 +22,17 @@ namespace Lopes.Jobs.Api.Controllers
         {
             _logger = logger;
             _service = service;
+        }
+
+        [HttpGet]
+        [Route("ObterStatusJob")]
+        public string ObterStatusJob(int idJob)
+        {
+            IStorageConnection connection = JobStorage.Current.GetConnection();
+            JobData jobData = connection.GetJobData(idJob.ToString());
+            string stateName = jobData.State;
+
+            return stateName;
         }
 
         [HttpGet]
@@ -56,15 +68,15 @@ namespace Lopes.Jobs.Api.Controllers
 
         [HttpGet]
         [Route("AtualizarPorCota")]
-        public string AtualizarPorCota([FromQuery] int[] idCotas)
+        public JsonResult AtualizarPorCota([FromQuery] int[] idCotas)
         {
-            string? jobId = BackgroundJob.Enqueue(() => AtualizarPorCotas(idCotas, null));
+            string? idJob = BackgroundJob.Enqueue(() => AtualizarPorCotas(idCotas, null));
 
-            string mensagem = $"Atualização para a(s) cota(s) '{string.Join(", ", idCotas)}' enfileirada. JobId: {jobId}";
+            string mensagem = $"Atualização para a(s) cota(s) '{string.Join(", ", idCotas)}' enfileirada. IdJob: {idJob}";
 
             _logger.Log(LogLevel.Information, mensagem);
 
-            return mensagem;
+            return new JsonResult(new { idJob, mensagem });
         }
 
         [HttpGet]

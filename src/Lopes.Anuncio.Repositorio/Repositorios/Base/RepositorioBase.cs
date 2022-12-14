@@ -18,6 +18,10 @@ namespace Lopes.Acesso.Data.Repositories
         {
             DbSet.Add(obj);
         }
+        public async virtual Task CriarAsync(TEntidade obj)
+        {
+            await DbSet.AddAsync(obj);
+        }
 
         public virtual void Alterar(TEntidade obj)
         {

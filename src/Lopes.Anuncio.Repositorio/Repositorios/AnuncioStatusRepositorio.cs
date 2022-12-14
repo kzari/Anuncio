@@ -12,11 +12,38 @@ namespace Lopes.Anuncio.Repositorio.Repositorios
         {
         }
 
+        public async Task CriarAsync(AnuncioAtualizacao entidade, bool salvarAlteracoes = true)
+        {
+            await base.CriarAsync(entidade);
+            if (salvarAlteracoes)
+                SalvarAlteracoes();
+        }
         public void Criar(AnuncioAtualizacao entidade, bool salvarAlteracoes = true)
         {
             base.Criar(entidade);
             if (salvarAlteracoes)
                 SalvarAlteracoes();
+        }
+
+        public async Task CriarAsync(IEnumerable<AnuncioAtualizacao> entidades, IProgresso? progresso = null)
+        {
+            int i = 0;
+            foreach (AnuncioAtualizacao entidade in entidades)
+            {
+                i++;
+                await CriarAsync(entidade, salvarAlteracoes: false);
+
+                if (i % 1000 == 0)
+                {
+                    if (progresso != null)
+                        progresso.Mensagem($"Registrando status dos anúncios... {i} de {entidades.Count()}", i);
+
+                    SalvarAlteracoes();
+                }
+            }
+            SalvarAlteracoes();
+            if (progresso != null)
+                progresso.Mensagem($"Registro de atualização concluído", i);
         }
 
         public void Criar(IEnumerable<AnuncioAtualizacao> entidades, IProgresso? progresso = null)

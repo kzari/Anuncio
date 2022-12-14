@@ -9,31 +9,31 @@ namespace Lopes.Anuncio.Domain.Handlers
     public class RegistroAtualizacaoCommandHandler : IRequestHandler<RegistroAtualizacoesCommand, bool>,
                                                      IRequestHandler<RegistroAtualizacaoCommand, AtualizarStatusAnuncioResponse>
     {
-        private readonly IAnuncioStatusRepositorio _DadosService;
+        private readonly IAnuncioStatusRepositorio _repositorio;
 
-        public RegistroAtualizacaoCommandHandler(IAnuncioStatusRepositorio DadosService)
+        public RegistroAtualizacaoCommandHandler(IAnuncioStatusRepositorio repositorio)
         {
-            _DadosService = DadosService;
+            _repositorio = repositorio;
         }
 
           
-        public Task<bool> Handle(RegistroAtualizacoesCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(RegistroAtualizacoesCommand command, CancellationToken cancellationToken)
         {
             //TODO: validar
 
-            _DadosService.Criar(command.Entidades, command.Progresso);
+            await _repositorio.CriarAsync(command.Entidades, command.Progresso);
 
-            return Task.FromResult(true);
+            return await Task.FromResult(true);
         }
 
-        public Task<AtualizarStatusAnuncioResponse> Handle(RegistroAtualizacaoCommand request, CancellationToken cancellationToken)
+        public async Task<AtualizarStatusAnuncioResponse> Handle(RegistroAtualizacaoCommand request, CancellationToken cancellationToken)
         {
             var entidade = new AnuncioAtualizacao(request.IdPortal, request.IdProduto, request.IdEmpresa, request.Acao, request.Id, request.Data);
             //TODO: validar
 
-            _DadosService.Criar(entidade);
+            _repositorio.Criar(entidade);
 
-            return Task.FromResult(new AtualizarStatusAnuncioResponse(request));
+            return await Task.FromResult(new AtualizarStatusAnuncioResponse(request));
         }
     }
 }

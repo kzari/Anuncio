@@ -1,4 +1,5 @@
-﻿using Lopes.Anuncio.Application.DadosService;
+﻿using Lopes.Acesso.Commons.Extensions;
+using Lopes.Anuncio.Application.DadosService;
 using Lopes.Anuncio.Application.Models;
 using Lopes.Anuncio.Domain.Commands.Requests;
 using Lopes.Anuncio.Domain.Enums;
@@ -26,11 +27,38 @@ namespace Lopes.Anuncio.Application.Services
             _portalAtualizadorFactory = portalAtualizadorFactory;
         }
 
-        public AnunciosDesatualizadosViewModel ObterAnunciosDesatualizados(int portal)
+        public AnunciosDesatualizadosViewModel ObterAnunciosDesatualizadosPorCota(int idCota)
+        {
+            IEnumerable<AnuncioCota> anuncios = _anuncioDadosService.Obter(new AnuncioCotaRequest(idCotas: new[] { idCota })).ToList();
+
+            if (anuncios.Nenhum())
+                throw new Exception($"Nenhum anúncio encontrado para a cota {idCota}.");
+
+            Portal portal = anuncios.First().Portal;
+            int idFranquia = anuncios.First().IdFranquia;
+            IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portal, idFranquia);
+            List<int> idProdutosNoPortal = atualizador.ObterIdProdutosNoPortal().ToList();
+
+            var franquiaAnunciosDesatualizados = new FranquiaAnunciosDesatualizados(idFranquia, idCota);
+
+            foreach (AnuncioCota anuncio in anuncios)
+            {
+                bool produtoNoPortal = idProdutosNoPortal.Contains(anuncio.IdProduto);
+                StatusAnuncioPortal statusAnuncioPortal = _statusAnuncioService.VerificarStatusProdutoPortal(anuncio, produtoNoPortal);
+                if (statusAnuncioPortal == StatusAnuncioPortal.Desatualizado)
+                    franquiaAnunciosDesatualizados.QtdeAnunciosParaIncluirAtualizar++;
+                else if (statusAnuncioPortal == StatusAnuncioPortal.ARemover)
+                    franquiaAnunciosDesatualizados.QtdeAnunciosParaExcluir++;
+            }
+
+            return new AnunciosDesatualizadosViewModel((int)portal, franquiaAnunciosDesatualizados);
+        }
+
+        public AnunciosDesatualizadosViewModel ObterAnunciosDesatualizadosPorPortal(int portal)
         {
             var franquiasAnuncios = _anuncioDadosService.Obter(new AnuncioCotaRequest((Portal)portal))
-                .GroupBy(_ => _.IdFranquia)
-                .Select(_ => new { IdFranquia = _.Key, Anuncios = _.ToList() })
+                .GroupBy(_ => new { _.IdFranquia, _.IdCota})
+                .Select(_ => new { IdFranquia = _.Key.IdFranquia, IdCota = _.Key.IdCota, Anuncios = _.ToList() })
                 .ToList();
 
             var anunciosDesatualizados = new AnunciosDesatualizadosViewModel(portal);
@@ -40,7 +68,7 @@ namespace Lopes.Anuncio.Application.Services
                 IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador((Portal)portal, franquiaAnuncios.IdFranquia);
                 var idProdutosNoPortal = atualizador.ObterIdProdutosNoPortal().ToList();
 
-                var franquiaAnunciosDesatualizados = new FranquiaAnunciosDesatualizados(franquiaAnuncios.IdFranquia);
+                var franquiaAnunciosDesatualizados = new FranquiaAnunciosDesatualizados(franquiaAnuncios.IdFranquia, franquiaAnuncios.IdCota);
 
                 foreach (AnuncioCota? anuncio in franquiaAnuncios.Anuncios)
                 {

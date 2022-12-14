@@ -47,6 +47,8 @@
 {
     <script>
         
+        var anunciosDesatualizados = [];
+
         $(document).ready(function() {
 
             $.get("/Home/ObterResumoCotas", function(dados) {
@@ -83,7 +85,7 @@
                                 "<div class='col-6'> " +
                                     "<div class='input-group mb-3'>" +
                                         "<div class='input-group-prepend'>" +
-                                            "<span class='input-group-text bi-search' id='basic-addon1'> </span>" +
+                                            "<span class='input-group-text bi-search' id='basic-addon1'></span>" +
                                         "</div>"+
                                         "<input type='text' class='pesquisa form-control' placeholder='Pesquisar por franquia' aria-describedby='basic-addon1'>" +
                                     "</div>" +
@@ -95,15 +97,16 @@
 
                             conteudo +=
                                 "<div class='row detalhe-cotas'>" +
-                                    "<div class=col-6>" +
+                                    "<div class=col-5>" +
                                         "<b class='nome-franquia'>" + c.nomeFranquia + "</b>" +
-                                        "<br/>" + c.totalProdutos + " produtos / " +
-                                        "<span style='color:red; weight:bold' id='desatualizados_" + idPortal + "_" + c.idFranquia + "'>" +
-                                            "<img src='loadingdots.gif' width='50' />" +
+                                        "<br/>" + c.totalProdutos.toString().padStart(6) + " produtos / " +
+                                        "<span style='color:red; weight:bold' id='desatualizados_" + c.idCota + "'>" +
+                                            loadingGif("Carregando...") +
                                         "</span> desatualizados" +
                                     "</div>" +
-                                    "<div class=col-2>" +
-                                        "<button class='btn btn-primary'>Atualizar</button>" +
+                                    "<div class='col-6'>" +
+                                        "<button class='btn btn-primary btn-atualizar' data-idcota='" + c.idCota + "'>Atualizar</button>" +
+                                        "&nbsp;<span class='status'></span>" +
                                     "</div>" +
                                     "<hr/>" +
                                 "</div>";
@@ -113,6 +116,7 @@
 
                         onClickPesquisa(idPortal);
                         preencherQtdeAnunciosDesatualizados(idPortal, false);
+                        onClickAtualizarCota();
                     });
                 });
             });
@@ -129,6 +133,44 @@
                 $('#div-franquias').slideDown();
             });
         });
+
+
+        function onClickAtualizarCota(){
+            $('.btn-atualizar').click(function() {
+                var idCota = $(this).data('idcota');
+
+                //Tirar botão e colocar atualizando
+                var botaoAtualizar = $(this);
+                var spanStatus = $(botaoAtualizar).parent().find(".status");
+
+                $(botaoAtualizar).prop('disabled', true);
+                $(botaoAtualizar).html(loadingGif("Atualizando cota id " + idCota));
+
+                $.get("/Home/AtualizarCota?idCota=" + idCota, function(dado){
+
+                    var dadoJson = JSON.parse(dado);
+                    var idJob = dadoJson.idJob;
+                    $(spanStatus).html(dadoJson.mensagem);
+
+                    const interval = setInterval(obterStatusJob, 5000, idJob, botaoAtualizar, idCota, spanStatus);
+
+                    function obterStatusJob(idJob, botaoAtualizar, idCota, spanStatus){
+                        $.get("/Home/ObterStatusJob?idJob=" + idJob, function(retorno) {
+                
+                            var html = $(spanStatus).html().replace(" - " + retorno, "") + " - " + retorno;
+                            $(spanStatus).html(html);
+
+                            if (retorno == "Succeeded") {
+                                $(spanStatus).html("Atualização concluída - IdJob: <a href='http://localhost:9951/hangfire/jobs/details/"+idJob+"' target='_blank'>" + idJob + "</a>");
+                                $(botaoAtualizar).prop('disabled', false).html('Atualizar');
+                                preencherQtdeAnunciosDesatualizadosPorCota(idCota);
+                                clearInterval(interval);
+                            }
+                        });
+                    }
+                });
+            });
+        }
 
 
         function onClickPesquisa(idPortal) {
@@ -175,12 +217,44 @@
             callback();
         }
 
-        function preencherQtdeAnunciosDesatualizados(idPortal, ignorarCache){
-            $.get("/Home/ObterAnunciosDesatualizados?idPortal=" + idPortal + "&ignorarCache="+ignorarCache, function(dados) {
-                dados.anunciosDesatualizados.forEach(function(dado) {
-                    $('#desatualizados_'+idPortal+'_'+ dado.idFranquia).html(dado.qtdeAnunciosDesatualizados);
-                })
+        function preencherQtdeAnunciosDesatualizados(idPortal, ignorarCache) {
+            $.get("/Home/ObterAnunciosDesatualizados?idPortal=" + idPortal + "&ignorarCache=" + ignorarCache, function(dados) {
+                anunciosDesatualizados = dados.anunciosDesatualizados;
+                anunciosDesatualizados.forEach(function(dado) {
+                    //$('#desatualizados_' + idPortal + '_' + dado.idFranquia).html(dado.qtdeAnunciosDesatualizados);
+                    atualizarQtdeAnunciosDesatualizados(dado.idCota, dado.qtdeAnunciosDesatualizados);
+                });
             });
+        }
+        
+        function preencherQtdeAnunciosDesatualizadosPorCota(idCota) {
+
+            loadingDesatualizados(idCota);
+
+            $.get("/Home/ObterAnunciosDesatualizadosPorCota?idCota=" + idCota, function(dados) {
+
+                anunciosDesatualizados = anunciosDesatualizados.filter(item => item.idCota !== idCota);
+                anunciosDesatualizados.push(dados.anunciosDesatualizados);
+
+                dados.anunciosDesatualizados.forEach(function(dado) {
+                    //$('#desatualizados_' + idPortal + '_' + dado.idFranquia).html(dado.qtdeAnunciosDesatualizados);
+                    atualizarQtdeAnunciosDesatualizados(idCota, dado.qtdeAnunciosDesatualizados)
+                });
+                //mostrarQtdeAnunciosDesatualizados(dado.idPortal);
+            });
+        }
+
+        function atualizarQtdeAnunciosDesatualizados(idCota, quantidade) {
+            $('#desatualizados_' + idCota).html(quantidade.toString().padStart(6))
+                                          .prop('color' + (quantidade == 0 ? "green" : "red"));
+        }
+        function loadingDesatualizados(idCota){
+            $('#desatualizados_' + idCota).html(loadingGif('Atualizando...'));
+        }
+
+        function loadingGif(title){
+            var titleStr = title != undefined ? " title='" + title + "'": "";
+            return '<img src="loadingdots.gif" width="50" '+titleStr+' />';
         }
     </script>
 }

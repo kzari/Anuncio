@@ -9,6 +9,7 @@ using Lopes.Anuncio.Domain.Entidades;
 using Lopes.Anuncio.Domain.Models.DadosProduto;
 using Lopes.Anuncio.Domain.ObjetosValor;
 using Lopes.Domain.Commons.Cache;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lopes.Anuncio.Domain.Handlers
 {
@@ -178,9 +179,14 @@ namespace Lopes.Anuncio.Domain.Handlers
         {
             progresso.Mensagem($"4. Registrando o status...", percentualConcluido: 80);
 
-            var handler = _serviceProvider.ObterServico<IRequestHandler<RegistroAtualizacoesCommand, bool>>();
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            {
+                var handler = scope.ServiceProvider.ObterServico<IRequestHandler<RegistroAtualizacoesCommand, bool>>();
 
-            return handler.Handle(new RegistroAtualizacoesCommand(atualizacoes, progresso), cancellationToken).Result;
+                Task<bool>? result = handler.Handle(new RegistroAtualizacoesCommand(atualizacoes, progresso), cancellationToken);
+
+                return result.Result;
+            }   
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Lopes.Acesso.XML
             }
         }
 
-        public void RemoverProdutos(int[] idProdutos, IProgresso progresso = null)
+        public void RemoverProdutos(int[] idProdutos, IProgresso? progresso = null)
         {
             if (idProdutos.Length == 0 || !File.Exists(CaminhoArquivo))
                 return;
