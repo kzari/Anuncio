@@ -88,7 +88,29 @@ namespace Lopes.Anuncio.Application.Services
 
         public IEnumerable<CotaResumoViewModel> ObterCotas()
         {
-            return _dadosService.Obter(new CotaResumoRequest(68)).ToList().Select(_ => new CotaResumoViewModel(_));
+            List<CotaResumo> todasCotas = _dadosService.Obter(new CotaResumoRequest()).ToList();
+
+            List<CotaResumo> cotasFranquiaPortal = SelecionarCotaFranquiaPortal(todasCotas);
+
+            return cotasFranquiaPortal.Select(_ => new CotaResumoViewModel(_));
+        }
+
+        /// <summary>
+        /// Retorna somente uma cota de uma mesma franquia e portal (a mais ativa)
+        /// </summary>
+        /// <param name="todasCotas">Cotas</param>
+        /// <returns></returns>
+        private static List<CotaResumo> SelecionarCotaFranquiaPortal(List<CotaResumo> todasCotas)
+        {
+            List<CotaResumo> cotasFranquiaPortal = new List<CotaResumo>();
+
+            foreach (CotaResumo cota in todasCotas.OrderBy(_ => _.IdStatusCota))
+            {
+                //Cada Franquia só pode ter uma cota de cada portal
+                if (!cotasFranquiaPortal.Any(_ => _.IdFranquia == cota.IdFranquia && _.Portal == cota.Portal))
+                    cotasFranquiaPortal.Add(cota);
+            }
+            return cotasFranquiaPortal;
         }
     }
 }

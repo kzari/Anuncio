@@ -3,43 +3,67 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Resumo</h1>
+    <h2 style="color: darkgrey;">Cotas de anúncios</h2>
 </div>
 
 <div class="row" id="principal">
-    <div class="col-1 padd" id="div-1">
+    <div class="col-2" id="div-1">
+        <p id="link-portais">
+            Portais <br/>
+            <b><span id="total-portais"><img src="loadingdots.gif" width="50" /></span></b>
+        </p>
         <p>Anúncios <br/><b><span id="total-anuncios"><img src="loadingdots.gif" width="50" /></span></b></p>
         <p>Cotas <br/><b><span id="total-cotas"><img src="loadingdots.gif" width="50" /></span></b></p>
-        <p>Franquias <br/>
-            <a href="#" id="link-franquias">
-                <b><span id="total-franquias"><img src="loadingdots.gif" width="50" /></span></b>
-            </a>
+        <p id="link-franquias">
+            Franquias <br/>
+            <b><span id="total-franquias"><img src="loadingdots.gif" width="50" /></span></b>
         </p>
-        <p>
-            Portais <br/>
-            <a href="#" id="link-portais">
-                <b><span id="total-portais"><img src="loadingdots.gif" width="50" /></span></b>
-            </a>
-        </p>
-        @*<p>Total de Imóveis anunciados: <b><span id="total-imoveis"><img src="loadingdots.gif" width="50" /></span></b></p>*@
     </div>
     <div class="col-3" id="div-2">
-        <div id="div-portais" class="padd"></div>
-        <div id="div-franquias" class="padd"></div>
+        <div id="div-portais"></div>
+        <div id="div-franquias"></div>
     </div>
-    <div class="col-8" id="div-3">
-    </div>
+    <div class="col-7" id="div-3"></div>
 </div>
 
 <style>
-    #principal div{
-        //border: 1px dotted lightblue;
-    }
     #principal div.padd{
         padding: 25px;
     }
     .titulo-detalhe-cotas{
         padding: 25px 0px 25px 0px;
+    }
+    .cota-inativa{
+        background-color:#fde5e5;
+    }
+    #principal p{
+        padding: 10px;
+    }
+    #principal p:hover{
+        background-color:lightgreen;
+        cursor:pointer;
+    }
+    .link-cotas-portais:hover{
+        background-color:lightgreen;
+        cursor:pointer;
+        font-weight: bold;
+        padding: 10px;
+    }
+    .link-cotas-portais{
+        padding: 10px 0px 10px 0px;
+    }
+    .selecionado{
+        background-color:#80008033;
+        font-weight: bold;
+        padding: 10px;
+    }
+    #lista-portais li{
+        padding: 5px 0px 5px 0px;
+    }
+
+    .cotas{
+        overflow:scroll;
+        height:800px;
     }
 </style>
 
@@ -50,6 +74,8 @@
         var anunciosDesatualizados = [];
 
         $(document).ready(function() {
+
+            $('#link-portais').trigger("click");
 
             $.get("/Home/ObterResumoCotas", function(dados) {
                 $("#total-anuncios").html(dados.totalAnuncios);
@@ -65,6 +91,9 @@
                 preencherDivPortais(dados, function() {
                     $('.link-cotas-portais').click(function(e) {
                         e.preventDefault();
+
+                        $('.link-cotas-portais').removeClass('selecionado');
+                        $(this).addClass('selecionado');
 
                         $('.detalhes-cota').hide();
 
@@ -92,27 +121,39 @@
                                 "</div>" +
                             "</div>";
 
+
+                        var conteudoCotas = "";
                         var cotas = dados.cotas.filter(_ => _.portal == idPortal);
                         cotas.forEach(function(c) {
 
-                            conteudo +=
-                                "<div class='row detalhe-cotas'>" +
-                                    "<div class=col-5>" +
-                                        "<b class='nome-franquia'>" + c.nomeFranquia + "</b>" +
-                                        "<br/>" + c.totalProdutos.toString().padStart(6) + " produtos / " +
-                                        "<span style='color:red; weight:bold' id='desatualizados_" + c.idCota + "'>" +
-                                            loadingGif("Carregando...") +
-                                        "</span> desatualizados" +
+                            var classCotaInativa = c.cotaAtiva == false ? " cota-inativa" : "";
+
+                            conteudoCotas +=
+                                "<div class='row detalhe-cotas" + classCotaInativa + "'>" +
+                                    "<div class=col-4>" +
+                                        "<b class='nome-franquia' title='Nome da franquia'>" + c.nomeFranquia + "</b>" +
+                                        "<br/>" + 
+                                        "<div title='(total de produtos) | (produtos desatualizados)'>" + 
+                                            nbsp(5 - c.totalProdutos.toString().length) + c.totalProdutos.toString().padStart(6) + " | " +
+                                            "<span style='font-weight:bold' id='desatualizados_" + c.idCota + "'>" +
+                                                loadingGif("Carregando quantidade de produtos desatualizados...") +
+                                            "</span>" +
+                                        "</div>" +
+                                    "</div>" +
+                                    "<div class='col-2' style='text-align:right;'>" +
+                                        "<button class='btn btn-primary btn-atualizar' data-idcota='" + c.idCota + "'>Atualizar</button>" +
                                     "</div>" +
                                     "<div class='col-6'>" +
-                                        "<button class='btn btn-primary btn-atualizar' data-idcota='" + c.idCota + "'>Atualizar</button>" +
-                                        "&nbsp;<span class='status'></span>" +
+                                        "&nbsp;<span id='status_" + c.idCota + "'></span>" +
                                     "</div>" +
                                     "<hr/>" +
                                 "</div>";
                         });
-                        //$(this).parent().append('<div id="div-detalhes-cota-'+idPortal+'">' + conteudo + '</div>');
-                        $('#div-3').append('<div id="div-detalhes-cota-'+idPortal+'" class="detalhes-cota">' + conteudo + '</div>');
+                        conteudoCotas = "<div class='cotas'>" + conteudoCotas + "</div>";
+
+                        conteudo += conteudoCotas;
+
+                        $('#div-3').append('<div id="div-detalhes-cota-' + idPortal + '" class="detalhes-cota">' + conteudo + '</div>');
 
                         onClickPesquisa(idPortal);
                         preencherQtdeAnunciosDesatualizados(idPortal, false);
@@ -125,6 +166,7 @@
                 e.preventDefault();
                 $('#div-franquias').hide();
                 $('#div-portais').slideDown();
+                $(this).addClass('selecionado');
             });
 
             $('#link-franquias').click(function(e) {
@@ -134,6 +176,13 @@
             });
         });
 
+        function nbsp(quantidade) {
+            var str = "";
+            for (var x = 0; x < quantidade; x++){
+                str += "&nbsp;"
+            }
+            return str;
+        }
 
         function onClickAtualizarCota(){
             $('.btn-atualizar').click(function() {
@@ -141,7 +190,7 @@
 
                 //Tirar botão e colocar atualizando
                 var botaoAtualizar = $(this);
-                var spanStatus = $(botaoAtualizar).parent().find(".status");
+                var spanStatus = $('#status_' + idCota);
 
                 $(botaoAtualizar).prop('disabled', true);
                 $(botaoAtualizar).html(loadingGif("Atualizando cota id " + idCota));
@@ -150,18 +199,17 @@
 
                     var dadoJson = JSON.parse(dado);
                     var idJob = dadoJson.idJob;
-                    $(spanStatus).html(dadoJson.mensagem);
+                    $(spanStatus).html(dadoJson.mensagem + " Id Job: " + linkJob(idJob));
 
                     const interval = setInterval(obterStatusJob, 5000, idJob, botaoAtualizar, idCota, spanStatus);
 
                     function obterStatusJob(idJob, botaoAtualizar, idCota, spanStatus){
                         $.get("/Home/ObterStatusJob?idJob=" + idJob, function(retorno) {
-                
-                            var html = $(spanStatus).html().replace(" - " + retorno, "") + " - " + retorno;
-                            $(spanStatus).html(html);
+
+                            $(spanStatus).html(retorno+" - Id Job: " + linkJob(idJob));
 
                             if (retorno == "Succeeded") {
-                                $(spanStatus).html("Atualização concluída - IdJob: <a href='http://localhost:9951/hangfire/jobs/details/"+idJob+"' target='_blank'>" + idJob + "</a>");
+                                $(spanStatus).html("Atualização concluída - IdJob: " + linkJob(idJob));
                                 $(botaoAtualizar).prop('disabled', false).html('Atualizar');
                                 preencherQtdeAnunciosDesatualizadosPorCota(idCota);
                                 clearInterval(interval);
@@ -172,6 +220,9 @@
             });
         }
 
+        function linkJob(idJob){
+            return "<a href='http://localhost:9951/hangfire/jobs/details/" + idJob + "' target='_blank'>" + idJob + "</a>";
+        }
 
         function onClickPesquisa(idPortal) {
             $('.pesquisa').keyup(function(e) {
@@ -182,13 +233,12 @@
 
         function pesquisarDetalheCotas(texto, idPortal) {
             if (texto != undefined && texto != '') {
-                    $('#div-detalhes-cota-'+idPortal+' .detalhe-cotas').hide();
-                    //$('#div-3 .nome-franquia:contains("' + text + '")').parent().parent().show();
+                $('#div-detalhes-cota-' + idPortal + ' .detalhe-cotas').hide();
 
-                    var search = $('#div-detalhes-cota-'+idPortal+' .nome-franquia').filter(function() {
-                        return $(this).text().toLowerCase().indexOf(texto.toLowerCase()) >= 0;
-                    });
-                    $(search).parent().parent().show();
+                var search = $('#div-detalhes-cota-'+idPortal+' .nome-franquia').filter(function() {
+                    return $(this).text().toLowerCase().indexOf(texto.toLowerCase()) >= 0;
+                });
+                $(search).parent().parent().show();
 
             } else {
                 $('#div-detalhes-cota-'+idPortal+' .detalhe-cotas').show();
@@ -199,7 +249,7 @@
             $('#div-franquias').hide();
             var conteudo = "";
             franquias.forEach(function(p) {
-                conteudo += "<li>" + p.nome + " (" + p.qtdeCotas + " cotas)</li>";
+                conteudo += "<li>" + p.nome + " - " + p.qtdeCotas + " cotas</li>";
             });
             $('#div-franquias').html("<ul>" + conteudo + "</ul>");
         }  
@@ -208,12 +258,11 @@
             var conteudo = "";
             dados.portais.forEach(function(p) {
                 conteudo +=
-                    "<li>" + p.nome +
-                    " (<a href='#' class='link-cotas-portais' data-portal=" + p.id + " data-nome='" + p.nome + "' data-cotas='" + p.qtdeCotas + "'>" +
-                    p.qtdeCotas + " cotas</a>)" +
-                    "</li>";
+                    "<div class='link-cotas-portais' data-portal=" + p.id + " data-nome='" + p.nome + "' data-cotas='" + p.qtdeCotas + "'>" + 
+                        p.nome + " - "+ p.qtdeCotas + " cotas" +
+                    "</div>";
             });
-            $('#div-portais').html("<ul>" + conteudo + "</ul>");
+            $('#div-portais').html("<div id='lista-portais'>" + conteudo + "</div>");
             callback();
         }
 
@@ -245,8 +294,10 @@
         }
 
         function atualizarQtdeAnunciosDesatualizados(idCota, quantidade) {
-            $('#desatualizados_' + idCota).html(quantidade.toString().padStart(6))
-                                          .prop('color' + (quantidade == 0 ? "green" : "red"));
+
+            var html = nbsp(5 - quantidade.toString().length) + quantidade
+            $('#desatualizados_' + idCota).html(html);
+            $('#desatualizados_' + idCota).css('color', (quantidade == 0 ? "green" : "red"));
         }
         function loadingDesatualizados(idCota){
             $('#desatualizados_' + idCota).html(loadingGif('Atualizando...'));

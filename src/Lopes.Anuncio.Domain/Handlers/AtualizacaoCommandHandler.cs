@@ -79,12 +79,15 @@ namespace Lopes.Anuncio.Domain.Handlers
                         var portalEmpresa = partition.Current;
 
                         int idFranquia = portalEmpresa.IdFranquia;
+                        string nomeFranquia = portalEmpresa.Anuncios.First().NomeFranquia;
+                        int idCota = portalEmpresa.Anuncios.First().IdCota;
                         Portal portal = portalEmpresa.Portal;
                         List<AnuncioStatus> anuncios = portalEmpresa.Anuncios.Select(_ => new AnuncioStatus(_)).ToList();
                         int qtdeAnuncios = anuncios.Count;
 
                         IProgresso progresso = logger.ObterProgresso(qtdeAnuncios, 95, textoInicial: $"P{partitionId.ToString().PadLeft(2)} E: {idFranquia.ToString().PadRight(5)} P: {portal.ToString().PadRight(10)} Anúncios: {qtdeAnuncios.ToString().PadLeft(5)} ");
 
+                        progresso.Mensagem($"Franquia: {nomeFranquia}  | Id Cota: {idCota}", percentualConcluido: 5);
                         progresso.Mensagem("1. Verificando o status...", percentualConcluido: 10);
 
                         IPortalAtualizador atualizador = _portalAtualizadorFactory.ObterAtualizador(portal, idFranquia);

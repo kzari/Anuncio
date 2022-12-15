@@ -46,7 +46,10 @@ namespace Lopes.Jobs.Web.Controllers
 
         public JsonResult ObterResumoCotas()
         {
-            IEnumerable<CotaResumoViewModel> cotas = _cacheService.ObterOuGravar("Cotas", TimeSpan.FromMinutes(30), _cotaService.ObterCotas);
+            IEnumerable<CotaResumoViewModel> cotas =  _cotaService.ObterCotas().ToList();
+            //IEnumerable<CotaResumoViewModel> cotas = _cacheService.ObterOuGravar("Cotas", TimeSpan.FromMinutes(30), _cotaService.ObterCotas.ToLis());
+
+            var algumaCotaInativa = cotas.Where(_=> !_.CotaAtiva && _.Portal == 68).ToList();
 
             AnunciosResumoViewModel resumo = new(cotas.ToList());
 

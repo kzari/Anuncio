@@ -1,4 +1,6 @@
-﻿namespace Lopes.Anuncio.Application.Models
+﻿using Lopes.Anuncio.Domain.Enums;
+
+namespace Lopes.Anuncio.Application.Models
 {
     public class AnunciosResumoViewModel
     {
@@ -13,9 +15,13 @@
             TotalAnuncios = Cotas.Sum(_ => _.TotalProdutos);
             TotalCotas = Cotas.Count();
 
+            var preferences = new List<int> { (int)Portal.Zap };
             Portais = Cotas.GroupBy(_ => new { _.Portal, _.NomePortal })
                            .Select(_ => new ItemCotas((int)_.Key.Portal, _.Key.NomePortal, _.Count()))
-                           .OrderBy(_ => _.Nome)
+                           .OrderBy(d => {
+                               var index = preferences.IndexOf(d.Id);
+                               return index == -1 ? int.MaxValue : index;
+                           })
                            .ToArray();
             Franquias = Cotas.GroupBy(_ => new { _.IdFranquia, _.NomeFranquia })
                              .Select(_ => new ItemCotas(_.Key.IdFranquia, _.Key.NomeFranquia, _.Count()))

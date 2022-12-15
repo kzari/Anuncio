@@ -72,7 +72,7 @@ namespace Lopes.Jobs.Api.Controllers
         {
             string? idJob = BackgroundJob.Enqueue(() => AtualizarPorCotas(idCotas, null));
 
-            string mensagem = $"Atualização para a(s) cota(s) '{string.Join(", ", idCotas)}' enfileirada. IdJob: {idJob}";
+            string mensagem = $"Atualização para a(s) cota(s) '{string.Join(", ", idCotas)}' enfileirada.";
 
             _logger.Log(LogLevel.Information, mensagem);
 

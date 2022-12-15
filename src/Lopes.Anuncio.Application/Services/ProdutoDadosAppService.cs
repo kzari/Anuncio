@@ -60,7 +60,8 @@ namespace Lopes.Anuncio.Application.Services
             int[] idProdutosEncontrados = dadosPrincipais.Select(_ => _.IdProduto).ToArray();
             int[] idProdutosNaoEncontrados = idProdutos.Where(_ => !idProdutosEncontrados.Contains(_)).ToArray();
 
-            _logger.Warn($"Imóveis não encontrados: {string.Join(", ", idProdutosNaoEncontrados)}");
+            if(idProdutosNaoEncontrados.Length > 0)
+                _logger.Warn($"Imóveis não encontrados: {string.Join(", ", idProdutosNaoEncontrados)}");
 
             progresso?.NovaMensagem($"Obtendo caracteristicas de {idProdutosEncontrados.Length} imóveis.");
 

@@ -18,6 +18,7 @@ namespace Lopes.Anuncio.Application.Models
             NomeFranquia= cota.NomeFranquia;
             IdFranquia = cota.IdFranquia;
             IdCota = cota.IdCota;
+            CotaAtiva = cota.CotaAtiva;
             TotalProdutos = cota.TotalProdutos;
         }
         public int Portal { get; set; }
@@ -25,6 +26,7 @@ namespace Lopes.Anuncio.Application.Models
         public int IdFranquia { get; set; }
         public string NomeFranquia { get; set; }
         public int IdCota { get; set; }
+        public bool CotaAtiva { get; set; }
         public int TotalProdutos { get; set; }
     }
 }
