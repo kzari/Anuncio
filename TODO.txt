@@ -3,24 +3,37 @@
 
 >> Arquitetura ------------------------------------------------------------
 
+	- Mapear os detalhes das entidades (tamanho de campos, tipo, etc.)
+	- Método "Excluir todos produtos" - Excluir arquivo XML
+	
+	- Implementar Log
+		
+	
+	- Configurar asNoTracking como padrão para os contextos de leitura
 	- FranquiaApelidoPortalMap - Consumir de view ao invez de tabela
 	- Validações das entidades
 	- Arrumar testes
-	- Implementar cache com Redis
+	
+	OK- Implementar cache com Redis
 	OK- Implementar cache em memória
 	OK- CQRS
 
-	- API Jobs - Implementar autenticação
+	- API Jobs 
+		> Implementar autenticação e autorização
+	
+	- Redis 
+		- Implementações de segurança
 
-	- Implementar consumo de mensageria (Kafka)
-
-	- Configurar asNoTracking como padrão para os contextos de leitura
 
 >> Features --------------------------------------------------------------
 
 	- Implementar consumo da API do ImóvelWeb
+	- Site
+		- Home (guardar dados em cache - 1 dia):
+			OK-1. Mostrar quantidade total de anúncios, cotas, franquias
+			OK-2. Mostrar cotas/portais por franquias
+			3. Mostrar média de anúncios por franquia/portal
 	
-
 >> BUGS -------------------------------------------------------------------
 	
 	- Verificar dados dos Imóveis não encontrados
