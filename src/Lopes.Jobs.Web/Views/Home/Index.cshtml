@@ -2,9 +2,6 @@
     ViewData["Title"] = "Cotas Dash";
 }
 
-<div class="text-center">
-    <h2 style="color: darkgrey;">Cotas de anúncios</h2>
-</div>
 
 <div class="row" id="principal">
     <div class="col-2" id="div-1">
@@ -29,9 +26,6 @@
 <style>
     #principal div.padd{
         padding: 25px;
-    }
-    .titulo-detalhe-cotas{
-        padding: 25px 0px 25px 0px;
     }
     .cota-inativa{
         background-color:#fde5e5;
@@ -62,7 +56,26 @@
     }
 
     .cotas{
-        overflow:scroll;
+        overflow: auto;
+        overflow-x: hidden;
+        height:800px;
+    }
+    
+    .titulo-detalhe-cotas{
+        padding: 10px 0px 0px 0px;
+        background-color: #e6cce6;
+    }
+    .titulo-detalhe-cotas h3{
+        color:#0a58ca75;
+        font-weight:bold;
+    }
+    .detalhe-cotas{
+        padding: 10px;
+    }
+
+    #div-portais{
+        overflow: auto;
+        overflow-x: hidden;
         height:800px;
     }
 </style>
@@ -108,9 +121,12 @@
                             return;
                         }
 
+                        var logo = logoPortal(idPortal, 100);
+                        var strTitulo = logo != "" ? logo : nome + " - <small>" + qtdeCotas + " cotas</small>";
+
                         var conteudo =
                             "<div class='row titulo-detalhe-cotas'>" +
-                                "<h3 class='padd col-6'>" + nome + " - <small>" + qtdeCotas + " cotas</small> </h3>" +
+                                "<h3 class='padd col-6'>" + strTitulo + "</h3>" +
                                 "<div class='col-6'> " +
                                     "<div class='input-group mb-3'>" +
                                         "<div class='input-group-prepend'>" +
@@ -127,6 +143,7 @@
                         cotas.forEach(function(c) {
 
                             var classCotaInativa = c.cotaAtiva == false ? " cota-inativa" : "";
+                            var spanCotaInativa  = c.cotaAtiva == false ? '<span class="texto-cota-inativa" style="color: red; font-weight: bold; float: right;">Cota inativa</span>' : "";
 
                             conteudoCotas +=
                                 "<div class='row detalhe-cotas" + classCotaInativa + "'>" +
@@ -137,17 +154,17 @@
                                             nbsp(5 - c.totalProdutos.toString().length) + c.totalProdutos.toString().padStart(6) + " | " +
                                             "<span style='font-weight:bold' id='desatualizados_" + c.idCota + "'>" +
                                                 loadingGif("Carregando quantidade de produtos desatualizados...") +
-                                            "</span>" +
+                                            "</span>" + spanCotaInativa +
                                         "</div>" +
                                     "</div>" +
-                                    "<div class='col-2' style='text-align:right;'>" +
+                                    "<div class='col-2' style='text-align:right;padding-top:4px;'>" +
                                         "<button class='btn btn-primary btn-atualizar' data-idcota='" + c.idCota + "'>Atualizar</button>" +
                                     "</div>" +
                                     "<div class='col-6'>" +
                                         "&nbsp;<span id='status_" + c.idCota + "'></span>" +
                                     "</div>" +
-                                    "<hr/>" +
-                                "</div>";
+                                "</div>" +
+                                "<hr style='margin:0px;'/>";
                         });
                         conteudoCotas = "<div class='cotas'>" + conteudoCotas + "</div>";
 
@@ -175,6 +192,13 @@
                 $('#div-franquias').slideDown();
             });
         });
+
+        function logoPortal(portal, tamanho){
+            if(portal == 68)
+                return "<img src='imgs/zap.png' width='"+tamanho+"' style='margin-right:15px'/> "
+
+            return "";
+        }
 
         function nbsp(quantidade) {
             var str = "";
@@ -259,7 +283,7 @@
             dados.portais.forEach(function(p) {
                 conteudo +=
                     "<div class='link-cotas-portais' data-portal=" + p.id + " data-nome='" + p.nome + "' data-cotas='" + p.qtdeCotas + "'>" + 
-                        p.nome + " - "+ p.qtdeCotas + " cotas" +
+                        logoPortal(p.id, 40) + p.nome + " - "+ p.qtdeCotas + " cotas" +
                     "</div>";
             });
             $('#div-portais').html("<div id='lista-portais'>" + conteudo + "</div>");
