@@ -1,4 +1,5 @@
-﻿using Lopes.Anuncio.Domain.Entidades;
+﻿using Lopes.Acesso.Data.Mappings;
+using Lopes.Anuncio.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lopes.Anuncio.Repositorio.Context
@@ -15,7 +16,7 @@ namespace Lopes.Anuncio.Repositorio.Context
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<AnuncioAtualizacao>().ToTable("AnuncioAtualizacao").HasKey(_ => _.Id);
+            builder.ApplyConfiguration(new AnuncioAtualizacaoMap());
         }
     }
 }

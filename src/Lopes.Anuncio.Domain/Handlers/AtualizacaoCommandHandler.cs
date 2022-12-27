@@ -133,11 +133,13 @@ namespace Lopes.Anuncio.Domain.Handlers
 
         private static IEnumerable<AnuncioAtualizacao> RemoverAnuncios(IEnumerable<AnuncioStatus> anuncios, IProgresso progresso, IPortalAtualizador atualizador)
         {
-            int[] idProdutosRemover = anuncios.Where(_ => _.Status == StatusAnuncioPortal.ARemover).Select(_ => _.AnuncioCota.IdProduto).ToArray();
+            int[] idProdutosRemover = anuncios.Where(_ => _.Status == StatusAnuncioPortal.ARemover)
+                                              .Select(_ => _.AnuncioCota.IdProduto)
+                                              .ToArray();
             if (idProdutosRemover.Length == 0)
                 return Enumerable.Empty<AnuncioAtualizacao>();
 
-            progresso.Mensagem($"2. Removendo {idProdutosRemover.Count()} anúncios...", percentualConcluido: 10);
+            progresso.Mensagem($"2. Removendo {idProdutosRemover.Length} anúncios...", percentualConcluido: 10);
 
             atualizador.RemoverProdutos(idProdutosRemover, progresso);
 
