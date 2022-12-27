@@ -1,5 +1,5 @@
 ﻿using Lopes.Acesso.ConsoleCommons.Log;
-using Lopes.Acesso.IoC;
+using Lopes.Anuncio.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +17,7 @@ namespace Lopes.ConsoleTestes.Testes.Anuncio
         public static IServiceProvider ObterServiceProvider() => ObterServiceProvider(ObterConfiguration());
         public static IServiceProvider ObterServiceProvider(IConfiguration configuration)
         {
-            IServiceCollection services = ConfiguracaoServicos.ConfigurarServicos<ConsoleLogger>(configuration);
+            IServiceCollection services = AnuncioIoC.ConfigurarServicos<ConsoleLogger>(configuration);
             return services.BuildServiceProvider(validateScopes: true);
         }
         public static IServiceScope CriarEscopo()

@@ -1,22 +1,20 @@
-﻿using Lopes.Domain.Commons;
-
-namespace Lopes.Acesso.Commons
+﻿namespace Lopes.Domain.Commons
 {
-    public class Retorno : IRetorno
+    public class Resultado : IResultado
     {
-        public Retorno() => Mensagens = new List<Mensagem>();
-        public Retorno(params Mensagem[] mensagens) => Mensagens = mensagens.ToList();
-        public Retorno(IEnumerable<Mensagem> mensagens) => Mensagens = mensagens.ToList();
+        public Resultado() => Mensagens = new List<Mensagem>();
+        public Resultado(params Mensagem[] mensagens) => Mensagens = mensagens.ToList();
+        public Resultado(IEnumerable<Mensagem> mensagens) => Mensagens = mensagens.ToList();
 
         public IList<Mensagem> Mensagens { get; }
         public bool Sucesso => !Mensagens.Any(_ => _.Tipo == TipoMensagem.Erro);
 
-        public IRetorno AdicionarErro(string erro)
+        public IResultado AdicionarErro(string erro)
         {
             Mensagens.Add(new Mensagem(TipoMensagem.Erro, erro));
             return this;
         }
-        public IRetorno AdicionarInformacao(string informacao)
+        public IResultado AdicionarInformacao(string informacao)
         {
             Mensagens.Add(new Mensagem(TipoMensagem.Informacao, informacao));
             return this;
@@ -33,7 +31,7 @@ namespace Lopes.Acesso.Commons
         }
     }
 
-    public class Retorno<T> : Retorno, IRetorno<T>
+    public class Retorno<T> : Resultado, IResultado<T>
     {
         public Retorno()
         {
@@ -47,7 +45,7 @@ namespace Lopes.Acesso.Commons
         public T Dado { get; private set; }
 
 
-        public IRetorno<T> AdicionarDado(T caminhoArquivo)
+        public IResultado<T> AdicionarDado(T caminhoArquivo)
         {
             Dado = caminhoArquivo;
             return this;

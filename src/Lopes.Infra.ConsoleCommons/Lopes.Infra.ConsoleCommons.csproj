@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Goblinfactory.Konsole" Version="6.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

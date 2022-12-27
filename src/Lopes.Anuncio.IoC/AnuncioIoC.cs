@@ -23,14 +23,18 @@ using Lopes.Acesso.App.Services;
 using Lopes.Acesso.Dados.DadosServices;
 using Lopes.Acesso.Application;
 using Lopes.Acesso.Dados;
+using Lopes.Acesso.IoC;
 
-namespace Lopes.Acesso.IoC
+namespace Lopes.Anuncio.IoC
 {
-    public class ConfiguracaoServicos
+    /// <summary>
+    /// Configurações para as dependências relacionadas ao domínio de Anúncios
+    /// </summary>
+    public class AnuncioIoC
     {
         public static IServiceCollection ConfigurarServicos<TLogger>(IConfiguration configuration = null, IServiceCollection services = null) where TLogger : class, ILogger
         {
-            return new ConfiguracaoServicos().Configurar<TLogger>(configuration, services);
+            return new AnuncioIoC().Configurar<TLogger>(configuration, services);
         }
 
         public virtual IServiceCollection Configurar<TLogger>(IConfiguration configuration = null, IServiceCollection services = null) where TLogger : class, ILogger
