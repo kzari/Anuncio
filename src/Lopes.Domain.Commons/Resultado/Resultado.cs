@@ -1,5 +1,29 @@
 ﻿namespace Lopes.Domain.Commons
 {
+    public class Falha<T> : Resultado<T>
+    {
+        public Falha(string erro) : base()
+        {
+            AdicionarErro(erro);
+        }
+    }
+    public class Falha : Resultado
+    {
+        public Falha(string erro) :base(new Mensagem(TipoMensagem.Erro, erro))
+        {
+        }
+    }
+
+    public class Sucesso<T> : Resultado<T>
+    {
+        public Sucesso(T dado) : base(dado)
+        {
+        }
+    }
+    public class Sucesso : Resultado
+    {
+    }
+
     public class Resultado : IResultado
     {
         public Resultado() => Mensagens = new List<Mensagem>();
@@ -8,6 +32,7 @@
 
         public IList<Mensagem> Mensagens { get; }
         public bool Sucesso => !Mensagens.Any(_ => _.Tipo == TipoMensagem.Erro);
+
 
         public IResultado AdicionarErro(string erro)
         {
@@ -29,15 +54,18 @@
                 ? string.Join(separador, erros.ToArray())
                 : string.Empty;
         }
+
+        public static Falha ComErro(string erro) => new Falha(erro);
+        public static Sucesso ComSucesso => new Sucesso();
     }
 
-    public class Retorno<T> : Resultado, IResultado<T>
+    public class Resultado<T> : Resultado, IResultado<T>
     {
-        public Retorno()
+        public Resultado()
         {
         }
 
-        public Retorno(T dado)
+        public Resultado(T dado)
         {
             Dado = dado;
         }
@@ -50,5 +78,13 @@
             Dado = caminhoArquivo;
             return this;
         }
+        public new IResultado<T> AdicionarErro(string erro)
+        {
+            Mensagens.Add(new Mensagem(TipoMensagem.Erro, erro));
+            return this;
+        }
+
+        public new static Falha<T> ComErro(string mensagem) => new Falha<T>(mensagem);
+        public new static Sucesso<T> ComSucesso(T dado) => new Sucesso<T>(dado);
     }
 }

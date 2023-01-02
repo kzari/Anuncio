@@ -1,4 +1,9 @@
-﻿using Lopes.Botmaker.Application.Services;
+﻿using Lopes.Anuncio.Dados.Leitura.Context;
+using Lopes.Anuncio.Dados.Leitura.DadosService;
+using Lopes.Botmaker.Application.DadosServices;
+using Lopes.Botmaker.Application.Services;
+using Lopes.Domain.Commons;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,29 +14,26 @@ namespace Lopes.Botmaker.IoC
         public IConfiguration Configuration { get; private set; }
         public IServiceProvider ServiceProvider { get; private set; }
 
-        public BotmakerIoC Build()
+        public BotmakerIoC Build<TLogger>() where TLogger : class, ILogger
         {
             Configuration = BuildConfiguration();
-            IServiceCollection services = ConfigurarServicos(Configuration);
+            IServiceCollection services = ConfigurarServicos<TLogger>(Configuration);
             ServiceProvider = services.BuildServiceProvider(validateScopes: true);
 
             return this;
         }
 
-        public IServiceScope CriarEscopo()
-        {
-            return ServiceProvider.CreateScope();
-        }
+        public IServiceScope CriarEscopo() => ServiceProvider.CreateScope();
 
-        private IServiceCollection ConfigurarServicos(IConfiguration configuration, IServiceCollection services = null)
+        private IServiceCollection ConfigurarServicos<TLogger>(IConfiguration configuration, IServiceCollection services = null) where TLogger : class, ILogger
         {
             Configuration = configuration;
             services ??= new ServiceCollection();
 
             RegistrarIConfiguration(services, configuration);
             //RegistrarCache(services);
-            //RegistrarLog<TLogger>(services);
-            //RegistrarDadosServices(services);
+            RegistrarLog<TLogger>(services);
+            RegistrarDadosServices(services, configuration);
             //RegistrarRepositorios(services);
             RegistrarAppServices(services);
             //RegistrarDbContexts(services, configuration);
@@ -44,6 +46,11 @@ namespace Lopes.Botmaker.IoC
             return services;
         }
 
+        private void RegistrarDadosServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<UsuarioLeituraContext>(_ => _.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
+        }
+
         private void RegistrarAppServices(IServiceCollection services)
         {
             string api = Configuration["Botmaker.Api"];
@@ -51,6 +58,7 @@ namespace Lopes.Botmaker.IoC
             services.AddSingleton<IBotmakerApiService>(new BotmakerApiService(token, api));
 
             services.AddScoped<IIntegracaoAppService, IntegracaoAppService>();
+            services.AddScoped<IIntegracaoBotmakerDadosService, IntegracaoBotmakerDadosService>();
         }
 
         private static IConfigurationRoot BuildConfiguration()
@@ -61,6 +69,10 @@ namespace Lopes.Botmaker.IoC
         private static void RegistrarIConfiguration(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton(configuration);
+        }
+        protected virtual void RegistrarLog<TLogger>(IServiceCollection services) where TLogger : class, ILogger
+        {
+            services.AddSingleton<ILogger, TLogger>();
         }
     }
 }

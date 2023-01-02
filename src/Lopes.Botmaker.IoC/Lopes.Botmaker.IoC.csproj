@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Lopes.Botmaker.Application\Lopes.Botmaker.Application.csproj" />
     <ProjectReference Include="..\Lopes.Domain.Commons\Lopes.Domain.Commons.csproj" />
     <ProjectReference Include="..\Lopes.Infra.ConsoleCommons\Lopes.Infra.ConsoleCommons.csproj" />
+    <ProjectReference Include="..\Lopes.Usuarios.Dados.Leitura\Lopes.Usuarios.Dados.Leitura.csproj" />
   </ItemGroup>
 
 </Project>

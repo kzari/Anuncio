@@ -7,6 +7,8 @@ namespace Lopes.Botmaker.Application.Services
     {
         string Token { get; }
 
+        IResultado AtualizarUsuarioChatbox(BotmakerInserirAtualizarUsuario item);
         IResultado<IEnumerable<UsuarioBotmakerApi>> ObterUsuariosNaBotmaker();
+        IResultado RemoverUsuarioChatbox(string email);
     }
 }

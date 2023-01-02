@@ -59,17 +59,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.Jobs.Web", "src\Lopes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.Jobs.Api", "src\Lopes.Jobs.Api\Lopes.Jobs.Api.csproj", "{37B245B9-8279-46F7-BA14-E2CE7E37D070}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.Botmaker.ConsoleTestes", "src\Lopes.Botmaker.ConsoleTestes\Lopes.Botmaker.ConsoleTestes.csproj", "{5C9D5C2C-B301-4EB9-BD98-2C7CE2F48108}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.Botmaker.ConsoleTestes", "src\Lopes.Botmaker.ConsoleTestes\Lopes.Botmaker.ConsoleTestes.csproj", "{5C9D5C2C-B301-4EB9-BD98-2C7CE2F48108}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Botmaker", "Botmaker", "{502D7C87-8BB1-4F42-8042-C52069DF38B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.Botmaker.IoC", "src\Lopes.Botmaker.IoC\Lopes.Botmaker.IoC.csproj", "{6DE50B8F-7E76-4ACB-B288-69482BDECB7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.Botmaker.IoC", "src\Lopes.Botmaker.IoC\Lopes.Botmaker.IoC.csproj", "{6DE50B8F-7E76-4ACB-B288-69482BDECB7E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Botmaker", "Botmaker", "{87EA952F-9D38-4707-A320-2E738924646C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.Botmaker.Domain", "src\Lopes.Botmaker.Domain\Lopes.Botmaker.Domain.csproj", "{0CD1AB19-4428-40BD-B5CE-0549F241C202}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lopes.Botmaker.Application", "src\Lopes.Botmaker.Application\Lopes.Botmaker.Application.csproj", "{7A109D8D-7E76-4F86-82F9-15080289E724}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.Botmaker.Application", "src\Lopes.Botmaker.Application\Lopes.Botmaker.Application.csproj", "{7A109D8D-7E76-4F86-82F9-15080289E724}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lopes.Usuarios.Dados.Leitura", "src\Lopes.Usuarios.Dados.Leitura\Lopes.Usuarios.Dados.Leitura.csproj", "{3D468762-CEE0-4C4C-AEDE-7DDD6990AFB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Usuarios", "Usuarios", "{3E168E3B-F3D7-4951-BFA3-1414600D4197}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,14 +151,14 @@ Global
 		{6DE50B8F-7E76-4ACB-B288-69482BDECB7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DE50B8F-7E76-4ACB-B288-69482BDECB7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DE50B8F-7E76-4ACB-B288-69482BDECB7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0CD1AB19-4428-40BD-B5CE-0549F241C202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0CD1AB19-4428-40BD-B5CE-0549F241C202}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0CD1AB19-4428-40BD-B5CE-0549F241C202}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0CD1AB19-4428-40BD-B5CE-0549F241C202}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A109D8D-7E76-4F86-82F9-15080289E724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A109D8D-7E76-4F86-82F9-15080289E724}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A109D8D-7E76-4F86-82F9-15080289E724}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A109D8D-7E76-4F86-82F9-15080289E724}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D468762-CEE0-4C4C-AEDE-7DDD6990AFB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D468762-CEE0-4C4C-AEDE-7DDD6990AFB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D468762-CEE0-4C4C-AEDE-7DDD6990AFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D468762-CEE0-4C4C-AEDE-7DDD6990AFB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -188,8 +190,9 @@ Global
 		{502D7C87-8BB1-4F42-8042-C52069DF38B9} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
 		{6DE50B8F-7E76-4ACB-B288-69482BDECB7E} = {502D7C87-8BB1-4F42-8042-C52069DF38B9}
 		{87EA952F-9D38-4707-A320-2E738924646C} = {BA4C73B5-5886-4BC0-9201-B60297E8FA07}
-		{0CD1AB19-4428-40BD-B5CE-0549F241C202} = {87EA952F-9D38-4707-A320-2E738924646C}
 		{7A109D8D-7E76-4F86-82F9-15080289E724} = {87EA952F-9D38-4707-A320-2E738924646C}
+		{3D468762-CEE0-4C4C-AEDE-7DDD6990AFB3} = {3E168E3B-F3D7-4951-BFA3-1414600D4197}
+		{3E168E3B-F3D7-4951-BFA3-1414600D4197} = {D5BF7E78-BFEE-40C8-8998-2FFC84424A6B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD9DC786-D91E-4431-BAAD-4D4C00C5C2B1}
