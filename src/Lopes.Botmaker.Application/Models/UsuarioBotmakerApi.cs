@@ -1,5 +1,8 @@
 ﻿namespace Lopes.Botmaker.Application.Models
 {
+    /// <summary>
+    /// Dados do usuário na Botmaker
+    /// </summary>
     public class UsuarioBotmakerApi
     {
         public DateTime? lastModificationDate { get; set; }

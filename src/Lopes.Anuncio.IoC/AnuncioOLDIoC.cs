@@ -3,12 +3,16 @@ using Lopes.Anuncio.Application.Services;
 using Lopes.Anuncio.Domain.Reposities;
 using Lopes.Anuncio.Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Lopes.Domain.Commons;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using MediatR;
 using System.Reflection;
 using Lopes.Anuncio.Domain.Handlers;
 using Lopes.Anuncio.Domain.Commands.Responses;
 using Lopes.Anuncio.Domain.Commands.Requests;
+using Lopes.Domain.Commons.Cache;
+using Lopes.Acesso.MemoryCache;
 using Lopes.Anuncio.Dados.Leitura.Context;
 using Lopes.Anuncio.Dados.Leitura.DadosService;
 using Lopes.Anuncio.Application.DadosService;
@@ -20,22 +24,27 @@ using Lopes.Acesso.Dados.DadosServices;
 using Lopes.Acesso.Application;
 using Lopes.Acesso.Dados;
 using Lopes.Acesso.IoC;
-using Lopes.Domain.Common.IoC;
-using Lopes.Infra.Commons;
 
 namespace Lopes.Anuncio.IoC
 {
     /// <summary>
     /// Configurações para as dependências relacionadas ao domínio de Anúncios
     /// </summary>
-    public class AnuncioIoC : BaseIoC, IBaseIoC
+    public class AnuncioOLDIoC
     {
-        public AnuncioIoC(TipoBaseDados tipoBaseDados) : base(tipoBaseDados)
+        public static IServiceCollection ConfigurarServicos<TLogger>(IConfiguration configuration = null, IServiceCollection services = null) where TLogger : class, ILogger
         {
+            return new AnuncioOLDIoC().Configurar<TLogger>(configuration, services);
         }
 
-        public void ConfigurarServicos(IServiceCollection services, IConfiguration configuration)
+        public virtual IServiceCollection Configurar<TLogger>(IConfiguration configuration = null, IServiceCollection services = null) where TLogger : class, ILogger
         {
+            services ??= new ServiceCollection();
+
+            configuration = RegistrarIConfiguration(services, configuration);
+
+            RegistrarCache(services);
+            RegistrarLog<TLogger>(services);
             RegistrarDadosServices(services);
             RegistrarRepositorios(services);
             RegistrarAppServices(services);
@@ -45,6 +54,22 @@ namespace Lopes.Anuncio.IoC
             RegistrarHandlers(services);
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
+
+            return services;
+        }
+
+
+        protected virtual void RegistrarCache(IServiceCollection services)
+        {
+            services.AddMemoryCache();
+            services.AddSingleton<ICacheService, MemoryCacheService>();
+        }
+
+        protected virtual IConfiguration RegistrarIConfiguration(IServiceCollection services, IConfiguration configuration = null)
+        {
+            configuration ??= new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            services.AddSingleton<IConfiguration>(configuration);
+            return configuration;
         }
 
         protected virtual void RegistrarFabricas(IServiceCollection services)
@@ -61,19 +86,18 @@ namespace Lopes.Anuncio.IoC
 
         protected virtual void RegistrarDbContexts(IServiceCollection services, IConfiguration configuration)
         {
-            RegistrarContextoEF<DbLopesnetContext>(services, configuration, "DbLopesnet");
-            //services.AddDbContext<DbLopesnetContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
+            services.AddDbContext<DbLopesnetContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
+            services.AddDbContext<DbProdutoContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")), ServiceLifetime.Transient);
 
-            RegistrarContextoEF<DbProdutoContext>(services, configuration, "DbProduto");
-            //services.AddDbContext<DbProdutoContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")), ServiceLifetime.Transient);
+            services.AddDbContext<DbLopesnetLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
+            services.AddDbContext<DbProdutoLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")), ServiceLifetime.Transient);
 
-            RegistrarContextoEF<DbLopesnetLeituraContext>(services, configuration, "DbLopesnet");
-            //services.AddDbContext<DbLopesnetLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
-            RegistrarContextoEF<DbProdutoLeituraContext>(services, configuration, "DbProduto");
-            //services.AddDbContext<DbProdutoLeituraContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbProduto")), ServiceLifetime.Transient);
+            services.AddDbContext<AcessoDadosContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
+        }
 
-            RegistrarContextoEF<AcessoDadosContext>(services, configuration, "DbLopesnet");
-            //services.AddDbContext<AcessoDadosContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbLopesnet")), ServiceLifetime.Transient);
+        protected virtual void RegistrarLog<TLogger>(IServiceCollection services)  where TLogger : class, ILogger
+        {
+            services.AddSingleton<ILogger, TLogger>();
         }
 
         protected virtual void RegistrarDomainServices(IServiceCollection services)

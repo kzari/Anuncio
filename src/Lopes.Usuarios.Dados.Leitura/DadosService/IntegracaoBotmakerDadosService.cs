@@ -15,9 +15,9 @@ namespace Lopes.Anuncio.Dados.Leitura.DadosService
         }
 
 
-        public IEnumerable<UsuarioIntegracaoBotmakerDTO> ObterUsuariosIntegracao(params int[] idsEmpresas) => ObterUsuariosIntegracao(new string[] { }, idsEmpresas);
+        public IEnumerable<DadosUsuarioDTO> ObterUsuariosIntegracao(params int[] idsEmpresas) => ObterUsuariosIntegracao(new string[] { }, idsEmpresas);
 
-        public IEnumerable<UsuarioIntegracaoBotmakerDTO> ObterUsuariosIntegracao(string[] emails, params int[] idsEmpresas)
+        public IEnumerable<DadosUsuarioDTO> ObterUsuariosIntegracao(string[] emails, params int[] idsEmpresas)
         {
             string idEmpresasParametro = idsEmpresas != null && idsEmpresas.Any() ? string.Join(",", idsEmpresas) : string.Empty;
             string emailsParametro = emails != null && emails.Any() ? string.Join(",", emails) : string.Empty;

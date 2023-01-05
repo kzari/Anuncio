@@ -6,14 +6,17 @@ namespace Lopes.Jobs.Web.Log
     {
         public void Debug(string message)
         {
+            Console.WriteLine(message);
         }
 
         public void Error(string message)
         {
+            Console.WriteLine(message);
         }
 
         public void Info(string message)
         {
+            Console.WriteLine(message);
         }
 
         public IProgresso ObterProgresso(int valorMaximo, int tamanhoTexto, string textoInicial = null, string caractereSubstituicao = "[contador]")

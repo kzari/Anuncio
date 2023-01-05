@@ -1,7 +1,11 @@
 using Lopes.Acesso.Application;
-using Lopes.Acesso.IoC;
+using Lopes.Acesso.MemoryCache;
+using Lopes.Anuncio.IoC;
+using Lopes.Botmaker.IoC;
+using Lopes.Domain.Common.IoC;
+using Lopes.Domain.Commons.Cache;
+using Lopes.Infra.Common;
 using Lopes.Jobs.Web.Log;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Text;
@@ -12,16 +16,19 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.json")
     .Build();
 
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-ConfiguracaoServicos.ConfigurarServicos<Log>(configuration, builder.Services);
+
+var ioc = new IoC(new BotmakerIoC(TipoBaseDados.Producao),
+                  new AnuncioIoC(TipoBaseDados.Hml));
+ioc.Configurar<Log>(configuration, builder.Services);
+
+ioc.ServiceCollection.AddMemoryCache();
+ioc.ServiceCollection.AddSingleton<ICacheService, MemoryCacheService>();
 
 ConfigurarAutenticacao(builder);
-
-
 
 WebApplication app = builder.Build();
 

@@ -17,7 +17,7 @@ namespace Lopes.ConsoleTestes.Testes.Anuncio
         public static IServiceProvider ObterServiceProvider() => ObterServiceProvider(ObterConfiguration());
         public static IServiceProvider ObterServiceProvider(IConfiguration configuration)
         {
-            IServiceCollection services = AnuncioIoC.ConfigurarServicos<ConsoleLogger>(configuration);
+            IServiceCollection services = AnuncioOLDIoC.ConfigurarServicos<ConsoleLogger>(configuration);
             return services.BuildServiceProvider(validateScopes: true);
         }
         public static IServiceScope CriarEscopo()

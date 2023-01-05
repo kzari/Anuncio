@@ -1,6 +1,9 @@
 ﻿namespace Lopes.Botmaker.Application.Models
 {
-    public class UsuarioIntegracaoBotmakerDTO
+    /// <summary>
+    /// Dados do usuário para integração na Botmaker
+    /// </summary>
+    public class DadosUsuarioDTO
     {
         public int CdPessoa { get; set; }
         public string Nome { get; set; }

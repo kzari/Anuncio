@@ -9,14 +9,14 @@ namespace Lopes.Anuncio.Dados.Leitura.Context
         {
         }
 
-        public DbSet<UsuarioIntegracaoBotmakerDTO> UsuariosIntegracaoBotmaker { get; set; }
+        public DbSet<DadosUsuarioDTO> UsuariosIntegracaoBotmaker { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<UsuarioIntegracaoBotmakerDTO>().HasNoKey();
+            builder.Entity<DadosUsuarioDTO>().HasNoKey();
         }
     }
 }

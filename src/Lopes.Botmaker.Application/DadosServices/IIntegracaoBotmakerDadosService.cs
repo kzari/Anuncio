@@ -4,7 +4,7 @@ namespace Lopes.Botmaker.Application.DadosServices
 {
     public interface IIntegracaoBotmakerDadosService
     {
-        IEnumerable<UsuarioIntegracaoBotmakerDTO> ObterUsuariosIntegracao(params int[] idsEmpresas);
-        IEnumerable<UsuarioIntegracaoBotmakerDTO> ObterUsuariosIntegracao(string[] emails, params int[] idsEmpresas);
+        IEnumerable<DadosUsuarioDTO> ObterUsuariosIntegracao(params int[] idsEmpresas);
+        IEnumerable<DadosUsuarioDTO> ObterUsuariosIntegracao(string[] emails, params int[] idsEmpresas);
     }
 }

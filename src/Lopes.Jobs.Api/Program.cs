@@ -2,11 +2,15 @@ using Hangfire;
 using Hangfire.Console;
 using Lopes.Jobs.Api;
 using Lopes.Jobs.Api.Log;
-using Lopes.Acesso.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Lopes.Acesso.Application;
+using Lopes.Infra.Common;
+using Lopes.Anuncio.IoC;
+using Lopes.Domain.Common.IoC;
+using Lopes.Domain.Commons.Cache;
+using Lopes.Acesso.MemoryCache;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +29,10 @@ builder.Services.AddHangfire(x =>
 });
 builder.Services.AddHangfireServer();
 
-ConfiguracaoServicos.ConfigurarServicos<HangFireLog>(configuration, builder.Services);
+var ioc = IoC.ConfigurarServicos<HangFireLog>(new AnuncioIoC(TipoBaseDados.Hml), configuration, builder.Services);
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
 
 //builder.Services.AddTransient<ITokenService, JwtTokenService>();
 

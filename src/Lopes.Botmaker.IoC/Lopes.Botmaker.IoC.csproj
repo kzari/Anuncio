@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
@@ -16,7 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Lopes.Botmaker.Application\Lopes.Botmaker.Application.csproj" />
     <ProjectReference Include="..\Lopes.Domain.Commons\Lopes.Domain.Commons.csproj" />
+    <ProjectReference Include="..\Lopes.Infra.Commons\Lopes.Infra.Commons.csproj" />
     <ProjectReference Include="..\Lopes.Infra.ConsoleCommons\Lopes.Infra.ConsoleCommons.csproj" />
+    <ProjectReference Include="..\Lopes.Infra.MemoryCache\Lopes.Infra.MemoryCache.csproj" />
     <ProjectReference Include="..\Lopes.Usuarios.Dados.Leitura\Lopes.Usuarios.Dados.Leitura.csproj" />
   </ItemGroup>
 

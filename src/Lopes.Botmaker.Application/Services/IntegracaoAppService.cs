@@ -21,13 +21,51 @@ namespace Lopes.Botmaker.Application.Services
             _dados = dados;
         }
 
+
+        public IEnumerable<UsuarioIntegracao> ObterUsuarios()
+        {
+            IResultado<IEnumerable<UsuarioBotmakerApi>> resultUsuariosBotmaker = _botmakerApi.ObterUsuariosNaBotmaker();
+            if (resultUsuariosBotmaker.Falha)
+                throw new Exception($"Ocorreu um erro ao obter os usuários na API da Botmaker: {resultUsuariosBotmaker.ErrosConcatenados()}");
+
+            List<UsuarioBotmakerApi> usuariosBotmaker = resultUsuariosBotmaker.Dado.Where(_ => _.extraValues != null && !string.IsNullOrEmpty(_.extraValues.CpfCorretor))
+                                                                                   .ToList();
+
+            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = _dados.ObterUsuariosIntegracao().ToList();
+
+            List<UsuarioIntegracao> usuarios = new List<UsuarioIntegracao>();
+            List<string> emails = new List<string>();
+            foreach (DadosUsuarioDTO usuario in usuariosParaIntegrar)
+            {
+                UsuarioBotmakerApi usuarioBotmaker = usuariosBotmaker.FirstOrDefault(_ => _.extraValues?.CpfCorretor != null && _.email == usuario.Email);
+                if (usuarioBotmaker == null)
+                {
+                    usuarios.Add(new UsuarioIntegracao(usuario));
+                }
+                else
+                {
+                    usuarios.Add(new UsuarioIntegracao(usuario, usuarioBotmaker));
+                }
+            }
+
+            //Adicionando usuários para excluir
+            foreach (UsuarioBotmakerApi usuarioBotmaker in usuariosBotmaker)
+            {
+                if (!usuarios.Any(_ => _.UsuarioBotmaker != null && _.UsuarioBotmaker.email == usuarioBotmaker.email))
+                    usuarios.Add(new UsuarioIntegracao(usuarioBotmaker));
+            }
+
+            return usuarios;
+        }
+
+
         public void IntegrarTudo()
         {
             IEnumerable<UsuarioBotmakerApi> usuariosBotmaker = ObterUsuariosNaBotmaker();
 
             RemoverUsuariosDuplicados(ref usuariosBotmaker);
 
-            IEnumerable<UsuarioIntegracaoBotmakerDTO> usuariosParaIntegrar = _dados.ObterUsuariosIntegracao().ToList();
+            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = _dados.ObterUsuariosIntegracao().ToList();
 
             IncluirAtualizarUsuarios(usuariosBotmaker, usuariosParaIntegrar, removerAntesDeIncluir: false);
 
@@ -54,22 +92,22 @@ namespace Lopes.Botmaker.Application.Services
             Info($"{usuariosBotmaker.Count()} usuários na Botmaker.");
 
             int qtdeAntes = usuariosBotmaker.Count;
-            //BotmakerApi.FiltrarUsuarios(ref usuariosBotmaker, emails: emails, cpfs: cpfs, nomes: nomes);
+            BotmakerApiService.FiltrarUsuarios(ref usuariosBotmaker, emails: emails, cpfs: cpfs, nomes: nomes);
 
-            //if (qtdeAntes > usuariosBotmaker.Count)
-            //    Info($"Usuários no Botmaker filtrados para {usuariosBotmaker.Count}.");
+            if (qtdeAntes > usuariosBotmaker.Count)
+                Info($"Usuários no Botmaker filtrados para {usuariosBotmaker.Count}.");
 
             return usuariosBotmaker;
         }
 
 
-        private IResultadoItens IncluirAtualizarUsuarios(IEnumerable<UsuarioBotmakerApi> usuariosBotmaker, IEnumerable<UsuarioIntegracaoBotmakerDTO> usuariosParaIntegrar, bool removerAntesDeIncluir)
+        private IResultadoItens IncluirAtualizarUsuarios(IEnumerable<UsuarioBotmakerApi> usuariosBotmaker, IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar, bool removerAntesDeIncluir)
         {
             Info("Inserindo/Atualizando usuários");
 
             Info($"{usuariosParaIntegrar.Count()} usuários encontrados para serem intregrados.");
 
-            List<UsuarioIntegracaoBotmakerDTO> usuariosInserirAtualizar = ObterUsuariosInserirAtualizar(usuariosParaIntegrar, usuariosBotmaker).ToList();
+            List<DadosUsuarioDTO> usuariosInserirAtualizar = ObterUsuariosInserirAtualizar(usuariosParaIntegrar, usuariosBotmaker).ToList();
 
             VerificarUsuariosParaIntegracaoDuplicados(usuariosInserirAtualizar);
 
@@ -89,9 +127,9 @@ namespace Lopes.Botmaker.Application.Services
         /// <param name="usuarios"></param>
         /// <param name="usuariosBotmaker"></param>
         /// <returns></returns>
-        private IEnumerable<UsuarioIntegracaoBotmakerDTO> ObterUsuariosInserirAtualizar(IEnumerable<UsuarioIntegracaoBotmakerDTO> usuarios, IEnumerable<UsuarioBotmakerApi> usuariosBotmaker)
+        private IEnumerable<DadosUsuarioDTO> ObterUsuariosInserirAtualizar(IEnumerable<DadosUsuarioDTO> usuarios, IEnumerable<UsuarioBotmakerApi> usuariosBotmaker)
         {
-            foreach (UsuarioIntegracaoBotmakerDTO usuario in usuarios)
+            foreach (DadosUsuarioDTO usuario in usuarios)
             {
                 UsuarioBotmakerApi usuarioBotmaker = usuariosBotmaker.FirstOrDefault(_ => _.extraValues?.CpfCorretor != null && _.email == usuario.Email);
                 if (usuarioBotmaker == null)
@@ -112,14 +150,13 @@ namespace Lopes.Botmaker.Application.Services
             }
         }
 
-
         /// <summary>
         /// Retorna as diferenças entre o usuário da Botmaker e do usuário para integrar
         /// </summary>
         /// <param name="usuarioInserirAtualizar">Usuário para integrar</param>
         /// <param name="usuarioBotmaker">Usuário na botmaker</param>
         /// <returns></returns>
-        private static IEnumerable<string> UsuarioAlterado(UsuarioIntegracaoBotmakerDTO usuarioInserirAtualizar, UsuarioBotmakerApi usuarioBotmaker)
+        private static IEnumerable<string> UsuarioAlterado(DadosUsuarioDTO usuarioInserirAtualizar, UsuarioBotmakerApi usuarioBotmaker)
         {
             IList<string> alteracoes = new List<string>();
 
@@ -144,8 +181,7 @@ namespace Lopes.Botmaker.Application.Services
             return alteracoes;
         }
 
-
-        private string[] VerificarUsuariosParaIntegracaoDuplicados(List<UsuarioIntegracaoBotmakerDTO> usuariosInserirAtualizar)
+        private string[] VerificarUsuariosParaIntegracaoDuplicados(List<DadosUsuarioDTO> usuariosInserirAtualizar)
         {
             List<string> agrupado = usuariosInserirAtualizar.GroupBy(_ => _.Email)
                                                             .Where(_ => _.Count() > 1)
@@ -153,7 +189,7 @@ namespace Lopes.Botmaker.Application.Services
                                                             .ToList();
             if (agrupado.Any())
             {
-                _logger.Warn($"--- {agrupado.Count()} usuários duplicados (verificar procedure): {string.Join(" | ", agrupado)}");
+                _logger.Warn($"--- {agrupado.Count} usuários duplicados (verificar procedure): {string.Join(" | ", agrupado)}");
             }
 
             return agrupado.ToArray();
@@ -182,9 +218,9 @@ namespace Lopes.Botmaker.Application.Services
         /// <summary>
         /// Atualiza/Insere as informações dos usuários na Botmaker
         /// </summary>
-        public IResultadoItens InserirAtualizarUsuarios(IEnumerable<UsuarioIntegracaoBotmakerDTO> usuarios, bool removerAntesDeIncluir)
+        public IResultadoItens InserirAtualizarUsuarios(IEnumerable<DadosUsuarioDTO> usuarios, bool removerAntesDeIncluir)
         {
-            IList<IEnumerator<UsuarioIntegracaoBotmakerDTO>> partitions = GetListPartitions(usuarios);
+            IList<IEnumerator<DadosUsuarioDTO>> partitions = GetListPartitions(usuarios);
 
             int partitionIds = 0;
             int i = 0;
@@ -197,7 +233,7 @@ namespace Lopes.Botmaker.Application.Services
                 using (partition)
                     while (partition.MoveNext())
                     {
-                        UsuarioIntegracaoBotmakerDTO current = partition.Current;
+                        DadosUsuarioDTO current = partition.Current;
                         var model = new BotmakerInserirAtualizarUsuario(cpf: current.CPF,
                                                                         email: current.Email,
                                                                         nome: current.Nome,

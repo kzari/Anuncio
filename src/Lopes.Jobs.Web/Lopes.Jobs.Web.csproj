@@ -13,6 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Lopes.Acesso.Application\Lopes.Acesso.Application.csproj" />
     <ProjectReference Include="..\Lopes.Anuncio.IoC\Lopes.Anuncio.IoC.csproj" />
+    <ProjectReference Include="..\Lopes.Botmaker.Application\Lopes.Botmaker.Application.csproj" />
+    <ProjectReference Include="..\Lopes.Botmaker.IoC\Lopes.Botmaker.IoC.csproj" />
   </ItemGroup>
 
 </Project>
