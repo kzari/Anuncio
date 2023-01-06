@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lopes.Botmaker.IoC
 {
-    public class BotmakerIoC : BaseIoC, IBaseIoC
+    public class BotmakerIoC : ConfiguracaoIoCBase, IConfiguracaoIoC
     {
         public BotmakerIoC(TipoBaseDados tipoBaseDados) : base(tipoBaseDados)
         {

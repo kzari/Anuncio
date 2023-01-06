@@ -28,7 +28,7 @@ namespace Lopes.Anuncio.IoC
     /// <summary>
     /// Configurações para as dependências relacionadas ao domínio de Anúncios
     /// </summary>
-    public class AnuncioIoC : BaseIoC, IBaseIoC
+    public class AnuncioIoC : ConfiguracaoIoCBase, IConfiguracaoIoC
     {
         public AnuncioIoC(TipoBaseDados tipoBaseDados) : base(tipoBaseDados)
         {

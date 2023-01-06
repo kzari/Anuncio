@@ -7,7 +7,7 @@ using Lopes.Domain.Commons.Cache;
 using Lopes.Infra.Common;
 using Microsoft.Extensions.DependencyInjection;
 
-IoC ioc = IoC.ConfigurarServicos<ConsoleLogger>(new BotmakerIoC(TipoBaseDados.Producao));
+ConfiguradorIoC ioc = ConfiguradorIoC.ConfigurarServicos<ConsoleLogger>(new BotmakerIoC(TipoBaseDados.Producao));
 
 ioc.ServiceCollection.AddMemoryCache();
 ioc.ServiceCollection.AddSingleton<ICacheService, MemoryCacheService>();

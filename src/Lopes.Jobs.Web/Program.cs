@@ -21,7 +21,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-var ioc = new IoC(new BotmakerIoC(TipoBaseDados.Producao),
+var ioc = new ConfiguradorIoC(new BotmakerIoC(TipoBaseDados.Producao),
                   new AnuncioIoC(TipoBaseDados.Hml));
 ioc.Configurar<Log>(configuration, builder.Services);
 

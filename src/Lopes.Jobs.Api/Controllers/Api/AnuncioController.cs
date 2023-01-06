@@ -6,7 +6,6 @@ using Lopes.Anuncio.Application.Interfaces;
 using Lopes.Anuncio.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Lopes.Anuncio.Domain.Commands.Requests;
-using Hangfire.Storage;
 
 namespace Lopes.Jobs.Api.Controllers
 {
@@ -22,17 +21,6 @@ namespace Lopes.Jobs.Api.Controllers
         {
             _logger = logger;
             _service = service;
-        }
-
-        [HttpGet]
-        [Route("ObterStatusJob")]
-        public string ObterStatusJob(int idJob)
-        {
-            IStorageConnection connection = JobStorage.Current.GetConnection();
-            JobData jobData = connection.GetJobData(idJob.ToString());
-            string stateName = jobData.State;
-
-            return stateName;
         }
 
         [HttpGet]

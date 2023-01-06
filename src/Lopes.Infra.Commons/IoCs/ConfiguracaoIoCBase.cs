@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lopes.Infra.Commons
 {
-    public class BaseIoC
+    public class ConfiguracaoIoCBase
     {
-        public BaseIoC(TipoBaseDados tipoBaseDados)
+        public ConfiguracaoIoCBase(TipoBaseDados tipoBaseDados)
         {
             TipoBaseDados = tipoBaseDados;
         }
@@ -18,6 +18,7 @@ namespace Lopes.Infra.Commons
         public void RegistrarContextoEF<TDbContext>(IServiceCollection services, IConfiguration configuration, string chave) where TDbContext : DbContext
         {
             string stringConexao = ObterStringConexao(chave, configuration);
+            
             services.AddDbContext<TDbContext>(_ => _.UseSqlServer(stringConexao), ServiceLifetime.Transient);
         }
 
@@ -39,7 +40,12 @@ namespace Lopes.Infra.Commons
             }
 
             chave = $"{chave}_{complementoChave}";
-            return configuration.GetConnectionString(chave);
+            string stringConexao  = configuration.GetConnectionString(chave);
+
+            if (string.IsNullOrEmpty(stringConexao))
+                throw new Exception($"String de conexão com a chave '{chave}' não encontrada.");
+            
+            return stringConexao;
         }
     }
 }

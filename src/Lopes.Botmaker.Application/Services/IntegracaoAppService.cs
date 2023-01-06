@@ -9,7 +9,7 @@ namespace Lopes.Botmaker.Application.Services
     {
         private readonly IIntegracaoBotmakerDadosService _dados;
         private readonly IBotmakerApiService _botmakerApi;
-        private readonly ILogger _logger;
+        private ILogger _logger;
         private int _usuariosNovos = 0;
 
         public IntegracaoAppService(IBotmakerApiService botmakerApi,
@@ -59,8 +59,11 @@ namespace Lopes.Botmaker.Application.Services
         }
 
 
-        public void IntegrarTudo()
+        public void IntegrarTudo(ILogger? log = null)
         {
+            if (log != null)
+                _logger = log;
+
             IEnumerable<UsuarioBotmakerApi> usuariosBotmaker = ObterUsuariosNaBotmaker();
 
             RemoverUsuariosDuplicados(ref usuariosBotmaker);
@@ -111,7 +114,7 @@ namespace Lopes.Botmaker.Application.Services
 
             VerificarUsuariosParaIntegracaoDuplicados(usuariosInserirAtualizar);
 
-            Info($"{_usuariosNovos} usuários para inserir. {usuariosInserirAtualizar.Count() - _usuariosNovos} usuários para atualizar. Total: {usuariosInserirAtualizar.Count()}");
+            Info($"{_usuariosNovos} usuários para inserir. {usuariosInserirAtualizar.Count - _usuariosNovos} usuários para atualizar. Total: {usuariosInserirAtualizar.Count()}");
 
             IResultadoItens execItemsResult = InserirAtualizarUsuarios(usuariosInserirAtualizar, removerAntesDeIncluir: removerAntesDeIncluir);
 
@@ -160,22 +163,24 @@ namespace Lopes.Botmaker.Application.Services
         {
             IList<string> alteracoes = new List<string>();
 
-            if (usuarioInserirAtualizar.NomeSupervisor?.ToLower() != usuarioBotmaker.extraValues?.top_name?.ToLower())
+            static string TratarString(string? valor) => valor?.Trim().ToLower() ?? string.Empty;
+
+            if (TratarString(usuarioInserirAtualizar.NomeSupervisor) != TratarString(usuarioBotmaker.extraValues?.top_name))
                 alteracoes.Add($"Nome do Supervisor alterado de '{usuarioBotmaker.extraValues?.top_name?.ToLower() ?? ""}' para '{usuarioInserirAtualizar.NomeSupervisor ?? ""}'");
 
-            if (usuarioInserirAtualizar.Email.ToLower() != usuarioBotmaker.email.ToLower())
+            if (TratarString(usuarioInserirAtualizar.Email) != TratarString(usuarioBotmaker.email))
                 alteracoes.Add($"E-mail alterado de '{usuarioBotmaker.email.ToLower()}' para '{usuarioInserirAtualizar.Email}'");
 
-            if (usuarioInserirAtualizar.Nome?.ToUpper() != usuarioBotmaker.name?.ToUpper())
+            if (TratarString(usuarioInserirAtualizar.Nome) != TratarString(usuarioBotmaker.name))
                 alteracoes.Add($"Nome alterado de '{usuarioBotmaker.name ?? ""}' para '{usuarioInserirAtualizar.Nome ?? ""}'");
 
-            if (usuarioInserirAtualizar.Apelido?.ToUpper() != usuarioBotmaker.extraValues?.Apelido?.ToUpper())
+            if (TratarString(usuarioInserirAtualizar.Apelido) != TratarString(usuarioBotmaker.extraValues?.Apelido))
                 alteracoes.Add($"Nome alterado de '{usuarioBotmaker.extraValues?.Apelido ?? ""}' para '{usuarioInserirAtualizar.Apelido ?? ""}'");
 
-            if (usuarioInserirAtualizar.EmailDiretor?.ToUpper() != usuarioBotmaker.extraValues?.EmailDiretor?.ToUpper())
+            if (TratarString(usuarioInserirAtualizar.EmailDiretor) != TratarString(usuarioBotmaker.extraValues?.EmailDiretor))
                 alteracoes.Add($"E-mail do diretor alterado de '{usuarioBotmaker.extraValues?.EmailDiretor ?? ""}' para '{usuarioInserirAtualizar.EmailDiretor ?? ""}'");
 
-            if (usuarioInserirAtualizar.EmailSupervisor?.ToUpper() != usuarioBotmaker.extraValues?.EmailSupervisor?.ToUpper())
+            if (TratarString(usuarioInserirAtualizar.EmailSupervisor) != TratarString(usuarioBotmaker.extraValues?.EmailSupervisor))
                 alteracoes.Add($"E-mail do Supervisor alterado de '{usuarioBotmaker.extraValues?.EmailSupervisor ?? ""}' para '{usuarioInserirAtualizar.EmailSupervisor ?? ""}'");
 
             return alteracoes;

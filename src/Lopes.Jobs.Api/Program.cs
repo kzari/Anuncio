@@ -11,6 +11,7 @@ using Lopes.Anuncio.IoC;
 using Lopes.Domain.Common.IoC;
 using Lopes.Domain.Commons.Cache;
 using Lopes.Acesso.MemoryCache;
+using Lopes.Botmaker.IoC;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +25,16 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
 //Hangfire
 builder.Services.AddHangfire(x =>
 {
-    x.UseSqlServerStorage(configuration.GetConnectionString("DbLopesnet"));
+    x.UseSqlServerStorage(configuration.GetConnectionString("DbLopesnet_HML"));
     x.UseConsole();
 });
 builder.Services.AddHangfireServer();
 
-var ioc = IoC.ConfigurarServicos<HangFireLog>(new AnuncioIoC(TipoBaseDados.Hml), configuration, builder.Services);
+var iocConfigs = new IConfiguracaoIoC[] { 
+    new AnuncioIoC(TipoBaseDados.Hml),
+    new BotmakerIoC(TipoBaseDados.Producao)
+};
+var ioc = ConfiguradorIoC.ConfigurarServicos<HangFireLog>(iocConfigs, configuration, builder.Services);
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
