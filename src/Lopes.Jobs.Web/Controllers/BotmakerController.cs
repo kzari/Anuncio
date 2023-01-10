@@ -1,17 +1,24 @@
 ﻿using Lopes.Botmaker.Application.Models;
 using Lopes.Botmaker.Application.Services;
 using Lopes.Domain.Commons;
+using Lopes.Jobs.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 
 namespace Lopes.Jobs.Web.Controllers;
 
 public class BotmakerController : Controller
 {
     private readonly IIntegracaoAppService _service;
+    private readonly IConfiguration _configuration;
+    private readonly ApiJobs _api;
 
-    public BotmakerController(IIntegracaoAppService service)
+    public BotmakerController(IIntegracaoAppService service,
+                              IConfiguration configuration)
     {
         _service = service;
+        _configuration = configuration;
+        _api = new ApiJobs();
     }
 
 
@@ -25,6 +32,12 @@ public class BotmakerController : Controller
     {
         IResultadoItens resultado = _service.EnviarUsuarios(new[] { email });
         return Json(resultado);
+    }
+    public IActionResult Integrar()
+    {
+        RestResponse response = _api.Botmaker.Integrar();
+
+        return Json(response.Content);
     }
 
 

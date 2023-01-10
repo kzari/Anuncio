@@ -5,7 +5,6 @@ using Lopes.Jobs.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
 using System.Diagnostics;
-using System.Text.Json.Serialization;
 
 namespace Lopes.Jobs.Web.Controllers
 {
