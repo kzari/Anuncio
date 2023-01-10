@@ -22,7 +22,7 @@ builder.Services.AddControllersWithViews();
 
 
 var ioc = new ConfiguradorIoC(new BotmakerIoC(TipoBaseDados.Producao),
-                  new AnuncioIoC(TipoBaseDados.Hml));
+                              new AnuncioIoC(TipoBaseDados.Hml));
 ioc.Configurar<Log>(configuration, builder.Services);
 
 ioc.ServiceCollection.AddMemoryCache();

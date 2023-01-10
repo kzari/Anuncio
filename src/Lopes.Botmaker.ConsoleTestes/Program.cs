@@ -16,7 +16,7 @@ using (IServiceScope scope = ioc.CriarEscopo())
 {
     var service = scope.ServiceProvider.GetService<IIntegracaoAppService>();
 
-    service.IntegrarTudo();
+    service.IntegrarUsuarios();
 
 }
 

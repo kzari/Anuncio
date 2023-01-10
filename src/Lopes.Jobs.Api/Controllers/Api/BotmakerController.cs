@@ -39,7 +39,7 @@ namespace Lopes.Jobs.Api.Controllers
         {
             var log = new HangFireLog(context);
 
-            _service.IntegrarTudo(log);
+            _service.IntegrarUsuarios(log);
         }
     }
 }

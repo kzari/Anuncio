@@ -1,6 +1,7 @@
 ﻿using Lopes.Botmaker.Application.DadosServices;
 using Lopes.Botmaker.Application.Models;
 using Lopes.Domain.Commons;
+using Lopes.Domain.Commons.Cache;
 using System.Collections.Concurrent;
 
 namespace Lopes.Botmaker.Application.Services
@@ -9,32 +10,120 @@ namespace Lopes.Botmaker.Application.Services
     {
         private readonly IIntegracaoBotmakerDadosService _dados;
         private readonly IBotmakerApiService _botmakerApi;
+        private readonly ICacheService _cache;
         private ILogger _logger;
-        private int _usuariosNovos = 0;
 
         public IntegracaoAppService(IBotmakerApiService botmakerApi,
                                     ILogger logger,
-                                    IIntegracaoBotmakerDadosService dados)
+                                    IIntegracaoBotmakerDadosService dados,
+                                    ICacheService cache)
         {
             _botmakerApi = botmakerApi;
             _logger = logger;
             _dados = dados;
+            _cache = cache;
         }
 
 
         public IEnumerable<UsuarioIntegracao> ObterUsuarios()
         {
-            IResultado<IEnumerable<UsuarioBotmakerApi>> resultUsuariosBotmaker = _botmakerApi.ObterUsuariosNaBotmaker();
-            if (resultUsuariosBotmaker.Falha)
-                throw new Exception($"Ocorreu um erro ao obter os usuários na API da Botmaker: {resultUsuariosBotmaker.ErrosConcatenados()}");
+            List<UsuarioBotmakerApi> usuariosBotmaker = ObterUsuariosBotmaker(null);
+            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = ObterUsuarioParaIntegracao(null);
+            return MontarUsuariosIntegracao(usuariosBotmaker, usuariosParaIntegrar);
+        }
+        public IEnumerable<UsuarioIntegracao> ObterUsuarios(TimeSpan duracaoCacheBotmaker, TimeSpan duracaoCacheBd)
+        {
+            List<UsuarioBotmakerApi> usuariosBotmaker = ObterUsuariosBotmaker(duracaoCacheBotmaker);
+            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = ObterUsuarioParaIntegracao(duracaoCacheBd);
+            return MontarUsuariosIntegracao(usuariosBotmaker, usuariosParaIntegrar);
+        }
 
-            List<UsuarioBotmakerApi> usuariosBotmaker = resultUsuariosBotmaker.Dado.Where(_ => _.extraValues != null && !string.IsNullOrEmpty(_.extraValues.CpfCorretor))
-                                                                                   .ToList();
+        public IResultadoItens IntegrarUsuarios(ILogger? log = null)
+        {
+            if (log != null)
+                _logger = log;
 
-            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = _dados.ObterUsuariosIntegracao().ToList();
+            List<UsuarioIntegracao> usuarios = ObterUsuarios().ToList();
 
+            RemoverUsuariosDuplicados(ref usuarios);
+
+            IResultadoItens resultado = InserirAtualizar(usuarios);
+            IResultadoItens resultadoExclusoes = RemoverUsuarios(usuarios);
+
+            return resultado.Add(resultadoExclusoes);
+        }
+
+        public IResultadoItens EnviarUsuarios(string[] emails)
+        {
+            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = _dados.ObterUsuariosIntegracao(emails).ToList();
+
+            return InserirAtualizarUsuarios(usuariosParaIntegrar, false);
+        }
+
+
+
+
+
+        private IResultadoItens RemoverUsuarios(List<UsuarioIntegracao> usuarios)
+        {
+            string[] emailUsuariosRemover = usuarios.Where(_ => _.Remover).Select(_ => _.Email).ToArray();
+            
+            _logger.Info($"Removendo da Botmaker {emailUsuariosRemover.Length} usuários.");
+            IResultadoItens resultadoExclusoes = RemoverUsuarios(emailUsuariosRemover);
+
+            _logger.Info($"{resultadoExclusoes.ItensSucesso} usuários removidos de {emailUsuariosRemover.Length}.");
+
+            return resultadoExclusoes;
+        }
+
+        private IResultadoItens InserirAtualizar(List<UsuarioIntegracao> usuarios)
+        {
+            List<UsuarioIntegracao> usuariosInserirAtualizar = usuarios.Where(_ => _.Novo || _.Atualizar).ToList();
+
+            _logger.Info($"{usuariosInserirAtualizar.Count(_ => _.Novo)} usuários para inserir. " +
+                         $"{usuariosInserirAtualizar.Count(_ => _.Atualizar)} usuários para atualizar. " +
+                         $"Total: {usuariosInserirAtualizar.Count}");
+
+            List<DadosUsuarioDTO> usuariosSistema = usuariosInserirAtualizar.Select(_ => _.UsuarioSistema).ToList();
+            VerificarUsuariosParaIntegracaoDuplicados(usuariosSistema);
+            IResultadoItens execItemsResult = InserirAtualizarUsuarios(usuariosSistema, removerAntesDeIncluir: false);
+
+            _logger.Info($"{execItemsResult.ItensSucesso} usuários inseridos/atualizados com sucesso. {execItemsResult.ItensErro} usuários com erro ({string.Join(",", execItemsResult.Erros)})");
+
+            return execItemsResult;
+        }
+
+        /// <summary>
+        /// Remove os usuários duplicados na Botmaker
+        /// </summary>
+        /// <param name="usuarios"></param>
+        private void RemoverUsuariosDuplicados(ref List<UsuarioIntegracao> usuarios)
+        {
+            string[] emailsUsuariosDuplicados = usuarios.Select(_ => _.UsuarioBotmaker)
+                                                        .Where(_ => _?.extraValues?.CpfCorretor != null)
+                                                        .GroupBy(_ => _.email)
+                                                        .Where(_ => _.Count() > 1)
+                                                        .Select(_ => _.Key)
+                                                        .ToArray();
+            if (!emailsUsuariosDuplicados.Any())
+            {
+                _logger.Info($"Nenhum usuário duplicado");
+            }
+            else
+            {
+                _logger.Info("Removendo usuários duplicados...");
+                RemoverUsuarios(emailsUsuariosDuplicados);
+            }
+
+            usuarios = usuarios.Where(_ => !emailsUsuariosDuplicados.Contains(_.UsuarioBotmaker?.email)).ToList();
+        }
+
+
+
+        private static List<UsuarioIntegracao> MontarUsuariosIntegracao(List<UsuarioBotmakerApi> usuariosBotmaker, IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar)
+        {
             List<UsuarioIntegracao> usuarios = new List<UsuarioIntegracao>();
-            List<string> emails = new List<string>();
+
             foreach (DadosUsuarioDTO usuario in usuariosParaIntegrar)
             {
                 UsuarioBotmakerApi usuarioBotmaker = usuariosBotmaker.FirstOrDefault(_ => _.extraValues?.CpfCorretor != null && _.email == usuario.Email);
@@ -58,133 +147,47 @@ namespace Lopes.Botmaker.Application.Services
             return usuarios;
         }
 
-
-        public void IntegrarTudo(ILogger? log = null)
+        private IEnumerable<DadosUsuarioDTO> ObterUsuarioParaIntegracao(TimeSpan? duracaoCacheBd = null)
         {
-            if (log != null)
-                _logger = log;
+            List<DadosUsuarioDTO> usuarios;
+            if (duracaoCacheBd.HasValue)
+            {
+                usuarios = _cache.Obter<List<DadosUsuarioDTO>>("UsuariosIntegracao");
+                if (usuarios != null)
+                    return usuarios;
+            }
 
-            IEnumerable<UsuarioBotmakerApi> usuariosBotmaker = ObterUsuariosNaBotmaker();
+            usuarios = _dados.ObterUsuariosIntegracao().ToList();
 
-            RemoverUsuariosDuplicados(ref usuariosBotmaker);
+            if (duracaoCacheBd.HasValue)
+                _cache.Gravar("UsuariosIntegracao", usuarios, duracaoCacheBd.Value);
 
-            IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar = _dados.ObterUsuariosIntegracao().ToList();
-
-            IncluirAtualizarUsuarios(usuariosBotmaker, usuariosParaIntegrar, removerAntesDeIncluir: false);
-
-            //RemoverUsuarios(usuariosBotmaker, usuariosParaIntegrar);
+            return usuarios;
         }
 
-
-        /// <summary>
-        /// Resgata as informações dos usuários que estão na Botmaker
-        /// </summary>
-        /// <param name="emails">Filtrar por e-mails</param>
-        /// <param name="cpfs">Filtrar por CPFs</param>
-        /// <param name="nomes">Filtrar por nomes</param>
-        /// <returns></returns>
-        private IEnumerable<UsuarioBotmakerApi> ObterUsuariosNaBotmaker(string[] emails = null, string[] cpfs = null, string[] nomes = null)
+        private List<UsuarioBotmakerApi> ObterUsuariosBotmaker(TimeSpan? duracaoCacheBotmaker = null)
         {
+            List<UsuarioBotmakerApi>? usuarios = null;
+            if (duracaoCacheBotmaker.HasValue)
+            {
+                usuarios = _cache.Obter<List<UsuarioBotmakerApi>>("UsuariosBotmaker");
+                if (usuarios != null)
+                    return usuarios;
+            }
+
             IResultado<IEnumerable<UsuarioBotmakerApi>> resultUsuariosBotmaker = _botmakerApi.ObterUsuariosNaBotmaker();
             if (resultUsuariosBotmaker.Falha)
                 throw new Exception($"Ocorreu um erro ao obter os usuários na API da Botmaker: {resultUsuariosBotmaker.ErrosConcatenados()}");
 
-            List<UsuarioBotmakerApi> usuariosBotmaker = resultUsuariosBotmaker.Dado.Where(_ => _.extraValues != null && !string.IsNullOrEmpty(_.extraValues.CpfCorretor))
-                                                                                   .ToList();
+            usuarios = resultUsuariosBotmaker.Dado.Where(_ => _.extraValues != null && !string.IsNullOrEmpty(_.extraValues.CpfCorretor))
+                                                  .ToList();
 
-            Info($"{usuariosBotmaker.Count()} usuários na Botmaker.");
+            if (duracaoCacheBotmaker.HasValue)
+                _cache.Gravar("UsuariosBotmaker", usuarios, duracaoCacheBotmaker.Value);
 
-            int qtdeAntes = usuariosBotmaker.Count;
-            BotmakerApiService.FiltrarUsuarios(ref usuariosBotmaker, emails: emails, cpfs: cpfs, nomes: nomes);
-
-            if (qtdeAntes > usuariosBotmaker.Count)
-                Info($"Usuários no Botmaker filtrados para {usuariosBotmaker.Count}.");
-
-            return usuariosBotmaker;
+            return usuarios;
         }
 
-
-        private IResultadoItens IncluirAtualizarUsuarios(IEnumerable<UsuarioBotmakerApi> usuariosBotmaker, IEnumerable<DadosUsuarioDTO> usuariosParaIntegrar, bool removerAntesDeIncluir)
-        {
-            Info("Inserindo/Atualizando usuários");
-
-            Info($"{usuariosParaIntegrar.Count()} usuários encontrados para serem intregrados.");
-
-            List<DadosUsuarioDTO> usuariosInserirAtualizar = ObterUsuariosInserirAtualizar(usuariosParaIntegrar, usuariosBotmaker).ToList();
-
-            VerificarUsuariosParaIntegracaoDuplicados(usuariosInserirAtualizar);
-
-            Info($"{_usuariosNovos} usuários para inserir. {usuariosInserirAtualizar.Count - _usuariosNovos} usuários para atualizar. Total: {usuariosInserirAtualizar.Count()}");
-
-            IResultadoItens execItemsResult = InserirAtualizarUsuarios(usuariosInserirAtualizar, removerAntesDeIncluir: removerAntesDeIncluir);
-
-            Info($"{execItemsResult.ItensSucesso} usuários inseridos/atualizados com sucesso. {execItemsResult.ItensErro} usuários com erro ({string.Join(",", execItemsResult.Erros)})");
-
-            return execItemsResult;
-        }
-
-
-        /// <summary>
-        /// Retorna os usuários que devem ser incluídos ou atualizados
-        /// </summary>
-        /// <param name="usuarios"></param>
-        /// <param name="usuariosBotmaker"></param>
-        /// <returns></returns>
-        private IEnumerable<DadosUsuarioDTO> ObterUsuariosInserirAtualizar(IEnumerable<DadosUsuarioDTO> usuarios, IEnumerable<UsuarioBotmakerApi> usuariosBotmaker)
-        {
-            foreach (DadosUsuarioDTO usuario in usuarios)
-            {
-                UsuarioBotmakerApi usuarioBotmaker = usuariosBotmaker.FirstOrDefault(_ => _.extraValues?.CpfCorretor != null && _.email == usuario.Email);
-                if (usuarioBotmaker == null)
-                {
-                    _usuariosNovos++;
-                    _logger.Info($"Usuários novo: {usuario.Apelido} - {usuario.Email}.");
-                    yield return usuario;
-                }
-                else
-                {
-                    IEnumerable<string> alteracoes = UsuarioAlterado(usuario, usuarioBotmaker);
-                    if (alteracoes.Any())
-                    {
-                        _logger.Info($"Usuário alterado: {usuario.Apelido} - {usuario.Email} - Alteração: {string.Join(" | ", alteracoes)}.");
-                        yield return usuario;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Retorna as diferenças entre o usuário da Botmaker e do usuário para integrar
-        /// </summary>
-        /// <param name="usuarioInserirAtualizar">Usuário para integrar</param>
-        /// <param name="usuarioBotmaker">Usuário na botmaker</param>
-        /// <returns></returns>
-        private static IEnumerable<string> UsuarioAlterado(DadosUsuarioDTO usuarioInserirAtualizar, UsuarioBotmakerApi usuarioBotmaker)
-        {
-            IList<string> alteracoes = new List<string>();
-
-            static string TratarString(string? valor) => valor?.Trim().ToLower() ?? string.Empty;
-
-            if (TratarString(usuarioInserirAtualizar.NomeSupervisor) != TratarString(usuarioBotmaker.extraValues?.top_name))
-                alteracoes.Add($"Nome do Supervisor alterado de '{usuarioBotmaker.extraValues?.top_name?.ToLower() ?? ""}' para '{usuarioInserirAtualizar.NomeSupervisor ?? ""}'");
-
-            if (TratarString(usuarioInserirAtualizar.Email) != TratarString(usuarioBotmaker.email))
-                alteracoes.Add($"E-mail alterado de '{usuarioBotmaker.email.ToLower()}' para '{usuarioInserirAtualizar.Email}'");
-
-            if (TratarString(usuarioInserirAtualizar.Nome) != TratarString(usuarioBotmaker.name))
-                alteracoes.Add($"Nome alterado de '{usuarioBotmaker.name ?? ""}' para '{usuarioInserirAtualizar.Nome ?? ""}'");
-
-            if (TratarString(usuarioInserirAtualizar.Apelido) != TratarString(usuarioBotmaker.extraValues?.Apelido))
-                alteracoes.Add($"Nome alterado de '{usuarioBotmaker.extraValues?.Apelido ?? ""}' para '{usuarioInserirAtualizar.Apelido ?? ""}'");
-
-            if (TratarString(usuarioInserirAtualizar.EmailDiretor) != TratarString(usuarioBotmaker.extraValues?.EmailDiretor))
-                alteracoes.Add($"E-mail do diretor alterado de '{usuarioBotmaker.extraValues?.EmailDiretor ?? ""}' para '{usuarioInserirAtualizar.EmailDiretor ?? ""}'");
-
-            if (TratarString(usuarioInserirAtualizar.EmailSupervisor) != TratarString(usuarioBotmaker.extraValues?.EmailSupervisor))
-                alteracoes.Add($"E-mail do Supervisor alterado de '{usuarioBotmaker.extraValues?.EmailSupervisor ?? ""}' para '{usuarioInserirAtualizar.EmailSupervisor ?? ""}'");
-
-            return alteracoes;
-        }
 
         private string[] VerificarUsuariosParaIntegracaoDuplicados(List<DadosUsuarioDTO> usuariosInserirAtualizar)
         {
@@ -198,26 +201,6 @@ namespace Lopes.Botmaker.Application.Services
             }
 
             return agrupado.ToArray();
-        }
-
-
-        private void RemoverUsuariosDuplicados(ref IEnumerable<UsuarioBotmakerApi> usuariosBotmaker)
-        {
-            Info("Removendo usuários duplicados...");
-            var usuariosDuplicados = usuariosBotmaker.Where(_ => _.extraValues?.CpfCorretor != null)
-                                                     .GroupBy(_ => _.email)
-                                                     .Where(_ => _.Count() > 1)
-                                                     .Select(_ => new { Email = _.Key, D = _.ToArray() });
-            string[] emailUsuarios = usuariosDuplicados.Select(_ => _.Email).ToArray();
-            if (!emailUsuarios.Any())
-            {
-                Info($"Nenhum usuário duplicado");
-            }
-            else
-            {
-                RemoverUsuarios(emailUsuarios);
-            }
-            usuariosBotmaker = usuariosBotmaker.Where(_ => !emailUsuarios.Contains(_.email)).ToList();
         }
 
         /// <summary>
@@ -275,54 +258,37 @@ namespace Lopes.Botmaker.Application.Services
         /// Remove da Botmaker os usuários inativos
         /// </summary>
         /// <param name="dataHoraLimiteIntegracao"></param>
-        public void RemoverUsuarios(string[] emailUsuarios)
+        public IResultadoItens RemoverUsuarios(string[] emailUsuarios)
         {
             if (emailUsuarios == null || emailUsuarios.All(_ => string.IsNullOrWhiteSpace(_)))
-                return;
+                return new ResultadoItens();
 
-            Info($"Removendo da Botmaker {emailUsuarios.Length} usuários.");
+            var resultado = new ResultadoItens();
 
-            IList<IEnumerator<string>> partitions = GetListPartitions(emailUsuarios);
-
-            int partitionIds = 0;
-            int i = 0;
-            int sucesso = 0;
-
-            // Create a task for each partition.
-            Task[] tasks = partitions.Select(partition => Task.Run(() =>
+            foreach (string email in emailUsuarios)
             {
-                int partitionId = partitionIds++;
+                IResultado exec = RemoverUsuario(email);
+                resultado.Add(exec);
+            }
 
-                using (partition)   // Remember, the IEnumerator<T> implementation might implement IDisposable.
-                    while (partition.MoveNext()) // While there are items in p.
-                    {
-                        // Get the current item.
-                        string email = partition.Current;
-                        string partitionStr = $" P{partitionId,2}";
-
-                        IResultado exec = _botmakerApi.RemoverUsuarioChatbox(email);
-                        if (exec.Sucesso)
-                        {
-                            string mensagem = $"{++i} P{partitionId,2} - Usuário removido da Botmaker com sucesso ({email})";
-                            _logger.Info(mensagem);
-                        }
-                        else
-                        {
-                            string mensagem = $"{++i} P{partitionId,2} - Erro ao remover o usuário da Botmaker ({email}): {exec.ErrosConcatenados()}";
-                            _logger.Error(mensagem);
-                        }
-                        if (exec.Sucesso)
-                            sucesso++;
-                    }
-            })).ToArray(); // ToArray is needed (or something to materialize the list) to avoid deferred execution.
-            Task.WaitAll(tasks);
-
-            Info($"{sucesso} usuários removidos de {emailUsuarios.Count()}.");
+            return resultado;
         }
 
-        private static void Info(string mensagem)
+        public IResultado RemoverUsuario(string email)
         {
-            Console.WriteLine(mensagem);
+            IResultado exec = _botmakerApi.RemoverUsuarioChatbox(email);
+            if (exec.Sucesso)
+            {
+                string mensagem = $"Usuário removido da Botmaker com sucesso ({email})";
+                _logger.Info(mensagem);
+            }
+            else
+            {
+                string mensagem = $"Erro ao remover o usuário da Botmaker ({email}): {exec.ErrosConcatenados()}";
+                _logger.Error(mensagem);
+            }
+
+            return exec;
         }
 
         private static IList<IEnumerator<T>> GetListPartitions<T>(IEnumerable<T> items)
@@ -330,7 +296,7 @@ namespace Lopes.Botmaker.Application.Services
             // Get the partitioner.
             OrderablePartitioner<T> partitioner = Partitioner.Create(items);
 
-            int qtdeProcessadores = 1;// Environment.ProcessorCount;
+            int qtdeProcessadores = Environment.ProcessorCount;
 
             // Get the partitions.
             // You'll have to set the parameter for the number of partitions here.

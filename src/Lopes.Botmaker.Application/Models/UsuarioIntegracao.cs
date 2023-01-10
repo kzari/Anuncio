@@ -26,11 +26,15 @@
         public string? NomeSupervisor => UsuarioSistema?.NomeSupervisor ?? UsuarioBotmaker?.extraValues?.top_name;
 
         public bool Novo => UsuarioSistema != null && UsuarioBotmaker == null;
-        public bool Excluir => UsuarioBotmaker != null && UsuarioSistema == null;
+        public bool Remover => UsuarioBotmaker != null && 
+                               !UsuarioBotmaker.UsuarioAdmin && 
+                               UsuarioSistema == null;
         public bool Atualizar => ObterAlteracoes().Any();
-        public string Acao => Novo ? "Inserir" : Excluir ? "Excluir" : Atualizar ? "Atualizar" : "Atualizado";
+        public string Acao => Novo ? "Inserir" : Remover ? "Excluir" : Atualizar ? "Atualizar" : "Atualizado";
 
 
+
+        public string[] Alteracoes => ObterAlteracoes();
 
         /// <summary>
         /// Retorna as diferenças entre o usuário da Botmaker e do usuário para integrar
@@ -38,6 +42,8 @@
         /// <returns></returns>
         private string[] ObterAlteracoes()
         {
+            static string? TratarString(string? valor) => valor?.Trim()?.ToLower() ?? string.Empty;
+
             if (UsuarioSistema == null || UsuarioBotmaker == null)
                 return Array.Empty<string>();
 
@@ -46,22 +52,22 @@
 
             _alteracoes = new List<string>();
 
-            if (UsuarioSistema.NomeSupervisor?.ToLower() != UsuarioBotmaker.extraValues?.top_name?.ToLower())
+            if (TratarString(UsuarioSistema.NomeSupervisor) != TratarString(UsuarioBotmaker.extraValues?.top_name))
                 _alteracoes.Add($"Nome do Supervisor alterado de '{UsuarioBotmaker.extraValues?.top_name?.ToLower() ?? ""}' para '{UsuarioSistema.NomeSupervisor ?? ""}'");
 
-            if (UsuarioSistema.Email.ToLower() != UsuarioBotmaker.email.ToLower())
+            if (TratarString(UsuarioSistema.Email) != TratarString(UsuarioBotmaker.email))
                 _alteracoes.Add($"E-mail alterado de '{UsuarioBotmaker.email.ToLower()}' para '{UsuarioSistema.Email}'");
 
-            if (UsuarioSistema.Nome?.ToUpper() != UsuarioBotmaker.name?.ToUpper())
+            if (TratarString(UsuarioSistema.Nome) != TratarString(UsuarioBotmaker.name))
                 _alteracoes.Add($"Nome alterado de '{UsuarioBotmaker.name ?? ""}' para '{UsuarioSistema.Nome ?? ""}'");
 
-            if (UsuarioSistema.Apelido?.ToUpper() != UsuarioBotmaker.extraValues?.Apelido?.ToUpper())
+            if (TratarString(UsuarioSistema.Apelido) != TratarString(UsuarioBotmaker.extraValues?.Apelido))
                 _alteracoes.Add($"Nome alterado de '{UsuarioBotmaker.extraValues?.Apelido ?? ""}' para '{UsuarioSistema.Apelido ?? ""}'");
 
-            if (UsuarioSistema.EmailDiretor?.ToUpper() != UsuarioBotmaker.extraValues?.EmailDiretor?.ToUpper())
+            if (TratarString(UsuarioSistema.EmailDiretor) != TratarString(UsuarioBotmaker.extraValues?.EmailDiretor))
                 _alteracoes.Add($"E-mail do diretor alterado de '{UsuarioBotmaker.extraValues?.EmailDiretor ?? ""}' para '{UsuarioSistema.EmailDiretor ?? ""}'");
 
-            if (UsuarioSistema.EmailSupervisor?.ToUpper() != UsuarioBotmaker.extraValues?.EmailSupervisor?.ToUpper())
+            if (TratarString(UsuarioSistema.EmailSupervisor) != TratarString(UsuarioBotmaker.extraValues?.EmailSupervisor))
                 _alteracoes.Add($"E-mail do Supervisor alterado de '{UsuarioBotmaker.extraValues?.EmailSupervisor ?? ""}' para '{UsuarioSistema.EmailSupervisor ?? ""}'");
 
             return _alteracoes.ToArray();

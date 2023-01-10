@@ -50,6 +50,9 @@
                 <div class="col-4" title="Nome e e-mail do supervisor">Sup: @usuario.NomeSupervisor (@usuario.EmailSupervisor)</div>
                 <div class="col-3" title="E-mail do diretor">Dir: @usuario.EmailDiretor</div>
             </div>
+            <div class='row mais-info mais-info-@usuario.Cpf' style="display:none">
+                <div class="col-12" title="Alterações">@string.Join(" | ", usuario.Alteracoes)</div>
+            </div>
             <hr style="margin:0;"/>
         </div>
     }
