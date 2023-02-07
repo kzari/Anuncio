@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Julio.Acesso.Application\Julio.Acesso.Application.csproj" />
+    <ProjectReference Include="..\Julio.Acesso.Dados\Julio.Acesso.Dados.csproj" />
+    <ProjectReference Include="..\Julio.Anuncio.Application\Julio.Anuncio.Application.csproj" />
+    <ProjectReference Include="..\Julio.Anuncio.Dados.Leitura\Julio.Anuncio.Dados.Leitura.csproj" />
+    <ProjectReference Include="..\Julio.Anuncio.Repositorio\Julio.Anuncio.Repositorio.csproj" />
+    <ProjectReference Include="..\Julio.Anuncio.XML\Julio.Anuncio.XML.csproj" />
+    <ProjectReference Include="..\Julio.Infra.MemoryCache\Julio.Infra.MemoryCache.csproj" />
+  </ItemGroup>
+
+</Project>
